@@ -1,0 +1,3 @@
+interface:
+  display_name: "Google Cloud Storage"
+  short_description: "Secure and operate Google Cloud Storage"

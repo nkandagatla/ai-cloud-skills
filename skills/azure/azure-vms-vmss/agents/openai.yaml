@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure VMs and VM Scale Sets"
+  short_description: "Operate Azure Virtual Machines and Virtual Machine Scale..."

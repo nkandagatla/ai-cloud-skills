@@ -1,0 +1,3 @@
+interface:
+  display_name: "GCP Org Policy and Security"
+  short_description: "Google Cloud organization governance and security posture"

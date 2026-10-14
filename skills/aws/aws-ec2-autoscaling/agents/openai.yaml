@@ -1,0 +1,3 @@
+interface:
+  display_name: "AWS EC2 and Auto Scaling"
+  short_description: "Operate EC2 and Auto Scaling groups safely"

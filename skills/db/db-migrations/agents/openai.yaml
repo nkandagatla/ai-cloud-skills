@@ -1,0 +1,3 @@
+interface:
+  display_name: "Database Migrations"
+  short_description: "Safe, zero-downtime database schema migrations with Flyway,..."

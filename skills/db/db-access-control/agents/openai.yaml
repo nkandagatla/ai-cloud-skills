@@ -1,0 +1,3 @@
+interface:
+  display_name: "Database Access Control"
+  short_description: "Design and review database access control"

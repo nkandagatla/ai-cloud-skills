@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ask Skills"
+  short_description: "Router for the company skills library"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Google Cloud Networking"
+  short_description: "Google Cloud networking design and operations"

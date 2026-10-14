@@ -1,0 +1,3 @@
+interface:
+  display_name: "Node.js Backend"
+  short_description: "Company standard for Node.js services"

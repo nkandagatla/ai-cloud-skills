@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git Commits and Pull Requests"
+  short_description: "Write good commits and pull requests"

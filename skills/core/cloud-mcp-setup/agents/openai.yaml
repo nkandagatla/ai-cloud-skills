@@ -1,0 +1,5 @@
+interface:
+  display_name: "Cloud MCP Setup"
+  short_description: "Connect AI agents to AWS, Azure and Google Cloud through..."
+policy:
+  allow_implicit_invocation: false

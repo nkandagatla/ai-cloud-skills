@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Security Automation (auto-remediation)"
+  short_description: "Build guarded security auto-remediation on Azure"

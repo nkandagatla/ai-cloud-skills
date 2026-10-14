@@ -1,0 +1,3 @@
+interface:
+  display_name: "AI Token Cost Control"
+  short_description: "How an AI coding agent keeps its own token usage and cost..."

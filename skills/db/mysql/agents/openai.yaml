@@ -1,0 +1,3 @@
+interface:
+  display_name: "MySQL and MariaDB"
+  short_description: "Operate and troubleshoot MySQL and MariaDB (self-managed,..."

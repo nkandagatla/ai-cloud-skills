@@ -1,0 +1,3 @@
+interface:
+  display_name: "LLM Batch Processing"
+  short_description: "Use batch APIs to cut LLM cost for work that does not need..."

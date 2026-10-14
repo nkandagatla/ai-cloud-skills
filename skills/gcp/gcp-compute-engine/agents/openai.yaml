@@ -1,0 +1,3 @@
+interface:
+  display_name: "Google Compute Engine and MIGs"
+  short_description: "Operate Google Compute Engine and managed instance groups..."

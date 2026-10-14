@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Policy and Governance"
+  short_description: "Azure governance and security posture"

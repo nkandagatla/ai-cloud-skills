@@ -1,0 +1,5 @@
+interface:
+  display_name: "Write a Company Skill"
+  short_description: "Author a new company skill (or improve an existing one) for..."
+policy:
+  allow_implicit_invocation: false

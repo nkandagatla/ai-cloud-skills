@@ -1,0 +1,3 @@
+interface:
+  display_name: "Terraform Workflow"
+  short_description: "Safe day-to-day Terraform/OpenTofu/Terragrunt workflow for..."

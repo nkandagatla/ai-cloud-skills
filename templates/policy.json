@@ -1,0 +1,65 @@
+{
+  "$comment": "cloud-guard policy. Only humans edit this file (agents are blocked). Run /setup-cloud-skills to fill in environments. Docs: .cloud-guard/README.md",
+  "mode": "standard",
+  "prodMutations": "deny",
+  "unknownEnvironmentAs": "nonprod",
+  "environments": {
+    "prod": [],
+    "nonprod": [],
+    "sandbox": []
+  },
+  "tierPatterns": {
+    "prod": [
+      "prod",
+      "prd",
+      "production",
+      "live"
+    ],
+    "sandbox": [
+      "sandbox",
+      "sbx",
+      "playground",
+      "scratch",
+      "lab",
+      "localhost",
+      "local",
+      "127",
+      "devbox",
+      "docker"
+    ],
+    "nonprod": [
+      "dev",
+      "develop",
+      "development",
+      "test",
+      "tst",
+      "qa",
+      "uat",
+      "stage",
+      "stg",
+      "staging",
+      "nonprod",
+      "np",
+      "perf",
+      "int",
+      "preprod"
+    ]
+  },
+  "allowedRegions": [],
+  "overrides": {},
+  "customRules": [],
+  "detectActiveContext": true,
+  "geminiAskAs": "deny",
+  "audit": true,
+  "secretWriteGuard": true,
+  "tokenSaver": {
+    "enabled": true,
+    "maxChars": 6000,
+    "headLines": 30,
+    "tailLines": 50,
+    "maxSignalLines": 80,
+    "verbatimMaxChars": 40000,
+    "keepLogs": 50,
+    "stats": true
+  }
+}

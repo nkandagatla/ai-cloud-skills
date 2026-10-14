@@ -1,0 +1,3 @@
+interface:
+  display_name: "CI/CD with OIDC"
+  short_description: "Secure CI/CD to AWS, Azure and GCP with OIDC federation (no..."

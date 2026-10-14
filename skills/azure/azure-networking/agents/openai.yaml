@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Networking"
+  short_description: "Azure networking design and operations"

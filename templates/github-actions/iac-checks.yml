@@ -1,0 +1,57 @@
+# ai-cloud-skills: IaC and secret checks on every pull request. No cloud credentials needed.
+# Pin every action to a full commit SHA before using this in production
+# (for example with `pinact run` or Dependabot), and keep the tag in a comment.
+name: cloud-iac-checks
+
+on:
+  pull_request:
+    paths: ["**/*.tf", "**/*.tfvars", "**/*.bicep", "**/*.bicepparam", "**/*.yaml", "**/*.yml", "**/*.json", "**/Dockerfile", ".cloud-guard/**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-iac-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: cloud-guard secret scan
+        run: node .cloud-guard/bin/cloud-guard.mjs scan .
+
+      - name: Terraform fmt
+        if: hashFiles('**/*.tf') != ''
+        uses: hashicorp/setup-terraform@v3
+      - if: hashFiles('**/*.tf') != ''
+        run: terraform fmt -check -recursive -diff
+
+      - name: Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+          quiet: true
+          compact: true
+          soft_fail: false
+          skip_path: .cloud-guard
+
+      - name: Trivy config scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: config
+          exit-code: "1"
+          severity: HIGH,CRITICAL
+
+      - name: Bicep build and lint
+        if: hashFiles('**/*.bicep') != ''
+        run: |
+          az bicep install
+          for f in $(git ls-files '*.bicep'); do az bicep build --file "$f" --stdout > /dev/null; done

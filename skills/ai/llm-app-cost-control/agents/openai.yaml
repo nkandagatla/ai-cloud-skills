@@ -1,0 +1,3 @@
+interface:
+  display_name: "LLM Application Cost Control"
+  short_description: "Control cost and token usage in applications that call LLM..."

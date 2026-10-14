@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Cost Management"
+  short_description: "Analyse and reduce Azure spend"

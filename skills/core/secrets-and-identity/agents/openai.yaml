@@ -1,0 +1,3 @@
+interface:
+  display_name: "Secrets and Identity"
+  short_description: "Cross-cloud patterns for workload identity and secrets"

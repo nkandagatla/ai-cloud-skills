@@ -1,0 +1,3 @@
+interface:
+  display_name: "Kubernetes Ops"
+  short_description: "Safe Kubernetes operations on EKS, AKS and GKE"

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Monitor"
+  short_description: "Azure observability"

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Redis and Valkey"
+  short_description: "Operate and troubleshoot Redis and Valkey (self-managed,..."

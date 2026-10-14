@@ -1,0 +1,78 @@
+# ai-cloud-skills: Terraform on Azure with GitHub OIDC (workload identity federation). Plan on PR (read-only role), apply on main with environment approval.
+# Prerequisites (platform team, via IaC): user-assigned identities with federated credentials
+# (issuer https://token.actions.githubusercontent.com, audience api://AzureADTokenExchange):
+# id-ci-plan-<env> (subject repo:ORG/REPO:pull_request; Reader + state blob access) and
+# id-ci-apply-<env> (subject repo:ORG/REPO:environment:<env>; scoped roles on the target resource groups).
+# The azurerm backend should use use_azuread_auth = true. No ARM_CLIENT_SECRET anywhere.
+# Pin actions to full commit SHAs before production use.
+name: terraform-azure
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+
+permissions:
+  contents: read
+
+env:
+  TF_IN_AUTOMATION: "true"
+  WORKDIR: infra/envs/prod
+  ARM_USE_OIDC: "true"
+  ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+concurrency:
+  group: terraform-azure-prod
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions: { contents: read, id-token: write, pull-requests: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_PLAN_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - run: echo "ARM_CLIENT_ID=${{ vars.AZURE_PLAN_CLIENT_ID }}" >> "$GITHUB_ENV"
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform validate
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform plan -input=false -lock=false -no-color -out=tfplan > plan.txt
+        working-directory: ${{ env.WORKDIR }}
+      - name: Summarise plan (no values)
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          grep -E '^(Plan:|No changes)|# .* (will be|must be)' plan.txt | head -100 > summary.txt || true
+          { echo '### Terraform plan (prod)'; echo '```'; cat summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: prod          # configure required reviewers on this environment
+    permissions: { contents: read, id-token: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_APPLY_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - run: echo "ARM_CLIENT_ID=${{ vars.AZURE_APPLY_CLIENT_ID }}" >> "$GITHUB_ENV"
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform plan -input=false -out=tfplan
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform apply -input=false tfplan     # applies exactly the plan just produced, after environment approval
+        working-directory: ${{ env.WORKDIR }}

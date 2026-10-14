@@ -1,0 +1,8 @@
+node_modules/
+.cloud-guard/audit.jsonl
+*.tfstate
+*.tfstate.backup
+.env
+_site/
+*.tar.gz
+.cloud-guard/stats.jsonl*

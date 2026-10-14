@@ -1,0 +1,3 @@
+interface:
+  display_name: "Secure Coding"
+  short_description: "Language-agnostic secure coding standard for agents"

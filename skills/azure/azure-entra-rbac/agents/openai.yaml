@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Entra ID and RBAC"
+  short_description: "Azure identity and access"

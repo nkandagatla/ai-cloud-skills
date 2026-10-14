@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git Recovery"
+  short_description: "Recover from git mistakes safely"

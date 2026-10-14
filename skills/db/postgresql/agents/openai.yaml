@@ -1,0 +1,3 @@
+interface:
+  display_name: "PostgreSQL"
+  short_description: "Operate and troubleshoot PostgreSQL (self-managed,..."

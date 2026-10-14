@@ -1,0 +1,3 @@
+interface:
+  display_name: "AWS KMS and Secrets"
+  short_description: "AWS encryption keys and secrets"

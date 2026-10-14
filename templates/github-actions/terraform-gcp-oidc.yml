@@ -1,0 +1,70 @@
+# ai-cloud-skills: Terraform on Google Cloud with GitHub OIDC (Workload Identity Federation). Plan on PR (read-only role), apply on main with environment approval.
+# Prerequisites (platform team, via IaC): workload identity pool + OIDC provider for GitHub WITH an attribute
+# condition (assertion.repository == 'ORG/REPO'), service accounts tf-plan-<env> and tf-apply-<env>, and
+# roles/iam.workloadIdentityUser bindings restricted to the PR / environment principalSets. No SA keys.
+# Pin actions to full commit SHAs before production use.
+name: terraform-gcp
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+
+permissions:
+  contents: read
+
+env:
+  TF_IN_AUTOMATION: "true"
+  WORKDIR: infra/envs/prod
+  GCP_WIF_PROVIDER: ${{ vars.GCP_WIF_PROVIDER }}
+
+concurrency:
+  group: terraform-gcp-prod
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions: { contents: read, id-token: write, pull-requests: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_PLAN_SERVICE_ACCOUNT }}
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform validate
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform plan -input=false -lock=false -no-color -out=tfplan > plan.txt
+        working-directory: ${{ env.WORKDIR }}
+      - name: Summarise plan (no values)
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          grep -E '^(Plan:|No changes)|# .* (will be|must be)' plan.txt | head -100 > summary.txt || true
+          { echo '### Terraform plan (prod)'; echo '```'; cat summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: prod          # configure required reviewers on this environment
+    permissions: { contents: read, id-token: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_APPLY_SERVICE_ACCOUNT }}
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform plan -input=false -out=tfplan
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform apply -input=false tfplan     # applies exactly the plan just produced, after environment approval
+        working-directory: ${{ env.WORKDIR }}

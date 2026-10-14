@@ -1,0 +1,3 @@
+interface:
+  display_name: "GenAI Platforms (Bedrock, Azure OpenAI, Vertex AI)"
+  short_description: "Build and operate generative AI workloads safely on Amazon..."

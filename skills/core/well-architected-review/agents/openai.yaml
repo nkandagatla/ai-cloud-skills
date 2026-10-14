@@ -1,0 +1,5 @@
+interface:
+  display_name: "Well-Architected Review"
+  short_description: "Architecture review of a workload against the AWS..."
+policy:
+  allow_implicit_invocation: false

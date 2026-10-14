@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Key Vault"
+  short_description: "Azure Key Vault and Managed HSM"

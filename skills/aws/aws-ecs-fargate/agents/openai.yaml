@@ -1,0 +1,3 @@
+interface:
+  display_name: "Amazon ECS on Fargate"
+  short_description: "Build, deploy and troubleshoot containers on Amazon ECS..."

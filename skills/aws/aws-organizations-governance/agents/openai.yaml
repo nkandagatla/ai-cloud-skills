@@ -1,0 +1,3 @@
+interface:
+  display_name: "AWS Organizations and Governance"
+  short_description: "AWS multi-account governance and security posture"

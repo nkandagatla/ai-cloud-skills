@@ -1,0 +1,3 @@
+interface:
+  display_name: "AI Context Management"
+  short_description: "How an AI agent keeps its own context window small and..."

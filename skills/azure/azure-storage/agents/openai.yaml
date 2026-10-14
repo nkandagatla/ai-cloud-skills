@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Storage"
+  short_description: "Secure and operate Azure Storage accounts"

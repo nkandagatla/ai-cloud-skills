@@ -1,0 +1,3 @@
+interface:
+  display_name: "AWS Observability"
+  short_description: "AWS monitoring and logging"

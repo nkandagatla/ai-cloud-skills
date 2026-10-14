@@ -1,0 +1,3 @@
+interface:
+  display_name: "Azure Container Apps and ACR"
+  short_description: "Deploy and operate Azure Container Apps and Azure Container..."

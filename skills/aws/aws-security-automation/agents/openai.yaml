@@ -1,0 +1,3 @@
+interface:
+  display_name: "AWS Security Automation (auto-remediation)"
+  short_description: "Build guarded security auto-remediation on AWS"

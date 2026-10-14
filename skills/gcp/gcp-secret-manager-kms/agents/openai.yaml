@@ -1,0 +1,3 @@
+interface:
+  display_name: "GCP Secret Manager and Cloud KMS"
+  short_description: "Google Cloud Secret Manager and Cloud KMS"

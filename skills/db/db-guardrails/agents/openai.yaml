@@ -1,0 +1,3 @@
+interface:
+  display_name: "Database Guardrails"
+  short_description: "Non-negotiable rules for any AI agent work against databases..."

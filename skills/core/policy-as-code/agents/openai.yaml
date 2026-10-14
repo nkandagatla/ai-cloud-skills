@@ -1,0 +1,3 @@
+interface:
+  display_name: "Policy as Code"
+  short_description: "Set up and run policy-as-code guardrails for infrastructure"

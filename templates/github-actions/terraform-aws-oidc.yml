@@ -1,0 +1,71 @@
+# ai-cloud-skills: Terraform on AWS with GitHub OIDC. Plan on PR (read-only role), apply on main with environment approval.
+# Prerequisites (platform team, via IaC): OIDC provider token.actions.githubusercontent.com,
+# roles ci-plan-<env> (sub = repo:ORG/REPO:pull_request) and ci-apply-<env> (sub = repo:ORG/REPO:environment:<env>).
+# Pin actions to full commit SHAs before production use.
+name: terraform-aws
+
+on:
+  pull_request:
+    paths: ["infra/**"]
+  push:
+    branches: [main]
+    paths: ["infra/**"]
+
+permissions:
+  contents: read
+
+env:
+  TF_IN_AUTOMATION: "true"
+  WORKDIR: infra/envs/prod
+  AWS_REGION: us-east-1
+
+concurrency:
+  group: terraform-aws-prod
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions: { contents: read, id-token: write, pull-requests: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: gha-plan-${{ github.run_id }}
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform validate
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform plan -input=false -lock=false -no-color -out=tfplan > plan.txt
+        working-directory: ${{ env.WORKDIR }}
+      - name: Summarise plan (no values)
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          grep -E '^(Plan:|No changes)|# .* (will be|must be)' plan.txt | head -100 > summary.txt || true
+          { echo '### Terraform plan (prod)'; echo '```'; cat summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: prod          # configure required reviewers on this environment
+    permissions: { contents: read, id-token: write }
+    steps:
+      - uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_APPLY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: gha-apply-${{ github.run_id }}
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform init -input=false
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform plan -input=false -out=tfplan
+        working-directory: ${{ env.WORKDIR }}
+      - run: terraform apply -input=false tfplan     # applies exactly the plan just produced, after environment approval
+        working-directory: ${{ env.WORKDIR }}

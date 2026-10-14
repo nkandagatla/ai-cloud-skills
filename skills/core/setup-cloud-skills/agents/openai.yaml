@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Cloud Skills"
+  short_description: "One-time setup per repository"
+policy:
+  allow_implicit_invocation: false

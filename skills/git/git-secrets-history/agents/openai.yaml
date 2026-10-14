@@ -1,0 +1,3 @@
+interface:
+  display_name: "Git: Secrets and History"
+  short_description: "Prevent and respond to secrets in git"

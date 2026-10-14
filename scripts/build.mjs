@@ -1,0 +1,236 @@
+#!/usr/bin/env node
+// Generates everything derived from skills/**/SKILL.md:
+//   - skills/<name>/agents/openai.yaml (Codex / ChatGPT metadata)
+//   - skills/<group>/README.md
+//   - .claude-plugin/plugin.json and marketplace.json
+//   - site/catalog.json and the inlined catalog in site/index.html
+//   - the skills tables in README.md
+// `--check` fails if any generated file is out of date (used in CI).
+
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const CHECK = process.argv.includes("--check");
+const PKG = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
+const REPO = PKG.config.repo;
+const GROUPS = { core: "Core (guardrails and cross-cloud)", aws: "Amazon Web Services", azure: "Microsoft Azure", gcp: "Google Cloud", git: "Git and source control", lang: "Languages", db: "Databases", ai: "AI token cost and context" };
+const CLOUD_GROUPS = ["aws", "azure", "gcp"];
+const DEV_GROUPS = ["git", "lang", "db", "ai"];
+const errors = [];
+const stale = [];
+
+const ACRONYMS = { aws: "AWS", iam: "IAM", eks: "EKS", ecs: "ECS", s3: "S3", kms: "KMS", vms: "VMs", vmss: "VMSS", aks: "AKS", gke: "GKE", gcp: "GCP", iac: "IaC", dr: "DR", mcp: "MCP", oidc: "OIDC", cicd: "CI/CD", cdk: "CDK", finops: "FinOps", ec2: "EC2", rbac: "RBAC", genai: "GenAI", bigquery: "BigQuery", cloudformation: "CloudFormation", autoscaling: "Auto Scaling", entra: "Entra", fargate: "Fargate" };
+const display = (name) => name.split("-").map((w) => ACRONYMS[w] || w[0].toUpperCase() + w.slice(1)).join(" ");
+
+function frontmatter(text, file) {
+  const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
+  if (!m) {
+    errors.push(`${file}: missing frontmatter`);
+    return {};
+  }
+  const fm = {};
+  for (const line of m[1].split(/\r?\n/)) {
+    const mm = line.match(/^([\w-]+):\s*(.*)$/);
+    if (mm) fm[mm[1]] = mm[2];
+    else if (line.trim()) errors.push(`${file}: unsupported frontmatter line "${line}" (keep frontmatter to single-line keys)`);
+  }
+  return fm;
+}
+
+function shortDesc(desc) {
+  let s = desc.split(/ - |\. /)[0].replace(/\.$/, "");
+  if (s.length > 64) s = s.slice(0, 61).replace(/\s+\S*$/, "") + "...";
+  return s;
+}
+
+// ── collect ──
+const skills = [];
+for (const group of Object.keys(GROUPS)) {
+  const gdir = path.join(ROOT, "skills", group);
+  if (!fs.existsSync(gdir)) continue;
+  for (const name of fs.readdirSync(gdir).sort()) {
+    const dir = path.join(gdir, name);
+    if (!fs.statSync(dir).isDirectory()) continue;
+    const file = path.join(dir, "SKILL.md");
+    if (!fs.existsSync(file)) {
+      errors.push(`skills/${group}/${name}: missing SKILL.md`);
+      continue;
+    }
+    const text = fs.readFileSync(file, "utf8");
+    const fm = frontmatter(text, `skills/${group}/${name}/SKILL.md`);
+    const rel = `skills/${group}/${name}`;
+    if (fm.name !== name) errors.push(`${rel}: frontmatter name "${fm.name}" must equal folder name "${name}"`);
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) || name.length > 64) errors.push(`${rel}: name must be kebab-case, <= 64 chars`);
+    if (!fm.description) errors.push(`${rel}: description required`);
+    else {
+      if (fm.description.length > 1024) errors.push(`${rel}: description > 1024 chars`);
+      if (/[<>]/.test(fm.description)) errors.push(`${rel}: description must not contain < or >`);
+      if (!/Use (when|for|before|whenever)/.test(fm.description)) errors.push(`${rel}: description should say when to use it ("Use when ...")`);
+    }
+    const userInvoked = fm["disable-model-invocation"] === "true";
+    const body = text.replace(/^---[\s\S]*?---\r?\n/, "");
+    const title = (body.match(/^#\s+(.+)$/m) || [])[1] || display(name);
+    skills.push({ name, group, rel, title, description: fm.description || "", userInvoked, lines: text.split("\n").length, words: body.split(/\s+/).length });
+  }
+}
+
+// ── write helper ──
+function emit(rel, content) {
+  const file = path.join(ROOT, rel);
+  const cur = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : null;
+  if (cur === content) return;
+  if (CHECK) stale.push(rel);
+  else {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, content);
+  }
+}
+
+// ── openai.yaml per skill ──
+for (const s of skills) {
+  const y = [
+    "interface:",
+    `  display_name: "${s.title.replace(/"/g, "'")}"`,
+    `  short_description: "${shortDesc(s.description).replace(/"/g, "'")}"`,
+    ...(s.userInvoked ? ["policy:", "  allow_implicit_invocation: false"] : []),
+    "",
+  ].join("\n");
+  emit(`${s.rel}/agents/openai.yaml`, y);
+}
+
+// ── group READMEs ──
+for (const [g, label] of Object.entries(GROUPS)) {
+  const items = skills.filter((s) => s.group === g);
+  const line = (s) => `- **[${s.name}](./${s.name}/SKILL.md)**: ${s.description}`;
+  const md = [
+    `# ${label}`,
+    "",
+    "Generated by `npm run build`. Do not edit by hand.",
+    "",
+    ...(items.some((s) => s.userInvoked) ? ["## User-invoked", "", "Run them as commands (for example `/" + items.find((s) => s.userInvoked).name + "`). The model does not trigger them on its own.", "", ...items.filter((s) => s.userInvoked).map(line), ""] : []),
+    "## Model-invoked",
+    "",
+    "The agent loads these automatically when a task matches the description. You can also call them by name.",
+    "",
+    ...items.filter((s) => !s.userInvoked).map(line),
+    "",
+  ].join("\n");
+  emit(`skills/${g}/README.md`, md);
+}
+
+// ── Claude Code plugin + marketplace ──
+const author = { name: "Nithin", url: `https://github.com/${REPO.split("/")[0]}` };
+const allPaths = skills.map((s) => `./${s.rel}`);
+const plugin = {
+  name: "ai-cloud-skills",
+  version: PKG.version,
+  description: "Company skills library: guardrailed AWS, Azure and GCP, git, languages, databases and AI token-cost skills, plus the cloud-guard and token-saver hooks.",
+  author,
+  homepage: `https://github.com/${REPO}`,
+  repository: `https://github.com/${REPO}`,
+  license: "MIT",
+  keywords: ["aws", "azure", "gcp", "terraform", "kubernetes", "devops", "security", "guardrails", "finops"],
+};
+// Components (skills) live in the marketplace entries so one repo can ship several plugins.
+// hooks/hooks.json is auto-discovered from the plugin root by Claude Code.
+// No .claude-plugin/plugin.json on purpose: with several plugins sharing source "./", a plugin.json
+// at the root conflicts with the marketplace entries (strict: false). Each entry is self-contained.
+if (fs.existsSync(path.join(ROOT, ".claude-plugin", "plugin.json"))) {
+  if (CHECK) stale.push(".claude-plugin/plugin.json (should not exist)");
+  else fs.rmSync(path.join(ROOT, ".claude-plugin", "plugin.json"));
+}
+
+const per = (cloud) => ({
+  name: `ai-cloud-skills-${cloud}`,
+  source: "./",
+  strict: false,
+  version: PKG.version,
+  description: `Core guardrail skills + ${GROUPS[cloud]} skills, with the cloud-guard and token-saver hooks.`,
+  category: "devops",
+  keywords: [cloud, "cloud", "guardrails"],
+  skills: skills.filter((s) => s.group === "core" || s.group === cloud).map((s) => `./${s.rel}`),
+});
+void CLOUD_GROUPS;
+const market = {
+  name: "ai-cloud-skills",
+  owner: author,
+  description: "Company skills library for AI coding agents: cloud, git, languages, databases, AI cost, with guardrails.",
+  plugins: [
+    { name: "ai-cloud-skills", source: "./", strict: false, description: plugin.description, version: PKG.version, author, homepage: plugin.homepage, repository: plugin.repository, license: "MIT", category: "devops", keywords: plugin.keywords, skills: allPaths },
+    per("aws"),
+    per("azure"),
+    per("gcp"),
+    {
+      name: "ai-cloud-skills-dev",
+      source: "./",
+      strict: false,
+      version: PKG.version,
+      description: "Core guardrails + git, language, database and AI token-cost skills (no cloud packs), with the cloud-guard and token-saver hooks.",
+      category: "development",
+      keywords: ["git", "python", "java", "nodejs", "database", "tokens"],
+      skills: skills.filter((s) => s.group === "core" || DEV_GROUPS.includes(s.group)).map((s) => `./${s.rel}`),
+    },
+  ],
+};
+emit(".claude-plugin/marketplace.json", JSON.stringify(market, null, 2) + "\n");
+
+// ── catalog for the site ──
+const catalog = {
+  version: PKG.version,
+  repo: REPO,
+  generated: "build",
+  groups: GROUPS,
+  skills: skills.map(({ name, group, title, description, userInvoked, lines, rel }) => ({ name, group, title, description, userInvoked, lines, path: `${rel}/SKILL.md` })),
+};
+emit("site/catalog.json", JSON.stringify(catalog, null, 2) + "\n");
+// Browser build of the guard: the same rules and classifier, with Node APIs stubbed out,
+// so the site can evaluate commands live with exactly the logic the hook uses.
+function guardBundle() {
+  const strip = (src) => src.replace(/^import .*$/gm, "").replace(/^export /gm, "");
+  const rules = strip(fs.readFileSync(path.join(ROOT, "guard", "rules.mjs"), "utf8"));
+  let engine = strip(fs.readFileSync(path.join(ROOT, "guard", "cloud-guard.mjs"), "utf8"));
+  engine = engine.replace(/^#!.*$/m, "").split("// Entry point")[0];
+  const shims = `const process = { env: {}, cwd: () => "/repo", platform: "linux", argv: [] };
+const fs = { existsSync: () => false, readFileSync: () => { throw Object.assign(new Error("ENOENT"), { code: "ENOENT" }); }, appendFileSync() {}, statSync() { throw new Error("n/a"); }, readdirSync: () => [] };
+const os = { homedir: () => "/home/user" };
+const path = { join: (...a) => a.join("/"), resolve: (...a) => a.filter(Boolean).join("/") || "/", dirname: (p) => p.split(/[\\\\/]/).slice(0, -1).join("/") || "/", basename: (p) => p.split(/[\\\\/]/).pop(), sep: "/", delimiter: ":" };`;
+  return `(function(){\n${shims}\n${rules}\n${engine}\nwindow.CloudGuard = { evaluateCommand, evaluateFileAccess, DEFAULT_POLICY, HARD_RULES, VERSION };\n})();`;
+}
+const sitePath = path.join(ROOT, "site", "index.html");
+if (fs.existsSync(sitePath)) {
+  let html = fs.readFileSync(sitePath, "utf8");
+  const re = /(<script id="catalog" type="application\/json">)[\s\S]*?(<\/script>)/;
+  const reG = /(<script id="guard-engine">)[\s\S]*?(<\/script>)/;
+  if (!re.test(html)) errors.push("site/index.html: missing <script id=\"catalog\" type=\"application/json\"> placeholder");
+  if (!reG.test(html)) errors.push("site/index.html: missing <script id=\"guard-engine\"> placeholder");
+  html = html.replace(re, () => `<script id="catalog" type="application/json">${JSON.stringify(catalog).replace(/</g, "\\u003c")}</script>`);
+  html = html.replace(reG, () => `<script id="guard-engine">${guardBundle().replace(/<\/script/gi, "<\\/script")}</script>`);
+  emit("site/index.html", html);
+}
+
+// ── README tables ──
+const readme = path.join(ROOT, "README.md");
+if (fs.existsSync(readme)) {
+  let md = fs.readFileSync(readme, "utf8");
+  const table = Object.entries(GROUPS)
+    .map(([g, label]) => {
+      const items = skills.filter((s) => s.group === g);
+      return [`### ${label} (${items.length})`, "", "| Skill | What it covers |", "| --- | --- |", ...items.map((s) => `| [\`${s.name}\`](./${s.rel}/SKILL.md)${s.userInvoked ? " `/cmd`" : ""} | ${s.description.split(" Use ")[0].replace(/\|/g, "\\|")} |`), ""].join("\n");
+    })
+    .join("\n");
+  const re = /<!-- skills:begin -->[\s\S]*?<!-- skills:end -->/;
+  if (re.test(md)) emit("README.md", md.replace(re, `<!-- skills:begin -->\n${table}\n<!-- skills:end -->`));
+}
+
+// ── report ──
+if (errors.length) {
+  console.error("Skill errors:\n  " + errors.join("\n  "));
+  process.exit(1);
+}
+if (CHECK && stale.length) {
+  console.error("Generated files are out of date. Run `npm run build`:\n  " + stale.join("\n  "));
+  process.exit(1);
+}
+console.log(`${CHECK ? "Checked" : "Built"} ${skills.length} skills (${Object.keys(GROUPS).map((g) => `${g} ${skills.filter((s) => s.group === g).length}`).join(", ")}).`);

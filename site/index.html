@@ -1,0 +1,2042 @@
+<title>ai-cloud-skills</title>
+<meta name="description" content="The company skills library for AI coding agents: cloud, git, languages, databases and AI token cost, with a pre-execution guard, an output token saver and a one-command installer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: control-room manual. Left-aligned column, hero = thesis + live guard console, then install, catalog, decision matrix. */
+:root {
+  --bg: #eef1f4;
+  --panel: #ffffff;
+  --panel-2: #e3e8ee;
+  --ink: #15202b;
+  --muted: #55657a;
+  --line: #cfd7e1;
+  --accent: #d9530f;          /* hi-vis guardrail orange */
+  --accent-ink: #ffffff;
+  --term: #101820;
+  --term-ink: #d8e2ec;
+  --term-muted: #7f90a3;
+  --allow: #1d7f4e;
+  --ask: #a86a00;
+  --deny: #c0262d;
+  --allow-bg: #e2f3ea;
+  --ask-bg: #fbf0d9;
+  --deny-bg: #fbe3e3;
+  --font-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --r: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141a; --panel: #151e27; --panel-2: #1c2733; --ink: #e4ebf2; --muted: #93a3b6; --line: #2a3746;
+    --accent: #ff7a33; --accent-ink: #1a0d05; --term: #0a0f14; --term-ink: #d8e2ec; --term-muted: #74859a;
+    --allow: #4fd08f; --ask: #f2b53c; --deny: #ff6b6b; --allow-bg: #12301f; --ask-bg: #33270c; --deny-bg: #3a1618;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141a; --panel: #151e27; --panel-2: #1c2733; --ink: #e4ebf2; --muted: #93a3b6; --line: #2a3746;
+  --accent: #ff7a33; --accent-ink: #1a0d05; --term: #0a0f14; --term-ink: #d8e2ec; --term-muted: #74859a;
+  --allow: #4fd08f; --ask: #f2b53c; --deny: #ff6b6b; --allow-bg: #12301f; --ask-bg: #33270c; --deny-bg: #3a1618;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--font-body); }
+.wrap { max-width: 1160px; margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); padding-block: 0 64px; }
+a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, kbd, .mono { font-family: var(--font-mono); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+p { margin: 0; }
+
+/* top bar */
+.bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-block: 18px; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; font: 700 18px/1 var(--font-display); font-stretch: 112%; letter-spacing: .01em; }
+.rail { width: 34px; height: 14px; background: repeating-linear-gradient(135deg, var(--accent) 0 6px, var(--ink) 6px 12px); border-radius: 2px; }
+.bar nav { display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; color: var(--muted); }
+.bar nav a { text-decoration: none; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(24px, 4vw, 56px); padding-block: clamp(32px, 6vw, 64px) 40px; align-items: start; }
+.eyebrow { font: 500 12px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+.hero h1 { font-size: clamp(38px, 6vw, 68px); line-height: .98; font-weight: 800; font-stretch: 75%; letter-spacing: -.01em; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.lede { margin-top: 20px; max-width: 34em; font-size: 18px; color: var(--muted); }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 26px; font: 500 14px var(--font-mono); color: var(--muted); }
+.stats b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: var(--r); font: 600 15px var(--font-body); text-decoration: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:hover { color: inherit; filter: brightness(1.05); }
+
+/* console */
+.console { background: var(--term); color: var(--term-ink); border-radius: 10px; overflow: hidden; box-shadow: 0 18px 50px -24px rgba(5, 20, 35, .55); min-width: 0; }
+.console-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #ffffff14; font: 500 12px var(--font-mono); color: var(--term-muted); }
+.console-head select { background: #ffffff10; color: var(--term-ink); border: 1px solid #ffffff26; border-radius: 4px; font: 500 12px var(--font-mono); padding: 4px 6px; }
+.console-body { padding: 16px; display: grid; gap: 12px; }
+.prompt { display: flex; gap: 10px; align-items: flex-start; }
+.prompt span { color: var(--accent); font: 600 15px/1.5 var(--font-mono); padding-top: 9px; }
+.prompt textarea { flex: 1; min-width: 0; resize: vertical; min-height: 64px; background: #ffffff0a; color: var(--term-ink); border: 1px solid #ffffff22; border-radius: 6px; padding: 9px 10px; font: 400 14px/1.5 var(--font-mono); }
+.verdict { border-radius: 6px; padding: 12px 14px; display: grid; gap: 6px; background: #ffffff0a; border-left: 4px solid var(--term-muted); }
+.verdict .tag { font: 700 13px var(--font-mono); letter-spacing: .1em; }
+.verdict[data-d="allow"] { border-left-color: #4fd08f; } .verdict[data-d="allow"] .tag { color: #4fd08f; }
+.verdict[data-d="ask"] { border-left-color: #f2b53c; } .verdict[data-d="ask"] .tag { color: #f2b53c; }
+.verdict[data-d="deny"] { border-left-color: #ff6b6b; } .verdict[data-d="deny"] .tag { color: #ff6b6b; }
+.verdict .why { font-size: 14px; }
+.verdict .fix { font-size: 13px; color: var(--term-muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px var(--font-mono); padding: 5px 9px; border-radius: 999px; border: 1px solid #ffffff22; background: transparent; color: var(--term-ink); cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.console-foot { font-size: 12px; color: var(--term-muted); padding: 0 16px 14px; }
+
+/* sections */
+section { padding-block: 44px; border-top: 1px solid var(--line); }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px 24px; margin-bottom: 22px; }
+.sec-head h2 { font-size: clamp(26px, 3.4vw, 36px); font-weight: 750; font-stretch: 85%; }
+.sec-head p { color: var(--muted); max-width: 46em; }
+.label { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+/* install */
+.install { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--panel); }
+.tabs { display: flex; flex-direction: column; background: var(--panel-2); border-right: 1px solid var(--line); }
+.tab { text-align: left; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 15px var(--font-body); cursor: pointer; display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.tab small { font: 500 11px var(--font-mono); color: var(--muted); }
+.tab[aria-selected="true"] { background: var(--panel); box-shadow: inset 3px 0 0 var(--accent); font-weight: 600; }
+.pane { padding: 22px clamp(16px, 3vw, 28px); display: grid; gap: 16px; min-width: 0; }
+.pane h3 { font-size: 22px; font-weight: 700; font-stretch: 90%; }
+.pane p, .pane li { color: var(--muted); max-width: 62em; }
+.pane ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.code { position: relative; background: var(--term); color: var(--term-ink); border-radius: 8px; min-width: 0; }
+.code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font: 400 13.5px/1.6 var(--font-mono); white-space: pre; }
+.code pre .c { color: var(--term-muted); }
+.copy { position: absolute; top: 8px; right: 8px; font: 500 12px var(--font-mono); padding: 4px 8px; border-radius: 4px; border: 1px solid #ffffff26; background: #101820cc; color: var(--term-ink); cursor: pointer; }
+.copy:hover { border-color: var(--accent); }
+.enf { display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--font-mono); padding: 4px 9px; border-radius: 999px; }
+.enf.hook { background: var(--allow-bg); color: var(--allow); }
+.enf.inst { background: var(--ask-bg); color: var(--ask); }
+
+/* matrix */
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--panel-2); }
+tbody tr:last-child td { border-bottom: 0; }
+.pill { display: inline-block; font: 700 11px var(--font-mono); letter-spacing: .08em; padding: 3px 8px; border-radius: 4px; }
+.pill.allow { background: var(--allow-bg); color: var(--allow); }
+.pill.ask { background: var(--ask-bg); color: var(--ask); }
+.pill.deny { background: var(--deny-bg); color: var(--deny); }
+
+/* catalog */
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--panel); flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; color: var(--ink); padding: 8px 14px; font: 500 14px var(--font-body); cursor: pointer; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.seg button span { font: 500 12px var(--font-mono); opacity: .7; margin-left: 4px; font-variant-numeric: tabular-nums; }
+#q { flex: 1; min-width: 200px; max-width: 360px; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); color: var(--ink); font: 400 15px var(--font-body); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 12px; }
+.skill { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.skill-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.skill a.name { font: 600 15px var(--font-mono); text-decoration: none; word-break: break-word; }
+.skill a.name:hover { color: var(--accent); }
+.badge { font: 600 11px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.badge.cmd { color: var(--accent); }
+.skill p { font-size: 14px; color: var(--muted); }
+.empty { color: var(--muted); padding: 24px 0; }
+
+/* principles */
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 22px 32px; }
+.rules div { display: grid; gap: 6px; }
+.rules h3 { font-size: 18px; font-weight: 700; font-stretch: 95%; }
+.rules p { color: var(--muted); font-size: 15px; }
+
+footer { border-top: 1px solid var(--line); padding-block: 26px; color: var(--muted); font-size: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .install { grid-template-columns: minmax(0, 1fr); }
+  .tabs { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .tab { border-bottom: 0; border-right: 1px solid var(--line); white-space: nowrap; }
+  .tab small { display: none; }
+  .tab[aria-selected="true"] { box-shadow: inset 0 -3px 0 var(--accent); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .verdict { transition: border-color .2s ease; }
+}
+
+/* usage, examples, report */
+.stack { display: grid; gap: 22px; }
+.twocol { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 22px; align-items: start; }
+.rec { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; display: grid; gap: 6px; }
+.rec strong { font-family: var(--font-display); font-size: 18px; }
+.rec p { color: var(--muted); }
+.ww { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: 16px; }
+.case { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 10px; align-content: start; }
+.case h3 { font-size: 17px; font-weight: 700; font-stretch: 95%; }
+.case .row { display: grid; grid-template-columns: 74px 1fr; gap: 10px; font-size: 14.5px; }
+.case .row p { color: var(--muted); }
+.case .row .pill { justify-self: start; align-self: start; }
+.case code { font-size: 13px; }
+.meas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 14px; }
+.meas .stat { align-content: start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; }
+.meas .stat b { font: 700 15px var(--font-display); }
+.meas .stat span { display: block; color: var(--muted); font: 400 14px/1.5 var(--font-body); }
+.hint { color: var(--muted); font-size: 14px; }
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="brand"><span class="rail" aria-hidden="true"></span>ai-cloud-skills</div>
+    <nav aria-label="Sections">
+      <a href="#install">Install</a>
+      <a href="#use">Use it</a>
+      <a href="#compare">With / without</a>
+      <a href="#skills">Skills</a>
+      <a href="#guard">How the guard decides</a>
+      <a href="#report">Report</a>
+      <a id="gh-link" href="#">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Cloud · Git · Languages · Databases · AI cost</div>
+      <h1>Company skills for AI agents. <em>With guardrails built in.</em></h1>
+      <p class="lede">How we build, deploy and operate, written so agents can follow it: AWS, Azure and Google Cloud, git, HTML, JavaScript/TypeScript, Node.js, Python, Java, Go, .NET, shell, databases and AI token cost. A guard checks every command before it runs, and a token saver trims noisy output without touching the conversation. One command installs it for Claude Code, Codex, Cursor, Copilot, Gemini CLI and Windsurf.</p>
+      <div class="stats" id="stats"></div>
+      <div class="cta">
+        <a class="btn primary" href="#install">Install in your repo</a>
+        <a class="btn" href="#skills">Browse the skills</a>
+      </div>
+    </div>
+
+    <div class="console" aria-label="Live cloud-guard check">
+      <div class="console-head">
+        <span>cloud-guard <span id="gv"></span> · runs in your browser</span>
+        <label>session target
+          <select id="target" aria-label="Session target environment">
+            <option value="sbx">sandbox</option>
+            <option value="dev" selected>nonprod</option>
+            <option value="prod">prod</option>
+          </select>
+        </label>
+      </div>
+      <div class="console-body">
+        <div class="prompt"><span>$</span><textarea id="cmd" spellcheck="false" aria-label="Command to check">aws s3api put-bucket-acl --bucket acme-exports --acl public-read</textarea></div>
+        <div class="verdict" id="verdict" data-d="deny" aria-live="polite">
+          <div class="tag" id="v-tag">DENY</div>
+          <div class="why" id="v-why"></div>
+          <div class="fix" id="v-fix"></div>
+        </div>
+        <div class="chips" id="examples" aria-label="Example commands"></div>
+      </div>
+      <div class="console-foot">Same rules and classifier the hook uses. The session target stands in for your active profile, subscription, project and Terraform directory.</div>
+    </div>
+  </div>
+
+  <section id="install">
+    <div class="sec-head">
+      <h2>Install for your agent</h2>
+      <p>The installer copies the skills, adds the guard and wires it into each agent's hook system where one exists. Agents without hooks get instruction-level guardrails and a <code>check</code> command.</p>
+    </div>
+    <div class="install">
+      <div class="tabs" role="tablist" id="tabs" aria-label="Agent"></div>
+      <div class="pane" id="pane" role="tabpanel"></div>
+    </div>
+  </section>
+
+  <section id="use">
+    <div class="sec-head">
+      <h2>Repo or global, and how to call a skill</h2>
+      <p>Skills load on their own when a request matches their description. You can also call one by name. Full guide: <a class="doclink" href="https://github.com/nkandagatla/ai-cloud-skills/blob/main/docs/USAGE.md">docs/USAGE.md</a>.</p>
+    </div>
+    <div class="stack">
+      <div class="twocol">
+        <div class="rec"><strong>Team and infrastructure repos: install per repo</strong><p>Skills, guard policy and the production list are committed, reviewed in PRs, the same for every developer and every tool, and they work in CI and cloud agents. One install covers Claude Code, Codex, Copilot and Gemini in VS Code because they read the same files.</p></div>
+        <div class="rec"><strong>Your own repos: install globally</strong><p><code>install --scope user</code> puts the skills and guard in your home folder for every repo on the machine. Don't also install per repo for the same agent, or skills appear twice. Claude Code users can use the plugin instead (auto-updates).</p></div>
+      </div>
+      <div class="code"><pre><span class="c"># A. team repo (recommended): all packs, CI checks, pre-commit, then open a PR</span>
+npx github:nkandagatla/ai-cloud-skills install --yes --with-ci --with-precommit
+<span class="c"># B. app repo with no cloud: git, languages, databases, AI cost</span>
+npx github:nkandagatla/ai-cloud-skills install --packs git,lang,db,ai
+<span class="c"># C. AWS infra repo, strict mode, Claude Code + Cursor</span>
+npx github:nkandagatla/ai-cloud-skills install --packs aws,git --agents claude,cursor --mode strict
+<span class="c"># D. global, just me, every repo on this laptop</span>
+npx github:nkandagatla/ai-cloud-skills install --scope user --agents claude,codex</pre></div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Tool</th><th>Call a skill</th><th>List skills</th></tr></thead>
+          <tbody>
+            <tr><td>Claude Code: terminal, VS Code, JetBrains</td><td><code>/aws-iam review infra/iam.tf</code></td><td><code>/</code></td></tr>
+            <tr><td>OpenAI Codex: CLI, VS Code</td><td><code>$aws-iam review infra/iam.tf</code></td><td><code>/skills</code></td></tr>
+            <tr><td>GitHub Copilot: VS Code agent mode, CLI</td><td><code>/aws-iam review infra/iam.tf</code></td><td><code>/skills</code></td></tr>
+            <tr><td>Cursor</td><td><code>/aws-iam review infra/iam.tf</code></td><td><code>/</code></td></tr>
+            <tr><td>Gemini CLI</td><td>"use the aws-iam skill" (approve the activation prompt)</td><td><code>/skills list</code></td></tr>
+            <tr><td>Windsurf and others</td><td>"follow .agents/skills/aws-iam/SKILL.md"</td><td><code>npx … list</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">Not sure which skill? <code>/ask-skills I need to rotate the orders-api database password on Azure</code></p>
+    </div>
+  </section>
+
+  <section id="compare">
+    <div class="sec-head">
+      <h2>With and without the skills</h2>
+      <p>The same request, with an unguided agent and with this library installed. More in <a href="https://github.com/nkandagatla/ai-cloud-skills/blob/main/docs/EXAMPLES.md">docs/EXAMPLES.md</a>.</p>
+    </div>
+    <div class="ww">
+      <div class="case"><h3>"Fix the failing payment test"</h3>
+        <div class="row"><span class="pill deny">WITHOUT</span><p>3,000 lines of test output (about 40k tokens) land in context and are re-sent every turn. Then <code>cat .env</code> puts the DB password in the transcript.</p></div>
+        <div class="row"><span class="pill allow">WITH</span><p>Output trimmed to the failure and summary (about 1k tokens), full log saved. <code>.env</code> read blocked; the skill points to <code>.env.example</code>.</p></div></div>
+      <div class="case"><h3>"Delete orders older than 2019"</h3>
+        <div class="row"><span class="pill deny">WITHOUT</span><p>One giant <code>DELETE</code> against the prod host: locks, replication lag, no backup.</p></div>
+        <div class="row"><span class="pill allow">WITH</span><p>Prod write denied. Count, back up, delete in batches with <code>lock_timeout</code>, run via a reviewed script. Unbounded <code>DELETE</code> is blocked everywhere.</p></div></div>
+      <div class="case"><h3>"Ship the fix to prod quickly"</h3>
+        <div class="row"><span class="pill deny">WITHOUT</span><p><code>terraform apply -auto-approve</code>; nobody saw a resource would be replaced.</p></div>
+        <div class="row"><span class="pill allow">WITH</span><p>Blocked. Plan, replacements called out, rollback, PR; the pipeline applies after approval.</p></div></div>
+      <div class="case"><h3>"My rebase went wrong, reset everything"</h3>
+        <div class="row"><span class="pill deny">WITHOUT</span><p><code>git reset --hard</code> then <code>git push -f origin main</code>: lost work, overwritten teammates.</p></div>
+        <div class="row"><span class="pill allow">WITH</span><p>Force-push to main blocked, reset asks first. Backup branch, reflog, push to your branch with <code>--force-with-lease</code>.</p></div></div>
+      <div class="case"><h3>"Why can't the pod reach the DB?"</h3>
+        <div class="row"><span class="pill deny">WITHOUT</span><p><code>kubectl get secret db-creds -o yaml</code>, decoded in chat.</p></div>
+        <div class="row"><span class="pill allow">WITH</span><p>Secret read blocked. Read-only triage: DNS, NetworkPolicy, endpoints, identity, security groups.</p></div></div>
+      <div class="case"><h3>"Classify 40,000 tickets overnight"</h3>
+        <div class="row"><span class="pill deny">WITHOUT</span><p>Synchronous loop on the top model, a 1,500-token prompt re-sent 40,000 times, rate-limit retries.</p></div>
+        <div class="row"><span class="pill allow">WITH</span><p>Smallest model that passes a quality check, batch API (about half price), cached prompt prefix, retry only failures.</p></div></div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="sec-head">
+      <h2>The skills</h2>
+      <p>Each skill is a folder with a <code>SKILL.md</code>. Model-invoked skills load when a task matches; <span class="badge cmd">/command</span> skills run when you call them.</p>
+    </div>
+    <div class="filters">
+      <div class="seg" id="groups" role="group" aria-label="Filter by cloud"></div>
+      <input id="q" type="search" placeholder="Search: eks, python, postgres, tokens…" aria-label="Search skills">
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden>No skills match that search.</p>
+  </section>
+
+  <section id="guard">
+    <div class="sec-head">
+      <h2>How the guard decides</h2>
+      <p>Hard rules apply everywhere (cloud, git, databases, shell, publishing). Every other cloud or database CLI call is classified as read, change or destructive, and its target is matched to an environment tier from <code>.cloud-guard/policy.json</code>.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Operation</th><th>sandbox</th><th>nonprod</th><th>unknown</th><th>prod</th></tr></thead>
+        <tbody>
+          <tr><td>Read: <code>describe</code>, <code>list</code>, <code>get</code>, <code>plan</code>, <code>what-if</code>, <code>diff</code></td><td><span class="pill allow">ALLOW</span></td><td><span class="pill allow">ALLOW</span></td><td><span class="pill allow">ALLOW</span></td><td><span class="pill allow">ALLOW</span></td></tr>
+          <tr><td>Change: <code>create</code>, <code>update</code>, <code>deploy</code>, <code>apply tfplan</code></td><td><span class="pill allow">ALLOW</span> <span class="label">strict: ask</span></td><td><span class="pill ask">ASK</span></td><td><span class="pill ask">ASK</span></td><td><span class="pill deny">DENY</span> <span class="label">PR instead</span></td></tr>
+          <tr><td>Destructive: <code>delete</code>, <code>terminate</code>, <code>destroy</code>, <code>state rm</code></td><td><span class="pill ask">ASK</span></td><td><span class="pill ask">ASK</span></td><td><span class="pill ask">ASK</span></td><td><span class="pill deny">DENY</span></td></tr>
+          <tr><td>Hard rules: public data, 0.0.0.0/0 on admin ports, admin grants, long-lived keys, audit off, key deletion, printing secrets, <code>-auto-approve</code>, editing the guard</td><td><span class="pill deny">DENY</span></td><td><span class="pill deny">DENY</span></td><td><span class="pill deny">DENY</span></td><td><span class="pill deny">DENY</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="rules" style="margin-top:32px">
+      <div><h3>Seatbelt, not sandbox</h3><p>The guard reads command text and file paths. Give the agent read-only credentials by default, and keep SCPs, Azure Policy and Org Policy as the real boundary.</p></div>
+      <div><h3>Humans own the policy</h3><p>Agents cannot edit <code>.cloud-guard/</code> or hook settings. Weakening a rule needs a written justification in the policy file.</p></div>
+      <div><h3>Secrets never enter the transcript</h3><p>Credential files, state files, secret values and tokens are blocked on read. Secret material is blocked on write.</p></div>
+      <div><h3>Everything is audited</h3><p>Every ask and deny lands in <code>.cloud-guard/audit.jsonl</code> with secrets redacted, so you can review what the agent tried.</p></div>
+      <div><h3>Fewer tokens, same history</h3><p>token-saver trims oversized command output after it runs, keeps errors and summaries, and saves the full log for follow-up reads. Earlier conversation is never rewritten.</p></div>
+    </div>
+  </section>
+
+  <section id="report">
+    <div class="sec-head">
+      <h2>See what was guarded and saved</h2>
+      <p>The guard and token saver keep local counters (no command text). <code>report</code> turns them into a summary for you, your PR or your manager.</p>
+    </div>
+    <div class="stack">
+      <div class="code"><pre>node .cloud-guard/bin/report.mjs                               <span class="c"># last 30 days, text</span>
+node .cloud-guard/bin/report.mjs --price 3 --html report.html  <span class="c"># dashboard with a $ estimate</span>
+node .cloud-guard/bin/report.mjs --md                          <span class="c"># paste into a PR, wiki or Slack</span>
+node .cloud-guard/bin/report.mjs --dirs ../api,../web,../infra  <span class="c"># one view across repos</span>
+node .cloud-guard/bin/report.mjs --json                        <span class="c"># feed a central dashboard</span></pre></div>
+      <div class="meas">
+        <div class="stat"><b>Guarded</b><span>Actions checked, allowed, sent for approval and blocked.</span></div>
+        <div class="stat"><b>By risk</b><span>Prod changes redirected, secrets, public exposure, privilege, destructive, unreviewed applies, publishing, tamper attempts.</span></div>
+        <div class="stat"><b>Top rules</b><span>Which rules fired most, with the reason and the safe path.</span></div>
+        <div class="stat"><b>Saved</b><span>Outputs trimmed, tokens before and after, tokens and dollars saved, top commands, daily trend.</span></div>
+      </div>
+      <p class="hint">Preview with sample data: <code>node scripts/demo-data.mjs /tmp/demo &amp;&amp; node guard/report.mjs --dirs /tmp/demo --html demo.html</code></p>
+    </div>
+  </section>
+
+  <footer>
+    <span>ai-cloud-skills <span id="fv"></span> · MIT licensed</span>
+    <span>Skills follow the open Agent Skills format (<code>SKILL.md</code>). Add your team's with <code>/write-company-skill</code>.</span>
+  </footer>
+</div>
+
+<script id="catalog" type="application/json">{"version":"1.3.1","repo":"nkandagatla/ai-cloud-skills","generated":"build","groups":{"core":"Core (guardrails and cross-cloud)","aws":"Amazon Web Services","azure":"Microsoft Azure","gcp":"Google Cloud","git":"Git and source control","lang":"Languages","db":"Databases","ai":"AI token cost and context"},"skills":[{"name":"ask-skills","group":"core","title":"Ask Skills","description":"Router for the company skills library. Use when you are not sure which skill or flow fits a task - cloud (AWS, Azure, GCP), infrastructure, git, languages (HTML/CSS, JS/TS, Node.js, Python, Java, Go, .NET, shell), databases, security, or AI token cost.","userInvoked":true,"lines":54,"path":"skills/core/ask-skills/SKILL.md"},{"name":"cicd-oidc","group":"core","title":"CI/CD with OIDC","description":"Secure CI/CD to AWS, Azure and GCP with OIDC federation (no stored cloud keys) for GitHub Actions, GitLab CI and Azure DevOps - trust policies, plan-on-PR / apply-on-merge pipelines, environment approvals and pipeline hardening. Use when creating or reviewing a deployment pipeline or replacing CI secrets.","userInvoked":false,"lines":132,"path":"skills/core/cicd-oidc/SKILL.md"},{"name":"cloud-change-plan","group":"core","title":"Cloud Change Plan","description":"The plan, approve, apply, verify, rollback protocol for any change to cloud infrastructure or Kubernetes. Use whenever you are about to create, modify, scale, deploy, or delete a cloud resource, or apply Terraform/Bicep/CloudFormation/CDK/Pulumi.","userInvoked":false,"lines":122,"path":"skills/core/cloud-change-plan/SKILL.md"},{"name":"cloud-compliance-mapping","group":"core","title":"Cloud Compliance Mapping","description":"Map cloud controls on AWS, Azure and GCP to compliance frameworks (CIS Benchmarks, NIST 800-53, SOC 2, ISO 27001, PCI DSS 4.0, HIPAA, GDPR data residency) and gather audit evidence with native tools. Use when preparing for an audit, answering a security questionnaire, or checking which cloud settings satisfy a control.","userInvoked":false,"lines":80,"path":"skills/core/cloud-compliance-mapping/SKILL.md"},{"name":"cloud-dr-backup","group":"core","title":"Cloud DR and Backup","description":"Backup, restore and disaster recovery on AWS, Azure and GCP - RPO/RTO tiers, AWS Backup, Azure Backup/Site Recovery, GCP Backup and DR, immutable and cross-region/cross-account copies, ransomware protection and restore drills. Use when designing DR, auditing backups, or restoring data.","userInvoked":false,"lines":100,"path":"skills/core/cloud-dr-backup/SKILL.md"},{"name":"cloud-guardrails","group":"core","title":"Cloud Guardrails","description":"Non-negotiable safety rules for any work that touches AWS, Azure, Google Cloud, Kubernetes or infrastructure-as-code. Use before running any cloud CLI, SDK, IaC or kubectl command, before editing Terraform/Bicep/CloudFormation/CDK/Pulumi, and whenever credentials, secrets, IAM, networking or production are involved.","userInvoked":false,"lines":107,"path":"skills/core/cloud-guardrails/SKILL.md"},{"name":"cloud-incident-response","group":"core","title":"Cloud Incident Response","description":"Incident triage and response on AWS, Azure and GCP - outages, performance degradation, failed deploys, and security incidents such as leaked credentials, public data exposure, crypto-mining or suspicious IAM activity. Read-only investigation first, containment with approval, evidence preservation and blameless postmortems. Use when something is broken or a security alert fires.","userInvoked":false,"lines":108,"path":"skills/core/cloud-incident-response/SKILL.md"},{"name":"cloud-mcp-setup","group":"core","title":"Cloud MCP Setup","description":"Connect AI agents to AWS, Azure and Google Cloud through official MCP servers in read-only mode, with dedicated least-privilege identities, for Claude Code, Cursor, VS Code Copilot, Gemini CLI and Codex. Use when the user wants the agent to query live cloud resources, docs or pricing through MCP.","userInvoked":true,"lines":111,"path":"skills/core/cloud-mcp-setup/SKILL.md"},{"name":"cloud-migration-mapping","group":"core","title":"Cloud Migration Mapping","description":"Map services and concepts between AWS, Azure and Google Cloud, and plan migrations (rehost/replatform/refactor) with data transfer, identity, networking and cutover guardrails. Use when translating an architecture between clouds, answering \"what is the Azure/GCP equivalent of X\", or planning a migration or multi-cloud setup.","userInvoked":false,"lines":79,"path":"skills/core/cloud-migration-mapping/SKILL.md"},{"name":"cloud-tagging-naming","group":"core","title":"Cloud Tagging and Naming","description":"Naming conventions and tagging/labelling standards for AWS, Azure and GCP, with enforcement (tag policies, Azure Policy, org policy/labels in IaC) and cost allocation. Use when naming new resources, adding tags in IaC, auditing untagged resources, or setting up cost allocation.","userInvoked":false,"lines":94,"path":"skills/core/cloud-tagging-naming/SKILL.md"},{"name":"container-supply-chain","group":"core","title":"Container Supply Chain","description":"Secure container and artifact supply chain across ECR, ACR, Artifact Registry - minimal base images, Dockerfile hardening, vulnerability scanning, SBOMs, signing with cosign/Notation, provenance (SLSA), registry access control, and admission policies that only allow signed images. Use when writing Dockerfiles, building images in CI, or securing registries and clusters.","userInvoked":false,"lines":112,"path":"skills/core/container-supply-chain/SKILL.md"},{"name":"engineering-guardrails","group":"core","title":"Engineering Guardrails","description":"Non-negotiable safety rules for everyday engineering work by an AI agent - source control, code changes, dependencies, databases, secrets, publishing artifacts, shell commands and AI token spend. Use before running git, package manager, database or shell commands, before editing code in a shared repository, and whenever secrets, production data or releases are involved. Cloud work additionally follows cloud-guardrails.","userInvoked":false,"lines":72,"path":"skills/core/engineering-guardrails/SKILL.md"},{"name":"finops-preflight","group":"core","title":"FinOps Preflight","description":"Estimate and control cost before creating or changing cloud resources on AWS, Azure or GCP - Infracost on Terraform plans, pricing calculators/APIs, budget alerts, and expensive-resource red flags (NAT, GPUs, cross-AZ/egress, provisioned throughput, logs). Use before any change that adds billable resources, or when asked \"how much will this cost?\".","userInvoked":false,"lines":69,"path":"skills/core/finops-preflight/SKILL.md"},{"name":"genai-platforms","group":"core","title":"GenAI Platforms (Bedrock, Azure OpenAI, Vertex AI)","description":"Build and operate generative AI workloads safely on Amazon Bedrock, Azure OpenAI / Azure AI Foundry and Google Vertex AI (Gemini) - model access, private networking, identity, content safety guardrails, prompt-injection defence, RAG data security, logging, quotas and cost controls. Use when building a chatbot, RAG, agents or any LLM feature on a cloud provider.","userInvoked":false,"lines":107,"path":"skills/core/genai-platforms/SKILL.md"},{"name":"iac-security-review","group":"core","title":"IaC Security Review","description":"Security and correctness review of infrastructure-as-code changes (Terraform/OpenTofu, CloudFormation, CDK, SAM, Bicep/ARM, Pulumi, Helm/Kubernetes manifests) for AWS, Azure and GCP. Use when reviewing an IaC diff or PR, before proposing an IaC change, or when asked \"is this Terraform safe?\".","userInvoked":false,"lines":115,"path":"skills/core/iac-security-review/SKILL.md"},{"name":"kubernetes-ops","group":"core","title":"Kubernetes Ops","description":"Safe Kubernetes operations on EKS, AKS and GKE - context checks, read-only triage, deployments, rollbacks, scaling, RBAC, Pod Security, NetworkPolicies, secrets handling, node maintenance and upgrades. Use for any kubectl or helm work, debugging pods, or reviewing cluster security.","userInvoked":false,"lines":125,"path":"skills/core/kubernetes-ops/SKILL.md"},{"name":"policy-as-code","group":"core","title":"Policy as Code","description":"Set up and run policy-as-code guardrails for infrastructure - Checkov, Trivy/tfsec, TFLint, OPA/Conftest, cfn-guard, PSRule for Azure, Kyverno/Gatekeeper, pre-commit and CI gates - plus cloud-native preventive controls (SCPs, Azure Policy, GCP Org Policy). Use when adding scanners to a repo or pipeline, writing a custom policy, or triaging policy failures.","userInvoked":false,"lines":162,"path":"skills/core/policy-as-code/SKILL.md"},{"name":"secrets-and-identity","group":"core","title":"Secrets and Identity","description":"Cross-cloud patterns for workload identity and secrets - IAM roles, IRSA/EKS Pod Identity, Azure managed identity and workload identity, GCP service accounts and Workload Identity Federation, secret managers, rotation, and how to remove long-lived keys. Use when an app or pipeline needs credentials, when you see access keys / client secrets / key JSON, or when designing secret handling.","userInvoked":false,"lines":71,"path":"skills/core/secrets-and-identity/SKILL.md"},{"name":"setup-cloud-skills","group":"core","title":"Setup Cloud Skills","description":"One-time setup per repository. Use when installing these skills in a repo or when environments change. Interviews the user and writes CLOUD.md (environments, accounts, regions, IaC, tagging, change process) and .cloud-guard/policy.json so the cloud skills and the cloud-guard hook know what is production.","userInvoked":true,"lines":114,"path":"skills/core/setup-cloud-skills/SKILL.md"},{"name":"terraform-workflow","group":"core","title":"Terraform Workflow","description":"Safe day-to-day Terraform/OpenTofu/Terragrunt workflow for AWS, Azure and GCP - repo layout, remote state with locking and encryption, provider/module pinning, plan review, imports, moved/removed blocks, drift detection and state recovery. Use when writing, refactoring, planning or troubleshooting Terraform.","userInvoked":false,"lines":139,"path":"skills/core/terraform-workflow/SKILL.md"},{"name":"well-architected-review","group":"core","title":"Well-Architected Review","description":"Architecture review of a workload against the AWS Well-Architected Framework, Azure Well-Architected Framework and Google Cloud Architecture Framework pillars (security, reliability, cost, performance, operational excellence, sustainability), producing a prioritized risk register. Use when reviewing a design, a new service before launch, or an existing workload's health.","userInvoked":true,"lines":62,"path":"skills/core/well-architected-review/SKILL.md"},{"name":"write-company-skill","group":"core","title":"Write a Company Skill","description":"Author a new company skill (or improve an existing one) for this library - scoping, the SKILL.md template, guardrail requirements, examples that pass the guard, review checklist, and the build/validate steps. Use when a team wants to document a process, platform or standard as an agent skill.","userInvoked":true,"lines":81,"path":"skills/core/write-company-skill/SKILL.md"},{"name":"aws-cloudformation-cdk","group":"aws","title":"AWS CloudFormation and CDK","description":"Author, review and deploy AWS CloudFormation, SAM and CDK safely - change sets, stack policies, termination protection, drift detection, StackSets, cdk diff/synth, cdk-nag, bootstrap security, rollback and recovery from UPDATE_ROLLBACK_FAILED. Use when working with CloudFormation templates, CDK apps or SAM deployments.","userInvoked":false,"lines":93,"path":"skills/aws/aws-cloudformation-cdk/SKILL.md"},{"name":"aws-cost-optimization","group":"aws","title":"AWS Cost Optimization","description":"Analyse and reduce AWS spend - Cost Explorer and CUR/Data Exports queries, top cost drivers, rightsizing with Compute Optimizer, Savings Plans/RI coverage analysis, idle and orphaned resources, storage and data-transfer savings, Graviton/Spot, budgets and anomaly detection. Use for cost reviews, unexpected bills, or optimisation plans on AWS.","userInvoked":false,"lines":94,"path":"skills/aws/aws-cost-optimization/SKILL.md"},{"name":"aws-databases","group":"aws","title":"AWS Databases","description":"Secure and operate AWS databases - RDS and Aurora (PostgreSQL/MySQL/SQL Server), DynamoDB, ElastiCache/MemoryDB - private networking, encryption, IAM and Secrets Manager auth, backups/PITR, Multi-AZ and global replicas, parameter changes, upgrades, failover, performance troubleshooting. Use for database provisioning, connectivity, performance, upgrades or recovery on AWS.","userInvoked":false,"lines":95,"path":"skills/aws/aws-databases/SKILL.md"},{"name":"aws-ec2-autoscaling","group":"aws","title":"AWS EC2 and Auto Scaling","description":"Operate EC2 and Auto Scaling groups safely - launch templates, AMIs and golden images, IMDSv2, EBS encryption, SSM Session Manager/Patch Manager/Run Command, instance refresh, scaling policies, Spot/Graviton, and troubleshooting unhealthy or unreachable instances. Use for EC2/ASG builds, patching, scaling, or instance issues.","userInvoked":false,"lines":95,"path":"skills/aws/aws-ec2-autoscaling/SKILL.md"},{"name":"aws-ecs-fargate","group":"aws","title":"Amazon ECS on Fargate","description":"Build, deploy and troubleshoot containers on Amazon ECS (Fargate and EC2) - task definitions with task/execution roles, secrets injection, awsvpc networking, service deployments (rolling, circuit breaker, blue/green), ECS Exec, autoscaling and logging. Use for ECS services, task definitions, deployment failures or stopped tasks.","userInvoked":false,"lines":94,"path":"skills/aws/aws-ecs-fargate/SKILL.md"},{"name":"aws-eks","group":"aws","title":"Amazon EKS","description":"Build and operate Amazon EKS securely - cluster endpoint access, access entries, EKS Pod Identity/IRSA, managed node groups/Karpenter/Auto Mode, add-ons, VPC CNI, AWS Load Balancer Controller, secrets encryption, logging, GuardDuty runtime, upgrades and troubleshooting. Use for any EKS cluster provisioning, upgrade, access, or node/pod networking issue.","userInvoked":false,"lines":105,"path":"skills/aws/aws-eks/SKILL.md"},{"name":"aws-foundations","group":"aws","title":"AWS Foundations","description":"AWS basics done safely - CLI v2 profiles and IAM Identity Center (SSO) login, account/region targeting, multi-account landing zone layout (Control Tower, OUs), account baseline (root lockdown, CloudTrail, Config, GuardDuty, Security Hub, budgets) and service quotas. Use when starting AWS work, setting up or auditing an account, or when the target account/region is unclear.","userInvoked":false,"lines":108,"path":"skills/aws/aws-foundations/SKILL.md"},{"name":"aws-iam","group":"aws","title":"AWS IAM","description":"Design, write, review and troubleshoot AWS IAM - least-privilege policies, roles and trust policies, permission boundaries, ABAC with tags, resource policies, cross-account access, IAM Identity Center permission sets, Access Analyzer, and AccessDenied debugging. Use for any IAM policy, role, trust relationship or permission error.","userInvoked":false,"lines":107,"path":"skills/aws/aws-iam/SKILL.md"},{"name":"aws-kms-secrets","group":"aws","title":"AWS KMS and Secrets","description":"AWS encryption keys and secrets - KMS key design, key policies and grants, rotation, multi-region keys, Secrets Manager (rotation, replication, resource policies), SSM Parameter Store SecureString, ACM certificates, and troubleshooting KMS AccessDenied. Use when creating or reviewing keys, key policies, secrets, rotation, or certificate issues.","userInvoked":false,"lines":85,"path":"skills/aws/aws-kms-secrets/SKILL.md"},{"name":"aws-networking","group":"aws","title":"AWS Networking","description":"AWS networking design and operations - VPC/subnet/CIDR planning, security groups and NACLs, NAT and egress, VPC endpoints/PrivateLink, Transit Gateway, VPN/Direct Connect, Route 53 (public/private/Resolver), load balancers, CloudFront/WAF, flow logs and Reachability Analyzer troubleshooting. Use for VPC design, connectivity problems, security group changes or DNS issues.","userInvoked":false,"lines":90,"path":"skills/aws/aws-networking/SKILL.md"},{"name":"aws-observability","group":"aws","title":"AWS Observability","description":"AWS monitoring and logging - CloudWatch metrics, alarms, dashboards, Logs Insights queries, log retention and cost, X-Ray/Application Signals/OpenTelemetry, Container Insights, CloudTrail investigation and CloudTrail Lake, SLOs and alert design. Use when investigating issues, writing alarms or log queries, or reviewing monitoring coverage on AWS.","userInvoked":false,"lines":102,"path":"skills/aws/aws-observability/SKILL.md"},{"name":"aws-organizations-governance","group":"aws","title":"AWS Organizations and Governance","description":"AWS multi-account governance and security posture - Organizations, OUs, Service Control Policies, Resource Control Policies, Control Tower controls, delegated administrators, org-wide CloudTrail/Config/GuardDuty/Security Hub/Inspector/Macie, and declarative policies. Use when writing or reviewing SCPs/RCPs, designing guardrails, or auditing org security posture.","userInvoked":false,"lines":150,"path":"skills/aws/aws-organizations-governance/SKILL.md"},{"name":"aws-s3","group":"aws","title":"Amazon S3","description":"Secure and operate Amazon S3 - Block Public Access, bucket policies, Object Ownership, encryption (SSE-S3/SSE-KMS/DSSE), versioning, Object Lock, lifecycle, replication, access points, presigned URLs, CloudFront OAC for public content, access logging, Macie, and troubleshooting 403s. Use for any bucket creation, policy, data access, or S3 permission problem.","userInvoked":false,"lines":118,"path":"skills/aws/aws-s3/SKILL.md"},{"name":"aws-security-automation","group":"aws","title":"AWS Security Automation (auto-remediation)","description":"Build guarded security auto-remediation on AWS - EventBridge rules on GuardDuty/Security Hub/Config/CloudTrail events, Lambda and SSM Automation runbooks, AWS Config remediation, Security Hub automation rules, notification pipelines, with dry-run, scoping, kill switches and audit trails. Use when automating detection-to-response, writing remediation Lambdas/runbooks, or reviewing existing auto-remediation.","userInvoked":false,"lines":118,"path":"skills/aws/aws-security-automation/SKILL.md"},{"name":"aws-serverless","group":"aws","title":"AWS Serverless","description":"Build and operate AWS serverless applications - Lambda (roles, packaging, versions/aliases, concurrency, VPC, layers, function URLs), API Gateway (REST/HTTP, authorizers, WAF, throttling), Step Functions, EventBridge, SQS/SNS (DLQs, idempotency), with SAM/CDK/Terraform deployment and troubleshooting. Use for serverless architectures, Lambda errors/timeouts/throttles, or API Gateway issues.","userInvoked":false,"lines":100,"path":"skills/aws/aws-serverless/SKILL.md"},{"name":"azure-aks","group":"azure","title":"Azure Kubernetes Service (AKS)","description":"Build and operate Azure Kubernetes Service securely - Entra ID integration with Azure RBAC, local accounts disabled, private cluster/authorized IPs, workload identity, node pools and upgrades (auto-upgrade channels, node OS), Azure CNI Overlay/Cilium, network policies, Key Vault CSI, Azure Policy add-on, Defender for Containers, and troubleshooting. Use for AKS provisioning, upgrades, access, or cluster networking issues.","userInvoked":false,"lines":121,"path":"skills/azure/azure-aks/SKILL.md"},{"name":"azure-app-service-functions","group":"azure","title":"Azure App Service and Functions","description":"Secure and operate Azure App Service (Web Apps) and Azure Functions - plans (Flex Consumption, Premium, Dedicated), managed identity, Key Vault references, VNet integration and private endpoints, deployment slots and zero-downtime swaps, Easy Auth, TLS/FTPS settings, App Insights, scaling and troubleshooting. Use for web app or function deployments, configuration, or runtime errors on Azure.","userInvoked":false,"lines":76,"path":"skills/azure/azure-app-service-functions/SKILL.md"},{"name":"azure-bicep","group":"azure","title":"Azure Bicep","description":"Author, review and deploy Azure Bicep/ARM safely - module structure, Azure Verified Modules, parameters files (.bicepparam), @secure() params and Key Vault references, linter configuration, what-if, incremental vs complete mode, Deployment Stacks with deny settings, deployment scopes, and troubleshooting failed deployments. Use when writing Bicep, reviewing ARM templates, or deploying Azure infrastructure as code.","userInvoked":false,"lines":121,"path":"skills/azure/azure-bicep/SKILL.md"},{"name":"azure-container-apps","group":"azure","title":"Azure Container Apps and ACR","description":"Deploy and operate Azure Container Apps and Azure Container Registry securely - environments with VNet integration and internal ingress, managed identity image pulls, Key Vault secret references, revisions and traffic splitting, KEDA scaling, Dapr, jobs, and troubleshooting. Use for container deployments on Container Apps, ACR configuration, or revision/scaling issues.","userInvoked":false,"lines":91,"path":"skills/azure/azure-container-apps/SKILL.md"},{"name":"azure-cost-management","group":"azure","title":"Azure Cost Management","description":"Analyse and reduce Azure spend - Cost Management queries and exports, top cost drivers by service/resource group/tag, Azure Advisor cost recommendations, reservations and savings plan analysis, idle and orphaned resources, VM/AKS/database rightsizing, storage tiering, Log Analytics costs, budgets and anomaly alerts. Use for Azure cost reviews, bill spikes, or optimisation plans.","userInvoked":false,"lines":92,"path":"skills/azure/azure-cost-management/SKILL.md"},{"name":"azure-databases","group":"azure","title":"Azure Databases","description":"Secure and operate Azure databases - Azure SQL Database/Managed Instance, Azure Database for PostgreSQL/MySQL Flexible Server, Cosmos DB, Azure Cache for Redis - Entra-only authentication, private endpoints, TDE with CMK, auditing, Defender for SQL, backups/PITR/LTR, geo-replication and failover groups, scaling and performance troubleshooting. Use for database provisioning, connectivity, performance, failover or restores on Azure.","userInvoked":false,"lines":81,"path":"skills/azure/azure-databases/SKILL.md"},{"name":"azure-entra-rbac","group":"azure","title":"Azure Entra ID and RBAC","description":"Azure identity and access - Entra ID users/groups/apps/service principals, managed identities, workload identity federation, Azure RBAC role assignments and custom roles, PIM, Conditional Access, data-plane roles, and troubleshooting AuthorizationFailed. Use for role assignments, app registrations, managed identity setup, access reviews, or permission errors on Azure.","userInvoked":false,"lines":89,"path":"skills/azure/azure-entra-rbac/SKILL.md"},{"name":"azure-foundations","group":"azure","title":"Azure Foundations","description":"Azure basics done safely - az CLI login and subscription targeting, tenants/management groups/subscriptions/resource groups hierarchy, Azure Landing Zones (CAF), subscription baseline (Defender, Activity Log export, policies, budgets, locks), resource providers and quotas. Use when starting Azure work, auditing a subscription, or when the target tenant/subscription is unclear.","userInvoked":false,"lines":89,"path":"skills/azure/azure-foundations/SKILL.md"},{"name":"azure-key-vault","group":"azure","title":"Azure Key Vault","description":"Azure Key Vault and Managed HSM - RBAC authorization mode, network isolation, soft delete and purge protection, secrets/keys/certificates lifecycle, rotation policies and near-expiry events, Key Vault references, CMK for other services, and troubleshooting access. Use when creating or reviewing vaults, granting access to secrets, rotation, certificates, or Key Vault errors.","userInvoked":false,"lines":82,"path":"skills/azure/azure-key-vault/SKILL.md"},{"name":"azure-monitor","group":"azure","title":"Azure Monitor","description":"Azure observability - Log Analytics KQL queries, Application Insights, Azure Monitor metrics and alerts (metric, log search, activity log, Service Health), action groups, diagnostic settings, Data Collection Rules, Managed Prometheus/Grafana, Activity Log investigations, retention and cost. Use when investigating issues, writing KQL or alerts, or reviewing monitoring coverage on Azure.","userInvoked":false,"lines":95,"path":"skills/azure/azure-monitor/SKILL.md"},{"name":"azure-networking","group":"azure","title":"Azure Networking","description":"Azure networking design and operations - VNets/subnets/IP planning, NSGs and ASGs, hub-spoke and Virtual WAN, Azure Firewall, UDRs, Private Endpoints and Private DNS zones, service endpoints, NAT Gateway, Application Gateway/WAF, Front Door, Load Balancer, Bastion, VPN/ExpressRoute, flow logs and Network Watcher troubleshooting. Use for VNet design, connectivity or DNS problems, NSG changes, or private endpoint setup.","userInvoked":false,"lines":87,"path":"skills/azure/azure-networking/SKILL.md"},{"name":"azure-policy-governance","group":"azure","title":"Azure Policy and Governance","description":"Azure governance and security posture - Azure Policy definitions/initiatives/assignments/exemptions, effects (audit, deny, modify, deployIfNotExists), remediation tasks, Microsoft Cloud Security Benchmark, Defender for Cloud plans and secure score, resource locks, Deployment Stacks deny settings, and landing-zone guardrails. Use when writing or reviewing policies, analysing non-compliance, or auditing Defender for Cloud posture.","userInvoked":false,"lines":92,"path":"skills/azure/azure-policy-governance/SKILL.md"},{"name":"azure-security-automation","group":"azure","title":"Azure Security Automation (auto-remediation)","description":"Build guarded security auto-remediation on Azure - Defender for Cloud workflow automation and continuous export, Azure Policy remediation (modify/deployIfNotExists), Event Grid on Activity Log/Key Vault events, Logic Apps/Functions/Automation runbooks with managed identities, Sentinel automation rules and playbooks, with dry-run, scoping, kill switches and audit. Use when automating detection-to-response or reviewing remediation automation on Azure.","userInvoked":false,"lines":104,"path":"skills/azure/azure-security-automation/SKILL.md"},{"name":"azure-storage","group":"azure","title":"Azure Storage","description":"Secure and operate Azure Storage accounts - Blob/ADLS Gen2, Files, Queues, Tables - Entra ID auth and disabling shared keys, user-delegation SAS, private endpoints and network rules, encryption with CMK, soft delete/versioning/immutability, lifecycle management, replication (LRS/ZRS/GZRS), Defender for Storage, and troubleshooting 403s. Use for storage account creation, access, data protection or permission problems.","userInvoked":false,"lines":98,"path":"skills/azure/azure-storage/SKILL.md"},{"name":"azure-vms-vmss","group":"azure","title":"Azure VMs and VM Scale Sets","description":"Operate Azure Virtual Machines and Virtual Machine Scale Sets securely - images (Compute Gallery, Image Builder), Trusted Launch, encryption at host/disk encryption sets, managed identity, Bastion/JIT access, Update Manager patching, Run Command, VMSS rolling upgrades and autoscale, Azure Monitor Agent, and troubleshooting boot/connectivity. Use for VM/VMSS builds, patching, scaling or VM issues on Azure.","userInvoked":false,"lines":91,"path":"skills/azure/azure-vms-vmss/SKILL.md"},{"name":"gcp-bigquery","group":"gcp","title":"BigQuery","description":"Use and govern BigQuery safely - dataset/table IAM, authorized views and row/column-level security, policy tags and data masking, CMEK, dry runs and cost controls (maximum bytes billed, partitioning/clustering, reservations), query optimisation, data exfiltration controls (VPC-SC), audit logs and billing export analysis. Use when writing or reviewing BigQuery SQL, designing datasets/permissions, or controlling BigQuery cost.","userInvoked":false,"lines":91,"path":"skills/gcp/gcp-bigquery/SKILL.md"},{"name":"gcp-cloud-run-functions","group":"gcp","title":"Cloud Run and Cloud Run functions","description":"Deploy and operate Cloud Run services/jobs and Cloud Run functions securely - dedicated service accounts, ingress settings and IAM invoker, IAP/load balancer fronting, Secret Manager integration, Direct VPC egress, revisions and traffic splitting, concurrency/min instances, Eventarc/Pub/Sub triggers, Binary Authorization, and troubleshooting. Use for serverless container or function deployments, 403/5xx issues, or cold starts on GCP.","userInvoked":false,"lines":100,"path":"skills/gcp/gcp-cloud-run-functions/SKILL.md"},{"name":"gcp-cloud-storage","group":"gcp","title":"Google Cloud Storage","description":"Secure and operate Google Cloud Storage - public access prevention, uniform bucket-level access, IAM and IAM Conditions, CMEK, soft delete, object versioning, retention policies and Bucket Lock, lifecycle rules, Autoclass, dual/multi-region, signed URLs, data access logging, and troubleshooting 403s. Use for bucket creation, access policies, data protection or GCS permission problems.","userInvoked":false,"lines":88,"path":"skills/gcp/gcp-cloud-storage/SKILL.md"},{"name":"gcp-compute-engine","group":"gcp","title":"Google Compute Engine and MIGs","description":"Operate Google Compute Engine and managed instance groups securely - instance templates, custom images and image families, Shielded VM, OS Login and IAP access, dedicated service accounts with minimal scopes, CMEK disks, VM Manager (OS patch, inventory), MIG autoscaling/autohealing/rolling updates, snapshots schedules, and troubleshooting. Use for GCE/MIG builds, patching, scaling or VM issues on GCP.","userInvoked":false,"lines":98,"path":"skills/gcp/gcp-compute-engine/SKILL.md"},{"name":"gcp-cost-optimization","group":"gcp","title":"GCP Cost Optimization","description":"Analyse and reduce Google Cloud spend - billing export queries in BigQuery, top cost drivers by service/project/label/SKU, Recommender (idle VMs, rightsizing, idle disks/IPs, CUD recommendations), committed use discounts analysis, GKE/Cloud Run/Cloud SQL optimisation, storage classes, network egress, logging costs, budgets and alerts. Use for GCP cost reviews, bill spikes, or optimisation plans.","userInvoked":false,"lines":98,"path":"skills/gcp/gcp-cost-optimization/SKILL.md"},{"name":"gcp-databases","group":"gcp","title":"Google Cloud Databases","description":"Secure and operate Google Cloud databases - Cloud SQL (PostgreSQL/MySQL/SQL Server), AlloyDB, Spanner, Firestore, Bigtable and Memorystore - private IP/PSC, IAM database authentication, Cloud SQL Auth Proxy/connectors, SSL enforcement, CMEK, backups/PITR, HA and cross-region replicas, deletion protection, maintenance, and performance troubleshooting. Use for database provisioning, connectivity, performance, failover or restores on GCP.","userInvoked":false,"lines":101,"path":"skills/gcp/gcp-databases/SKILL.md"},{"name":"gcp-foundations","group":"gcp","title":"Google Cloud Foundations","description":"Google Cloud basics done safely - gcloud auth and configurations, project/folder/organization targeting, service account impersonation, resource hierarchy and landing zone (Cloud Foundation), project baseline (audit logs, org policies, SCC, budgets, APIs), quotas and Cloud Asset Inventory. Use when starting GCP work, auditing a project, or when the target project/account is unclear.","userInvoked":false,"lines":79,"path":"skills/gcp/gcp-foundations/SKILL.md"},{"name":"gcp-gke","group":"gcp","title":"Google Kubernetes Engine (GKE)","description":"Build and operate Google Kubernetes Engine securely - Autopilot vs Standard, private clusters and control-plane access, Workload Identity Federation for GKE, Google Groups for RBAC, release channels and maintenance windows, node pools (Shielded, COS, auto-upgrade), Dataplane V2 network policy, Binary Authorization, Security Posture, Backup for GKE, and troubleshooting. Use for GKE provisioning, upgrades, access, or cluster networking issues.","userInvoked":false,"lines":98,"path":"skills/gcp/gcp-gke/SKILL.md"},{"name":"gcp-iac","group":"gcp","title":"Google Cloud IaC","description":"Infrastructure as code on Google Cloud - Terraform google/google-beta providers with impersonation and GCS state, Cloud Foundation Fabric and terraform-google-modules, Infrastructure Manager, Config Connector (KRM), Cloud Build/Cloud Deploy pipelines, API enablement, IAM resource types pitfalls, and importing existing resources. Use when writing or reviewing Terraform/KRM for GCP or setting up GCP IaC pipelines.","userInvoked":false,"lines":97,"path":"skills/gcp/gcp-iac/SKILL.md"},{"name":"gcp-iam","group":"gcp","title":"Google Cloud IAM","description":"Google Cloud IAM design, review and troubleshooting - predefined vs custom roles, additive bindings vs authoritative policies, IAM Conditions, service accounts and impersonation, Workload Identity Federation, IAM deny policies, Principal Access Boundary, Recommender/Policy Analyzer/Policy Troubleshooter, and privilege-escalation risks. Use for any IAM binding, service account, role or 403 PERMISSION_DENIED on GCP.","userInvoked":false,"lines":93,"path":"skills/gcp/gcp-iam/SKILL.md"},{"name":"gcp-networking","group":"gcp","title":"Google Cloud Networking","description":"Google Cloud networking design and operations - custom-mode VPCs, Shared VPC, subnets and secondary ranges, hierarchical and network firewall policies, Cloud NAT, Private Google Access and Private Service Connect, Cloud DNS (private zones, forwarding), Cloud Load Balancing and Cloud Armor, IAP TCP forwarding, VPN/Interconnect, NCC, flow logs and Connectivity Tests. Use for VPC design, firewall changes, connectivity or DNS problems on GCP.","userInvoked":false,"lines":86,"path":"skills/gcp/gcp-networking/SKILL.md"},{"name":"gcp-observability","group":"gcp","title":"GCP Observability","description":"Google Cloud observability - Cloud Logging queries and Log Analytics (SQL), log buckets/sinks/exclusions and retention, Cloud Monitoring metrics, MQL/PromQL, alerting policies and notification channels, uptime checks, SLOs, Cloud Trace/Profiler, Managed Service for Prometheus, and audit log investigations. Use when investigating issues, writing log queries or alerts, or reviewing monitoring coverage on GCP.","userInvoked":false,"lines":93,"path":"skills/gcp/gcp-observability/SKILL.md"},{"name":"gcp-org-policy-security","group":"gcp","title":"GCP Org Policy and Security","description":"Google Cloud organization governance and security posture - Organization Policy constraints (managed and custom), dry-run policies, VPC Service Controls perimeters, Security Command Center (findings, posture, mute rules), org-level audit log sinks and log buckets, Access Transparency, Assured Workloads. Use when writing or reviewing org policies or perimeters, triaging SCC findings, or auditing org security posture.","userInvoked":false,"lines":93,"path":"skills/gcp/gcp-org-policy-security/SKILL.md"},{"name":"gcp-secret-manager-kms","group":"gcp","title":"GCP Secret Manager and Cloud KMS","description":"Google Cloud Secret Manager and Cloud KMS - secret creation and per-secret IAM, replication and CMEK, versions, rotation schedules with Pub/Sub, regional secrets, KMS key rings/keys/rotation, protection levels (software/HSM/external), CMEK for services, key IAM separation of duties, Autokey, and troubleshooting. Use when creating or reviewing secrets, keys, CMEK, rotation, or KMS/secret access errors on GCP.","userInvoked":false,"lines":102,"path":"skills/gcp/gcp-secret-manager-kms/SKILL.md"},{"name":"gcp-security-automation","group":"gcp","title":"GCP Security Automation (auto-remediation)","description":"Build guarded security auto-remediation on Google Cloud - Security Command Center notifications to Pub/Sub, Eventarc on Cloud Audit Logs, Cloud Run/Cloud Functions remediators with dedicated service accounts, log-based alerts, Workflows approvals, org policy and posture as preventive controls, with dry-run, scoping, kill switches and audit. Use when automating detection-to-response or reviewing remediation automation on GCP.","userInvoked":false,"lines":94,"path":"skills/gcp/gcp-security-automation/SKILL.md"},{"name":"git-commits-prs","group":"git","title":"Git Commits and Pull Requests","description":"Write good commits and pull requests - Conventional Commits, atomic commits, commit message body, co-author/attribution, PR size and description template, linking tickets, draft PRs, review etiquette, addressing review comments, squash vs merge, and gh CLI usage. Use when committing, opening or updating a PR, writing a PR description, or responding to review feedback.","userInvoked":false,"lines":110,"path":"skills/git/git-commits-prs/SKILL.md"},{"name":"git-recovery","group":"git","title":"Git Recovery","description":"Recover from git mistakes safely - lost commits via reflog, undoing commits (reset vs revert), unstaging, restoring deleted files or branches, aborting bad rebases/merges, fixing commits on the wrong branch, detached HEAD, and recovering after a bad force push. Use when something went wrong in git or before running any command that could discard work.","userInvoked":false,"lines":64,"path":"skills/git/git-recovery/SKILL.md"},{"name":"git-repo-standards","group":"git","title":"Repository Standards","description":"Company repository standards - required files (README, CODEOWNERS, CONTRIBUTING, SECURITY, LICENSE, .editorconfig, .gitattributes), branch protection and rulesets, required checks, Dependabot/Renovate, PR and issue templates, signed commits, git hooks, and an audit of an existing repo against the standard. Use when creating a new repository, auditing repo hygiene, or setting up branch protection and templates.","userInvoked":false,"lines":112,"path":"skills/git/git-repo-standards/SKILL.md"},{"name":"git-secrets-history","group":"git","title":"Git: Secrets and History","description":"Prevent and respond to secrets in git - .gitignore and example env files, pre-commit secret scanning (gitleaks, cloud-guard scan), GitHub push protection, what to do when a secret is committed or pushed (rotate first), purging history with git filter-repo, and coordinating the force-push. Use when setting up secret scanning, when a secret or credential is found in a repo, or before making a repository public.","userInvoked":false,"lines":94,"path":"skills/git/git-secrets-history/SKILL.md"},{"name":"git-workflow","group":"git","title":"Git Workflow","description":"Team git workflow for agents and developers - trunk-based vs GitFlow, branch naming, syncing with main (rebase vs merge), resolving conflicts, keeping branches short-lived, release branches and tags, monorepo and submodule basics, and compact git commands that save tokens. Use when starting work on a change, updating a branch, resolving conflicts, cutting a release, or when unsure which git flow the repo uses.","userInvoked":false,"lines":96,"path":"skills/git/git-workflow/SKILL.md"},{"name":"code-fundamentals","group":"lang","title":"Code Fundamentals","description":"Company coding fundamentals for every language - the definition of done (format, lint, type-check, unit tests, coverage), unit tests for every function or branch with logic, error handling (try/catch at boundaries, never swallow, wrap with context, always clean up), input validation, naming, small functions, logging, and quality-gate commands for JavaScript/TypeScript, Python, Java, Kotlin, Go, C#, Rust, PHP, Ruby, C/C++, shell and HTML/CSS. Use when writing, changing or reviewing any code, in any language, before saying a change is done.","userInvoked":false,"lines":139,"path":"skills/lang/code-fundamentals/SKILL.md"},{"name":"dotnet-csharp","group":"lang","title":".NET and C#","description":"Company standard for .NET and C# - LTS SDK pinning with global.json, nullable reference types and analyzers, ASP.NET Core security (authentication, authorization policies, data protection, headers), configuration and Key Vault/secret manager integration, EF Core pitfalls and migrations, async best practices, logging with ILogger/Serilog, testing with xUnit/Testcontainers, and container images. Use when writing, reviewing or debugging C# / ASP.NET Core / .NET worker code.","userInvoked":false,"lines":105,"path":"skills/lang/dotnet-csharp/SKILL.md"},{"name":"go","group":"lang","title":"Go","description":"Company standard for Go - modules and toolchain pinning, project layout, error handling and wrapping, context propagation and timeouts, concurrency patterns and race detection, net/http server hardening, database/sql usage, structured logging with slog, testing (table tests, fuzzing), linting with golangci-lint, govulncheck and static binaries in distroless images. Use when writing, reviewing or debugging Go services, CLIs or operators.","userInvoked":false,"lines":86,"path":"skills/lang/go/SKILL.md"},{"name":"html-css","group":"lang","title":"HTML and CSS","description":"Company standard for HTML and CSS - semantic markup, accessibility (WCAG 2.2 AA), responsive layout with flex/grid, design tokens and CSS custom properties, dark mode, forms, images and performance (Core Web Vitals), security headers and CSP, safe DOM manipulation, and linting with HTMLHint/Stylelint. Use when writing or reviewing HTML templates, CSS, static pages or front-end markup.","userInvoked":false,"lines":89,"path":"skills/lang/html-css/SKILL.md"},{"name":"java-spring","group":"lang","title":"Java and Spring Boot","description":"Company standard for Java and Spring Boot - LTS JDK, Maven/Gradle builds with wrappers and dependency management, project structure, Spring Boot configuration and profiles, Spring Security, validation, exception handling, JPA/Hibernate pitfalls (N+1, transactions), logging, Actuator hardening, testing with JUnit 5/Testcontainers, performance tuning and container images. Use when writing, reviewing or debugging Java or Spring Boot services and libraries.","userInvoked":false,"lines":131,"path":"skills/lang/java-spring/SKILL.md"},{"name":"javascript-typescript","group":"lang","title":"JavaScript and TypeScript","description":"Company standard for JavaScript and TypeScript - strict tsconfig, ESLint/Prettier, module system (ESM), types over any, runtime validation with zod, async/await and error handling, immutability, testing with Vitest/Jest/Playwright, React/front-end safety, bundle size, and package management with npm/pnpm lockfiles. Use when writing, reviewing or refactoring JS/TS code in browsers or tooling.","userInvoked":false,"lines":115,"path":"skills/lang/javascript-typescript/SKILL.md"},{"name":"nodejs-backend","group":"lang","title":"Node.js Backend","description":"Company standard for Node.js services - LTS versions, project layout, Express/Fastify/NestJS security middleware, config and secrets, input validation, structured logging with pino, error handling and graceful shutdown, database access and connection pooling, performance (event loop, streams, worker threads), testing, Docker images and npm supply-chain hygiene. Use when building, reviewing or debugging Node.js APIs, workers or CLIs.","userInvoked":false,"lines":100,"path":"skills/lang/nodejs-backend/SKILL.md"},{"name":"python","group":"lang","title":"Python","description":"Company standard for Python - supported versions, uv/poetry/pip with lockfiles and virtual environments, pyproject.toml, Ruff lint and format, type hints with mypy/pyright, pydantic validation, logging, exceptions, async, FastAPI/Django/Flask security, packaging, pytest testing, data and scripting hygiene, and dependency auditing. Use when writing, reviewing or debugging Python services, scripts, data jobs or Lambda/Cloud Functions code.","userInvoked":false,"lines":114,"path":"skills/lang/python/SKILL.md"},{"name":"secure-coding","group":"lang","title":"Secure Coding","description":"Language-agnostic secure coding standard for agents - OWASP Top 10 and API Top 10 defences, input validation, output encoding, injection (SQL/NoSQL/command/LDAP), authn/authz checks, secrets handling, crypto do's and don'ts, SSRF, deserialization, file uploads, logging without PII, dependency risk, and a review checklist. Use when writing or reviewing any code that handles input, auth, data, files, URLs or secrets, in any language.","userInvoked":false,"lines":77,"path":"skills/lang/secure-coding/SKILL.md"},{"name":"shell-scripting","group":"lang","title":"Shell Scripting (Bash and PowerShell)","description":"Company standard for Bash and PowerShell scripts - strict mode, quoting, argument parsing, dry-run flags, idempotency, error handling and traps, logging, portability (Linux/macOS/Windows), ShellCheck and PSScriptAnalyzer, safe file operations, secrets handling, and when to switch to Python. Use when writing, reviewing or debugging shell scripts, CI steps, Makefiles or PowerShell automation.","userInvoked":false,"lines":111,"path":"skills/lang/shell-scripting/SKILL.md"},{"name":"db-access-control","group":"db","title":"Database Access Control","description":"Design and review database access control - separate owner/migration/application/read-only/analyst roles, least-privilege grants per engine (PostgreSQL, MySQL, SQL Server, Oracle, MongoDB), cloud IAM database authentication, secret rotation, row-level security and column masking for personal data, audit logging, break-glass access and access reviews. Use when creating database users or roles, granting permissions, reviewing who can access data, or protecting personal data in databases.","userInvoked":false,"lines":97,"path":"skills/db/db-access-control/SKILL.md"},{"name":"db-guardrails","group":"db","title":"Database Guardrails","description":"Non-negotiable rules for any AI agent work against databases (PostgreSQL, MySQL/MariaDB, SQL Server, Oracle, MongoDB, Redis, Cassandra, SQLite, warehouses) - environment tiers, read-only by default, query safety (WHERE, LIMIT, transactions, dry runs), personal data handling, credentials, migrations-only schema changes, and what is forbidden. Use before connecting to a database, running any query or database CLI command, writing data fixes, or touching schemas.","userInvoked":false,"lines":78,"path":"skills/db/db-guardrails/SKILL.md"},{"name":"db-migrations","group":"db","title":"Database Migrations","description":"Safe, zero-downtime database schema migrations with Flyway, Liquibase, Alembic, Django, Prisma, Knex, EF Core, golang-migrate and Rails - expand/contract pattern, backward compatibility with running code, online index and column changes per engine, large backfills, testing on production-like data, rollback strategy and pipeline application. Use when adding or reviewing a migration, changing a column/table/index, backfilling data, or a migration failed.","userInvoked":false,"lines":87,"path":"skills/db/db-migrations/SKILL.md"},{"name":"mongodb","group":"db","title":"MongoDB","description":"Operate and troubleshoot MongoDB (self-managed, Atlas, Amazon DocumentDB, Azure Cosmos DB for MongoDB) safely - mongosh usage without credential leaks, query and aggregation safety, indexes and explain plans, schema design and validation, profiler and currentOp diagnostics, write concerns, transactions, replica set and sharding health, users/roles and network security. Use for any MongoDB query, index, performance or administration question.","userInvoked":false,"lines":66,"path":"skills/db/mongodb/SKILL.md"},{"name":"mysql","group":"db","title":"MySQL and MariaDB","description":"Operate and troubleshoot MySQL and MariaDB (self-managed, RDS/Aurora MySQL, Azure Flexible Server, Cloud SQL) safely - client usage without password leaks, performance_schema and sys schema diagnostics, slow query log, InnoDB locks and deadlocks, indexes, online DDL (INSTANT/INPLACE, gh-ost, pt-osc), replication lag, character sets, users and grants, backups and upgrades. Use for any MySQL/MariaDB query, performance, locking or maintenance question.","userInvoked":false,"lines":80,"path":"skills/db/mysql/SKILL.md"},{"name":"postgresql","group":"db","title":"PostgreSQL","description":"Operate and troubleshoot PostgreSQL (self-managed, RDS/Aurora, Azure Flexible Server, Cloud SQL/AlloyDB) safely - psql usage, roles and privileges, connection pooling, pg_stat_statements and pg_stat_activity diagnostics, locks and blocking, vacuum/bloat, indexes, configuration, replication lag, extensions, backups and upgrades. Use for any PostgreSQL query, performance, locking, connection or maintenance question.","userInvoked":false,"lines":97,"path":"skills/db/postgresql/SKILL.md"},{"name":"redis","group":"db","title":"Redis and Valkey","description":"Operate and troubleshoot Redis and Valkey (self-managed, ElastiCache/MemoryDB, Azure Cache/Managed Redis, Memorystore) safely - redis-cli without password leaks, key design and TTLs, SCAN instead of KEYS, memory and eviction diagnostics, big/hot keys, latency and slowlog, persistence, replication and cluster health, ACLs and TLS, and safe bulk deletes. Use for any Redis/Valkey caching, session, queue, performance or administration question.","userInvoked":false,"lines":75,"path":"skills/db/redis/SKILL.md"},{"name":"sql-safety-performance","group":"db","title":"SQL Safety and Performance","description":"Write, review and optimise SQL safely across PostgreSQL, MySQL, SQL Server and Oracle - parameterisation, correct joins and NULL handling, pagination, transactions and isolation, locking and deadlocks, indexing strategy, reading EXPLAIN plans, N+1 queries from ORMs, query anti-patterns, and safe data-fix scripts. Use when writing or reviewing SQL, a query is slow, an ORM generates bad SQL, or a data fix is needed.","userInvoked":false,"lines":97,"path":"skills/db/sql-safety-performance/SKILL.md"},{"name":"sql-server","group":"db","title":"SQL Server and Azure SQL","description":"Operate and troubleshoot Microsoft SQL Server and Azure SQL safely - sqlcmd/Invoke-Sqlcmd without password leaks, Entra authentication, DMVs and Query Store diagnostics, blocking and deadlocks, wait statistics, indexes and statistics maintenance, tempdb, Always On/geo-replication lag, permissions and security baseline. Use for any SQL Server or Azure SQL query, performance, blocking or maintenance question.","userInvoked":false,"lines":90,"path":"skills/db/sql-server/SKILL.md"},{"name":"ai-context-management","group":"ai","title":"AI Context Management","description":"How an AI agent keeps its own context window small and useful without losing important history - loading files and logs just in time, reading surgically, delegating noisy work to subagents, keeping a handoff note, suggesting clear or compact to the user at the right moment, resuming work across sessions, and writing lean CLAUDE.md/AGENTS.md files with progressive disclosure. Use when a session gets long, before switching tasks, when context is nearly full, when resuming earlier work, or when asked to create or trim project instruction files.","userInvoked":false,"lines":72,"path":"skills/ai/ai-context-management/SKILL.md"},{"name":"ai-token-cost-control","group":"ai","title":"AI Token Cost Control","description":"How an AI coding agent keeps its own token usage and cost low (Claude Code, Codex, Copilot, Cursor, Gemini CLI) - where tokens go, compact commands and targeted reads, model and effort choice, delegating noisy work to subagents, MCP and tool overhead, output trimming with token-saver, when to suggest clearing or compacting to the user, and how to configure team cost controls or prepare an AI spend review when asked. Use when a session is getting long or expensive, before running commands with large output, when choosing a model for a subagent, or when the user asks to reduce AI spend or set up AI budgets.","userInvoked":false,"lines":79,"path":"skills/ai/ai-token-cost-control/SKILL.md"},{"name":"llm-app-cost-control","group":"ai","title":"LLM Application Cost Control","description":"Control cost and token usage in applications that call LLM APIs (Anthropic Claude API, Amazon Bedrock, Azure OpenAI, Vertex AI, OpenAI) - token accounting per request, model routing, prompt caching, batch APIs, max_tokens and output limits, context trimming for chat history and RAG, response caching, rate limits, per-tenant budgets and quotas, cost observability and alerts. Use when building or reviewing a chatbot, RAG system, agent or any LLM feature, or when an LLM bill spikes.","userInvoked":false,"lines":84,"path":"skills/ai/llm-app-cost-control/SKILL.md"},{"name":"llm-batch-processing","group":"ai","title":"LLM Batch Processing","description":"Use batch APIs to cut LLM cost for work that does not need an immediate answer - Claude Message Batches, Amazon Bedrock batch inference, Azure OpenAI Global/Data Zone Batch, Vertex AI batch prediction and OpenAI Batch - when to batch, building JSONL/requests with custom ids, submitting and polling, handling partial failures and retries, combining with prompt caching, idempotent pipelines, security of input/output files, and cost estimation. Use when processing many LLM requests offline (evaluations, classification, enrichment, summarisation, embeddings, document processing, nightly jobs).","userInvoked":false,"lines":140,"path":"skills/ai/llm-batch-processing/SKILL.md"},{"name":"llm-prompt-caching","group":"ai","title":"LLM Prompt Caching","description":"Implement and verify prompt caching to cut LLM input cost and latency - how prefix caching works, what to cache, prompt layout for cache hits, cache breakpoints and TTLs on the Claude API, cachePoint on Amazon Bedrock, automatic caching on Azure OpenAI/OpenAI, Gemini context caching on Vertex AI, break-even maths, measuring hit rates from usage fields, common cache-busting mistakes, and keeping agent sessions cache-friendly. Use when building or reviewing any feature that sends repeated long prompts (system prompts, tools, documents, RAG context, chat history), or when LLM input costs are high.","userInvoked":false,"lines":166,"path":"skills/ai/llm-prompt-caching/SKILL.md"},{"name":"token-saver","group":"ai","title":"Token Saver","description":"How to work with the token-saver that ships with this library - a Claude Code PostToolUse hook and a run wrapper that trims large command output (test runs, builds, installs, logs) before the model sees it, keeps errors and summaries, saves the full redacted output to a local log for follow-up reads, and reports savings. Use when you are about to run a command with large output, when an output was trimmed and you need the omitted part, when the user asks to tune output trimming, or when comparing with third-party tools such as RTK.","userInvoked":false,"lines":95,"path":"skills/ai/token-saver/SKILL.md"}]}</script>
+<script id="guard-engine">(function(){
+const process = { env: {}, cwd: () => "/repo", platform: "linux", argv: [] };
+const fs = { existsSync: () => false, readFileSync: () => { throw Object.assign(new Error("ENOENT"), { code: "ENOENT" }); }, appendFileSync() {}, statSync() { throw new Error("n/a"); }, readdirSync: () => [] };
+const os = { homedir: () => "/home/user" };
+const path = { join: (...a) => a.join("/"), resolve: (...a) => a.filter(Boolean).join("/") || "/", dirname: (p) => p.split(/[\\/]/).slice(0, -1).join("/") || "/", basename: (p) => p.split(/[\\/]/).pop(), sep: "/", delimiter: ":" };
+// Hard guard rules for cloud-guard.
+//
+// Every rule is { id, level, re, reason, fix }.
+//   level "deny": never executed by an agent, in any environment. A human may
+//                 still run it themselves, outside the agent, after review.
+//   level "ask" : always needs explicit human approval, even in sandbox.
+//
+// Rules match against a normalised command string: lower-cased, quotes
+// removed, whitespace collapsed. Keep patterns anchored on the CLI name so
+// they do not fire on prose (for example a commit message).
+//
+// Rule ids are stable. Policies refer to them in `overrides`.
+
+const CLI = String.raw`(?:^|[\s;&|(\x60])`; // start of an invocation
+const SP = String.raw`\s+(?:\S+\s+)*?`; // any tokens in between (lazy)
+const OPEN = String.raw`(?:0\.0\.0\.0/0|::/0|\*|internet|any)`;
+// SQL-content rules only fire when a database client is part of the command, so
+// prose (commit messages, grep patterns) that merely mentions SQL is not blocked.
+const DBCLI = String.raw`^(?=[\s\S]*\b(?:psql|mysql|mariadb|sqlcmd|invoke-sqlcmd|mongosh|mongo|sqlplus|cqlsh|sqlite3|duckdb|clickhouse-client|snowsql|dropdb|dropuser|mysqladmin|pg_dump|pg_dumpall|mysqldump|bq\s+query|gcloud\s+sql\s+connect)\b)[\s\S]*?`;
+
+const r = (s) => new RegExp(s, "i");
+
+const HARD_RULES = [
+  // ───────────────────────── Credential and secret exposure (all clouds) ─────────────────────────
+  {
+    id: "SECRET-CRED-FILE-READ",
+    level: "deny",
+    re: r(String.raw`(?:\.aws[\\/](?:credentials|config|sso[\\/]cache|cli[\\/]cache)|\.azure[\\/](?:msal_token_cache|accesstokens|service_principal_entries|azureprofile)|gcloud[\\/](?:credentials\.db|access_tokens\.db|application_default_credentials\.json|legacy_credentials)|\.kube[\\/]config|\.docker[\\/]config\.json|\.terraform\.d[\\/]credentials|\.terraformrc|\.npmrc|\.netrc|\.ssh[\\/](?:id_[a-z0-9_]+|[^\s]*\.pem)|\.pgpass)`),
+    reason: "Reads or transmits a local credential store. Credentials must never enter the agent transcript or leave the machine.",
+    fix: "Use identity checks instead: `aws sts get-caller-identity`, `az account show`, `gcloud auth list`, `kubectl config current-context`.",
+  },
+  {
+    id: "SECRET-ENV-DUMP",
+    level: "deny",
+    re: r(String.raw`(?:echo|printf|printenv|write-output|write-host)\s+[^|;&]*\$?(?:\{)?(?:env:)?(?:aws_secret_access_key|aws_session_token|arm_client_secret|azure_client_secret|google_credentials|google_application_credentials_json|github_token|gh_token|ci_job_token|vault_token|tf_token_[a-z0-9_]+|[a-z0-9_]*_(?:secret|password|token|api_key|apikey))(?![\w-])`),
+    reason: "Prints a secret-bearing environment variable into the transcript.",
+    fix: "Check presence without printing the value: `test -n \"$VAR\" && echo set`.",
+  },
+  {
+    id: "SECRET-ENV-ALL",
+    level: "ask",
+    re: r(String.raw`(?:^|[;&|]\s*)(?:env|printenv|set|export\s+-p|get-childitem\s+env:|gci\s+env:|dir\s+env:)\s*(?:$|[|;&>])`),
+    reason: "Dumps every environment variable, which commonly includes cloud credentials.",
+    fix: "Print only the variable names you need, or check presence: `env | cut -d= -f1`.",
+  },
+  {
+    id: "EXEC-ENCODED",
+    level: "deny",
+    re: r(String.raw`(?:base64\s+(?:-d|--decode)|frombase64string|certutil\s+-decode|xxd\s+-r)[^;]*\|\s*(?:sh|bash|zsh|pwsh|powershell|iex|python[0-9.]*|node|perl)\b|-encodedcommand\b|\bpowershell(?:\.exe)?\s+-e(?:nc)?\s`),
+    reason: "Executes an encoded or obfuscated payload. Guarded commands must be readable by the human approving them.",
+    fix: "Run the plain command so it can be reviewed.",
+  },
+  {
+    id: "EXEC-REMOTE-SCRIPT",
+    level: "ask",
+    re: r(String.raw`(?:curl|wget|iwr|invoke-webrequest|irm|invoke-restmethod)\b[^|;]*\|\s*(?:sudo\s+)?(?:sh|bash|zsh|iex|pwsh|powershell|python[0-9.]*)(?![\w-])`),
+    reason: "Pipes a remote script straight into a shell.",
+    fix: "Download, inspect, pin a checksum, then run.",
+  },
+  {
+    id: "SECRET-CLI-LITERAL",
+    level: "deny",
+    re: r(String.raw`(?:${CLI}az\s+login\b[^;|&]*\s(?:-p|--password)\s|${CLI}aws\s+configure\s+set\s+(?:aws_secret_access_key|aws_session_token)\b|--client-secret\s+[^\s$]|${CLI}docker\s+login\b[^;|&]*\s(?:-p|--password)\s)`),
+    reason: "Puts a secret literal on the command line, where it lands in shell history, process lists and the transcript.",
+    fix: "Use workload identity / OIDC, `az login --identity`, `aws sso login`, `gcloud auth login`, or `--password-stdin` from a secret manager.",
+  },
+
+  // ───────────────────────── AWS ─────────────────────────
+  {
+    id: "AWS-ORG-DESTRUCT",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}organizations\s+(?:delete-organization|leave-organization|remove-account-from-organization|close-account|delete-organizational-unit|detach-policy|delete-policy|disable-policy-type|disable-aws-service-access|deregister-delegated-administrator)(?![\w-])`),
+    reason: "Changes AWS Organizations structure or removes SCP guardrails. This is a landing-zone change that must go through the organisation's change process.",
+    fix: "Propose the change as IaC (Terraform / CloudFormation StackSets / Control Tower) in a pull request.",
+  },
+  {
+    id: "AWS-ACCOUNT-CLOSE",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}account\s+(?:close-account|delete-alternate-contact|disable-region)(?![\w-])`),
+    reason: "Closes an account or alters account-level settings.",
+    fix: "A human owner does this in the console with MFA.",
+  },
+  {
+    id: "AWS-AUDIT-DISABLE",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:cloudtrail\s+(?:stop-logging|delete-trail|delete-event-data-store|stop-event-data-store-ingestion)|guardduty\s+(?:delete-detector|disassociate-[\w-]+|delete-members|stop-monitoring-members|delete-publishing-destination|update-detector\b[^;|&]*--no-enable)|securityhub\s+(?:disable-security-hub|disable-import-findings-for-product|batch-disable-standards|disassociate-[\w-]+|delete-members)|configservice\s+(?:stop-configuration-recorder|delete-configuration-recorder|delete-delivery-channel|delete-config-rule|delete-conformance-pack|delete-configuration-aggregator)|accessanalyzer\s+delete-analyzer|macie2\s+(?:disable-macie|disable-organization-admin-account)|inspector2\s+disable\b|detective\s+delete-graph|ec2\s+delete-flow-logs|logs\s+(?:delete-subscription-filter|put-retention-policy\b[^;|&]*--retention-in-days\s+1\b)|fms\s+delete-policy|auditmanager\s+deregister-account)(?![\w-])`),
+    reason: "Disables or deletes a security monitoring / audit control (CloudTrail, GuardDuty, Security Hub, Config, Access Analyzer, Macie, Inspector, flow logs).",
+    fix: "Never switch off detective controls from an agent. If a control is noisy, tune it (suppression rules, finding filters) through IaC.",
+  },
+  {
+    id: "AWS-KMS-DESTROY",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}kms\s+(?:schedule-key-deletion|disable-key|delete-imported-key-material|put-key-policy|disable-key-rotation|delete-custom-key-store|revoke-grant|retire-grant)(?![\w-])`),
+    reason: "Deletes, disables or re-permissions a KMS key. Lost keys mean permanently unreadable data.",
+    fix: "Change key policies through IaC with peer review; key deletion needs a documented data-retirement plan.",
+  },
+  {
+    id: "AWS-S3-PUBLIC",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:s3api\s+(?:delete-public-access-block|put-public-access-block\b[^;|&]*(?:blockpublicacls|ignorepublicacls|blockpublicpolicy|restrictpublicbuckets)=false|put-bucket-acl\b[^;|&]*(?:public-read|public-read-write|authenticated-read|allusers|authenticatedusers)|put-object-acl\b[^;|&]*(?:public-read|public-read-write|allusers)|put-bucket-ownership-controls\b[^;|&]*objectwriter|put-bucket-policy\b[^;|&]*principal[^;|&]{0,6}\*)|s3control\s+(?:delete-public-access-block|put-public-access-block\b[^;|&]*=false)|s3\s+(?:cp|sync|mv)\b[^;|&]*--acl\s+public-read)`),
+    reason: "Makes S3 data public or removes Block Public Access.",
+    fix: "Serve public content through CloudFront with Origin Access Control; keep Block Public Access on at account and bucket level.",
+  },
+  {
+    id: "AWS-S3-BULK-DELETE",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:s3\s+rb\b[^;|&]*--force|s3api\s+delete-bucket\b|s3api\s+(?:delete-bucket-policy|delete-bucket-encryption|delete-bucket-lifecycle|put-bucket-versioning\b[^;|&]*suspended|put-object-lock-configuration|delete-bucket-replication))`),
+    reason: "Deletes a bucket or strips its protection (versioning, encryption, policy, replication, object lock).",
+    fix: "Bucket removal and protection changes go through IaC with a reviewed plan.",
+  },
+  {
+    id: "AWS-S3-RECURSIVE-RM",
+    level: "ask",
+    re: r(String.raw`${CLI}aws${SP}s3\s+(?:rm\b[^;|&]*--recursive|sync\b[^;|&]*--delete)`),
+    reason: "Recursively deletes S3 objects.",
+    fix: "Run with --dryrun first and confirm the exact prefix.",
+  },
+  {
+    id: "AWS-IAM-ESCALATE",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}iam\s+(?:create-access-key|attach-(?:user|role|group)-policy\b[^;|&]*(?:administratoraccess|iamfullaccess|poweruseraccess)|put-(?:user|role|group)-policy\b[^;|&]*action[^;|&]{0,8}\*[^;|&]*resource[^;|&]{0,8}\*|update-assume-role-policy\b[^;|&]*principal[^;|&]{0,10}(?:\*|aws[^;|&]{0,6}\*)|delete-account-password-policy|deactivate-mfa-device|delete-virtual-mfa-device|create-login-profile|update-login-profile|delete-role-permissions-boundary|delete-user-permissions-boundary|add-user-to-group\b[^;|&]*admin|set-default-policy-version|upload-ssh-public-key|upload-signing-certificate|create-service-specific-credential)(?![\w-])`),
+    reason: "Creates long-lived credentials, grants admin, opens a trust policy to any principal, or removes an identity guardrail.",
+    fix: "Use IAM Identity Center / roles with least-privilege policies defined in IaC; CI uses OIDC federation, not access keys.",
+  },
+  {
+    id: "AWS-NET-OPEN-ADMIN",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}ec2\s+authorize-security-group-ingress\b(?=[^;|&]*(?:0\.0\.0\.0/0|::/0))(?=[^;|&]*(?:--port\s+(?:22|3389|-1|0-65535|5432|3306|1433|6379|27017|9200|2379)\b|fromport=(?:22|3389|-1|5432|3306|1433|6379|27017)\b|ipprotocol=-1|--protocol\s+(?:-1|all)\b))`),
+    reason: "Opens SSH/RDP/database/all ports to the internet.",
+    fix: "Use SSM Session Manager (no inbound ports), a VPN, or a source CIDR you own.",
+  },
+  {
+    id: "AWS-NET-OPEN-ANY",
+    level: "ask",
+    re: r(String.raw`${CLI}aws${SP}ec2\s+authorize-security-group-ingress\b[^;|&]*(?:0\.0\.0\.0/0|::/0)`),
+    reason: "Opens a port to the whole internet.",
+    fix: "Confirm this is a deliberate public endpoint (80/443 behind a load balancer) and prefer WAF + ALB.",
+  },
+  {
+    id: "AWS-PUBLIC-SHARE",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:ec2\s+(?:modify-image-attribute|modify-snapshot-attribute)\b[^;|&]*(?:group=all|--group-names\s+all|"all")|ec2\s+(?:disable-image-block-public-access|disable-snapshot-block-public-access|disable-ebs-encryption-by-default)|rds\s+modify-db(?:-cluster)?-snapshot-attribute\b[^;|&]*--values-to-add[^;|&]*\ball\b|lambda\s+add-permission\b[^;|&]*--principal\s+\*|ecr\s+set-repository-policy\b[^;|&]*principal[^;|&]{0,6}\*|sns\s+(?:add-permission|set-topic-attributes)\b[^;|&]*principal[^;|&]{0,6}\*|sqs\s+(?:add-permission|set-queue-attributes)\b[^;|&]*principal[^;|&]{0,6}\*|glacier\s+set-vault-access-policy|backup\s+put-backup-vault-access-policy\b[^;|&]*principal[^;|&]{0,6}\*)`),
+    reason: "Shares an image, snapshot, function, repository, topic or queue publicly, or disables an account-level public-sharing/encryption block.",
+    fix: "Share with specific account IDs or the organisation (aws:PrincipalOrgID) only.",
+  },
+  {
+    id: "AWS-DB-UNSAFE",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:rds\s+(?:modify-db-instance|modify-db-cluster|create-db-instance|restore-db-instance-[\w-]+)\b[^;|&]*--publicly-accessible\b|rds\s+delete-db-(?:instance|cluster)\b[^;|&]*--skip-final-snapshot|rds\s+(?:modify-db-instance|modify-db-cluster)\b[^;|&]*--no-deletion-protection|rds\s+delete-db-(?:cluster-)?snapshot|dynamodb\s+update-table\b[^;|&]*--no-deletion-protection-enabled|dynamodb\s+update-continuous-backups\b[^;|&]*pointintimerecoveryenabled=false|redshift\s+(?:modify-cluster\b[^;|&]*--publicly-accessible|delete-cluster\b[^;|&]*--skip-final-cluster-snapshot)|docdb\s+delete-db-cluster\b[^;|&]*--skip-final-snapshot|elasticache\s+delete-[\w-]+\b[^;|&]*--no-final-snapshot)`),
+    reason: "Makes a database public, removes its deletion protection / backups, or deletes it without a final snapshot.",
+    fix: "Keep databases private, deletion-protected and backed up; deletions take a final snapshot and go through IaC.",
+  },
+  {
+    id: "AWS-BACKUP-DESTROY",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:backup\s+(?:delete-backup-vault|delete-recovery-point|delete-backup-plan|delete-backup-vault-lock-configuration|disassociate-recovery-point)|ec2\s+(?:delete-snapshot|deregister-image)\b[^;|&]*--(?:snapshot-id|image-id)\s+\S+\s+\S)`),
+    reason: "Destroys backups or recovery points.",
+    fix: "Retention is managed by backup plans/lifecycle in IaC.",
+  },
+  {
+    id: "AWS-PROTECTION-OFF",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:cloudformation\s+update-termination-protection\b[^;|&]*--no-enable|ec2\s+modify-instance-attribute\b[^;|&]*--no-disable-api-termination|elbv2\s+modify-load-balancer-attributes\b[^;|&]*deletion_protection\.enabled,value=false|route53\s+delete-hosted-zone|route53domains\s+(?:transfer-domain|disable-domain-transfer-lock|delete-domain)|wafv2\s+(?:delete-web-acl|disassociate-web-acl)|shield\s+delete-[\w-]+|cloudfront\s+delete-distribution|acm\s+delete-certificate|ssm\s+(?:delete-document|stop-automation-execution)\b|organizations\s+update-policy|sso-admin\s+delete-[\w-]+|identitystore\s+delete-[\w-]+)`),
+    reason: "Removes deletion/termination protection, edge protection, DNS zones, domains, or identity-centre configuration.",
+    fix: "Make these changes in IaC with peer review and a rollback plan.",
+  },
+  {
+    id: "AWS-SECRET-READ",
+    level: "deny",
+    re: r(String.raw`${CLI}aws${SP}(?:secretsmanager\s+(?:get-secret-value|batch-get-secret-value)|ssm\s+get-parameters?(?:-by-path)?\b[^;|&]*--with-decryption|configure\s+(?:get\s+(?:aws_secret_access_key|aws_session_token)|export-credentials)|iam\s+(?:get-credential-report|generate-credential-report)\b[^;|&]*--output\s+text|ec2\s+get-password-data\b[^;|&]*--priv-launch-key|lightsail\s+get-instance-access-details|kms\s+decrypt\b|sts\s+get-session-token|cognito-idp\s+admin-initiate-auth)`),
+    reason: "Materialises a secret, decrypted parameter, password or session credential into the transcript.",
+    fix: "Reference secrets by ARN from the workload (IAM role + SDK at runtime). To verify a secret exists: `aws secretsmanager describe-secret`.",
+  },
+  {
+    id: "AWS-TOKEN-PRINT",
+    level: "ask",
+    re: r(String.raw`${CLI}aws${SP}(?:ecr\s+get-login-password|ecr-public\s+get-login-password|codeartifact\s+get-authorization-token|sts\s+assume-role(?:-with-web-identity|-with-saml)?|eks\s+get-token|rds\s+generate-db-auth-token|s3\s+presign)(?![\w-])`),
+    reason: "Prints a short-lived token or presigned URL.",
+    fix: "Only pipe it directly into its consumer (for example `| docker login --password-stdin`), never echo it.",
+  },
+
+  // ───────────────────────── Azure ─────────────────────────
+  {
+    id: "AZ-TENANT-DESTRUCT",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}(?:account\s+management-group\s+(?:delete|subscription\s+remove)|account\s+subscription\s+cancel|account\s+alias\s+delete|ad\s+(?:user|group|app|sp)\s+delete|ad\s+app\s+permission\s+(?:admin-consent|grant))(?![\w-])`),
+    reason: "Deletes tenant-level identity objects, management groups, subscriptions, or grants tenant-wide admin consent.",
+    fix: "Tenant and landing-zone changes go through the platform team's IaC and approval flow.",
+  },
+  {
+    id: "AZ-GOVERNANCE-OFF",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}(?:lock\s+delete|resource\s+lock\s+delete|group\s+lock\s+delete|account\s+lock\s+delete|policy\s+(?:assignment\s+delete|exemption\s+create|definition\s+delete|set-definition\s+delete)|security\s+(?:pricing\s+create\b[^;|&]*--tier\s+free|auto-provisioning-setting\s+update\b[^;|&]*--auto-provision\s+off|setting\s+update\b[^;|&]*--enabled\s+false|contact\s+delete|workspace-setting\s+delete)|monitor\s+(?:diagnostic-settings\s+delete|log-profiles\s+delete|activity-log\s+alert\s+delete)|monitor\s+log-analytics\s+workspace\s+(?:delete|update\b[^;|&]*--retention-time\s+[0-9]\b)|sentinel\s+[\w-]+\s+delete|network\s+watcher\s+flow-log\s+delete|backup\s+protection\s+disable|backup\s+vault\s+(?:delete|backup-properties\s+set\b[^;|&]*--soft-delete-feature-state\s+disable))(?![\w-])`),
+    reason: "Removes a resource lock, policy assignment, Defender plan, diagnostic setting, flow log or backup protection, or creates a policy exemption.",
+    fix: "Guardrail changes go through the policy-as-code repo with security sign-off.",
+  },
+  {
+    id: "AZ-RBAC-ESCALATE",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}(?:role\s+assignment\s+create\b[^;|&]*--role\s+(?:owner|user\s+access\s+administrator|role\s+based\s+access\s+control\s+administrator|8e3af657-a8ff-443c-a75c-2fe8c4bcb635|18d7d88d-d35e-4fb5-a5c3-7773c20a72d9)|role\s+definition\s+(?:create|update)\b[^;|&]*actions[^;|&]{0,8}\*|ad\s+(?:sp|app)\s+(?:credential\s+reset|create-for-rbac)|ad\s+app\s+(?:update|permission\s+add)\b[^;|&]*(?:roleassignment\.readwrite|directory\.readwrite|approleassignment\.readwrite|application\.readwrite\.all)|rest\b[^;|&]*elevateaccess)`),
+    reason: "Grants Owner / User Access Administrator, creates wildcard roles, mints client secrets, grants high-privilege Graph permissions or elevates to tenant root.",
+    fix: "Use managed identities or workload identity federation, scoped built-in roles, and PIM for elevated access.",
+  },
+  {
+    id: "AZ-SECRET-READ",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}(?:keyvault\s+(?:secret\s+(?:show|download|backup)|key\s+(?:download|backup|decrypt|unwrap-key)|certificate\s+(?:download|backup)|secret\s+list-versions\b[^;|&]*--query[^;|&]*value)|storage\s+account\s+(?:keys\s+(?:list|renew)|show-connection-string)|cosmosdb\s+keys\s+list|cosmosdb\s+list-(?:keys|connection-strings|read-only-keys)|redis\s+list-keys|acr\s+credential\s+(?:show|renew)|(?:servicebus|eventhubs|relay|notification-hub)\b[^;|&]*authorization-rule\s+keys\s+list|webapp\s+deployment\s+list-publishing-(?:profiles|credentials)|functionapp\s+(?:keys\s+list|function\s+keys\s+list|deployment\s+list-publishing-(?:profiles|credentials))|cognitiveservices\s+account\s+keys\s+list|search\s+admin-key\s+show|signalr\s+key\s+list|webpubsub\s+key\s+show|maps\s+account\s+keys\s+list|batch\s+account\s+keys\s+list|iot\s+hub\s+connection-string\s+show|aks\s+get-credentials\b[^;|&]*--file\s+-|account\s+get-access-token|appconfig\s+credential\s+list|sql\s+server\s+ad-admin)(?![\w-])`),
+    reason: "Prints secrets, keys, connection strings, publishing credentials or access tokens into the transcript.",
+    fix: "Use Key Vault references and managed identity at runtime. To verify a secret exists: `az keyvault secret list --vault-name X --query [].name`.",
+  },
+  {
+    id: "AZ-PUBLIC-DATA",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}(?:storage\s+container\s+(?:set-permission|create)\b[^;|&]*--public-access\s+(?:blob|container)|storage\s+account\s+(?:update|create)\b[^;|&]*(?:--allow-blob-public-access\s+true|--allow-shared-key-access\s+true|--min-tls-version\s+tls1_[01]|--https-only\s+false|--public-network-access\s+enabled\b[^;|&]*--default-action\s+allow)|acr\s+update\b[^;|&]*--admin-enabled\s+true|acr\s+update\b[^;|&]*--anonymous-pull-enabled\s+true|keyvault\s+(?:update|create)\b[^;|&]*(?:--default-action\s+allow|--enable-rbac-authorization\s+false)|keyvault\s+(?:purge|delete|key\s+(?:delete|purge)|secret\s+purge|certificate\s+purge)|sql\s+server\s+firewall-rule\s+create\b[^;|&]*--end-ip-address\s+255\.255\.255\.255|(?:postgres|mysql)\s+flexible-server\s+firewall-rule\s+create\b[^;|&]*--end-ip-address\s+255\.255\.255\.255|cosmosdb\s+update\b[^;|&]*--ip-range-filter\s+0\.0\.0\.0(?:\s|$)|sql\s+server\s+update\b[^;|&]*--enable-public-network\s+true|webapp\s+config\s+set\b[^;|&]*--ftps-state\s+allallowed)`),
+    reason: "Exposes data publicly, enables shared-key / admin / anonymous access, weakens TLS, or deletes/purges Key Vault content.",
+    fix: "Use private endpoints, Entra ID auth (managed identity), TLS 1.2+, and keep soft-delete + purge protection.",
+  },
+  {
+    id: "AZ-NET-OPEN-ADMIN",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}network\s+nsg\s+rule\s+(?:create|update)\b(?=[^;|&]*--access\s+allow)(?=[^;|&]*--source-address-prefixes?\s+(?:\*|internet|any|0\.0\.0\.0/0))(?=[^;|&]*--destination-port-ranges?\s+(?:\*|22|3389|1433|3306|5432|6379|5985|5986|0-65535)\b)`),
+    reason: "Opens SSH/RDP/WinRM/database/all ports to the internet in an NSG.",
+    fix: "Use Azure Bastion or Just-In-Time VM access; restrict to known source ranges.",
+  },
+  {
+    id: "AZ-DEPLOY-COMPLETE",
+    level: "deny",
+    re: r(String.raw`${CLI}az${SP}deployment\s+(?:group|sub|mg|tenant)\s+create\b[^;|&]*--mode\s+complete`),
+    reason: "Complete-mode deployment deletes every resource in scope that is not in the template.",
+    fix: "Use Incremental mode or Deployment Stacks with explicit deny settings, and run `what-if` first.",
+  },
+  {
+    id: "AZ-DESTROY-SCOPE",
+    level: "ask",
+    re: r(String.raw`${CLI}az${SP}(?:group\s+delete|resource\s+delete\b[^;|&]*--ids|stack\s+(?:group|sub|mg)\s+delete\b[^;|&]*--action-on-unmanage\s+deleteall|aks\s+delete|sql\s+(?:server|db)\s+delete|cosmosdb\s+(?:delete|sql\s+database\s+delete)|storage\s+account\s+delete|vm\s+delete|vmss\s+delete)(?![\w-])`),
+    reason: "Deletes a resource group, cluster, database, storage account or VM.",
+    fix: "Confirm the exact scope; prefer IaC removal with a reviewed plan.",
+  },
+
+  // ───────────────────────── Google Cloud ─────────────────────────
+  {
+    id: "GCP-HIERARCHY-DESTRUCT",
+    level: "deny",
+    re: r(String.raw`${CLI}gcloud${SP}(?:projects\s+(?:delete|move)|resource-manager\s+folders\s+(?:delete|move)|organizations\s+(?:set-iam-policy|remove-iam-policy-binding)|beta\s+billing\s+projects\s+unlink|billing\s+projects\s+unlink|resource-manager\s+liens\s+delete)(?![\w-])`),
+    reason: "Deletes or moves a project/folder, unlinks billing (which stops all services) or removes a lien.",
+    fix: "Resource hierarchy changes go through the landing-zone IaC with owner approval.",
+  },
+  {
+    id: "GCP-ORG-POLICY-OFF",
+    level: "deny",
+    re: r(String.raw`${CLI}gcloud${SP}(?:resource-manager\s+org-policies\s+(?:disable-enforce|delete|allow)|org-policies\s+(?:delete|reset)|access-context-manager\s+perimeters\s+(?:delete|dry-run\s+enforce)|scc\s+(?:notifications\s+delete|muteconfigs\s+create|settings\s+services\s+disable)|logging\s+(?:sinks\s+delete|buckets\s+(?:delete|update\b[^;|&]*--retention-days\s+[0-9]\b)|settings\s+update\b[^;|&]*--disable-default-sink)|services\s+disable\s+(?:[^;|&]*\s)?(?:securitycenter|logging|cloudkms|cloudasset|accesscontextmanager|containeranalysis|binaryauthorization)\.googleapis\.com|compute\s+(?:networks\s+subnets\s+update\b[^;|&]*--no-enable-flow-logs|security-policies\s+delete)|kms\s+keys\s+versions\s+(?:destroy|disable)|kms\s+keys\s+(?:remove-rotation-schedule|set-iam-policy)|projects\s+(?:remove-iam-policy-binding\b[^;|&]*roles/logging|set-iam-policy)|iam\s+service-accounts\s+(?:delete|disable)\b[^;|&]*(?:terraform|deploy|ci|cd)|access-approval\s+settings\s+delete|beta\s+audit-manager|logging\s+settings\s+update\b[^;|&]*--disable)(?![\w-])`),
+    reason: "Disables an org policy, VPC Service Controls perimeter, audit logging, Security Command Center, flow logs, Cloud Armor, KMS key or replaces a whole IAM policy.",
+    fix: "Change guardrails in the org-policy / landing-zone IaC with security approval; use `add-iam-policy-binding` (additive) through IaC rather than `set-iam-policy`.",
+  },
+  {
+    id: "GCP-IAM-ESCALATE",
+    level: "deny",
+    re: r(String.raw`${CLI}gcloud${SP}(?:(?:projects|resource-manager\s+folders|organizations|iam\s+service-accounts|storage\s+buckets|functions|run\s+services|pubsub\s+topics|secrets|kms\s+keys|artifacts\s+repositories|bigquery)\s+add-iam-policy-binding\b[^;|&]*(?:--member[= ](?:allusers|allauthenticatedusers)|--role[= ]roles/(?:owner|editor|iam\.securityadmin|iam\.serviceaccountadmin|iam\.serviceaccounttokencreator|iam\.serviceaccountkeyadmin|iam\.workloadidentitypooladmin|resourcemanager\.organizationadmin|resourcemanager\.projectiamadmin|resourcemanager\.folderadmin|billing\.admin|iam\.organizationroleadmin|orgpolicy\.policyadmin))|iam\s+service-accounts\s+keys\s+(?:create|upload)|iam\s+roles\s+(?:create|update)\b[^;|&]*--permissions[^;|&]*(?:\.setiampolicy|iam\.serviceaccounts\.(?:getaccesstoken|actas|implicitdelegation|signjwt|signblob)|iam\.serviceaccountkeys\.create)|iam\s+workload-identity-pools\s+providers\s+(?:create|update)[\w-]*\b(?![^;|&]*--attribute-condition))`),
+    reason: "Grants public, basic (owner/editor) or privilege-escalating roles, creates a service account key, or creates a workload identity provider with no attribute condition.",
+    fix: "Grant narrow predefined roles to groups or dedicated service accounts via IaC; CI uses Workload Identity Federation with an attribute condition.",
+  },
+  {
+    id: "GCP-PUBLIC-DATA",
+    level: "deny",
+    re: r(String.raw`(?:${CLI}gcloud${SP}(?:storage\s+buckets\s+(?:update|create)\b[^;|&]*(?:--no-public-access-prevention|--public-access-prevention[= ]inherited|--no-uniform-bucket-level-access)|storage\s+(?:objects\s+update|cp)\b[^;|&]*(?:--predefined-acl[= ]publicread|--add-acl-grant[^;|&]*allusers)|sql\s+instances\s+(?:patch|create)\b[^;|&]*(?:--authorized-networks[= ][^;|&]*0\.0\.0\.0/0|--no-require-ssl|--ssl-mode[= ]allow_unencrypted_and_encrypted|--assign-ip\b[^;|&]*--authorized-networks)|compute\s+images\s+add-iam-policy-binding\b[^;|&]*allauthenticatedusers|container\s+clusters\s+(?:update|create)\b[^;|&]*(?:--enable-legacy-authorization|--no-enable-master-authorized-networks|--master-authorized-networks[= ]0\.0\.0\.0/0|--no-enable-shielded-nodes|--enable-basic-auth|--issue-client-certificate)|functions\s+deploy\b[^;|&]*--allow-unauthenticated|run\s+(?:deploy|services\s+update)\b[^;|&]*--allow-unauthenticated)|${CLI}gsutil${SP}(?:iam\s+ch\s+(?:-d\s+)?allusers|iam\s+ch\b[^;|&]*all(?:authenticated)?users|acl\s+(?:ch|set)\b[^;|&]*(?:allusers|allauthenticatedusers|public-read)|defacl\s+(?:ch|set)\b[^;|&]*(?:allusers|public-read)|pap\s+set\s+inherited|ubla\s+set\s+off))`),
+    reason: "Makes storage, images, databases or clusters publicly reachable, weakens TLS, or enables legacy auth.",
+    fix: "Keep public access prevention + uniform bucket-level access; use Cloud SQL Auth Proxy / private IP, IAP or an authenticated load balancer. Public services need an explicit, reviewed IaC change.",
+  },
+  {
+    id: "GCP-NET-OPEN-ADMIN",
+    level: "deny",
+    re: r(String.raw`${CLI}gcloud${SP}compute\s+firewall-rules\s+(?:create|update)\b(?=[^;|&]*--source-ranges[= ](?:[^;|&\s]*,)?0\.0\.0\.0/0)(?=[^;|&]*(?:--allow[= ](?:[^;|&\s]*,)?(?:tcp:(?:22|3389|5432|3306|1433|6379|27017)\b|tcp\b(?!:)|all|udp\b(?!:))|--rules[= ](?:[^;|&\s]*,)?(?:tcp:(?:22|3389|5432|3306)\b|all)))`),
+    reason: "Opens SSH/RDP/database/all ports to the internet.",
+    fix: "Use IAP TCP forwarding (source 35.235.240.0/20) or OS Login over IAP.",
+  },
+  {
+    id: "GCP-SECRET-READ",
+    level: "deny",
+    re: r(String.raw`(?:${CLI}gcloud${SP}(?:secrets\s+versions\s+access|auth\s+(?:print-access-token|print-identity-token|application-default\s+print-access-token)|kms\s+decrypt|iam\s+service-accounts\s+(?:sign-blob|sign-jwt)|sql\s+(?:users\s+set-password\b[^;|&]*--password[= ]\S|generate-login-token)|container\s+clusters\s+describe\b[^;|&]*masterauth)|${CLI}bq\s+(?:query|head)\b[^;|&]*\b(?:password|secret|token|ssn|credit_card)\b)`),
+    reason: "Prints a secret, access/identity token or decrypted value into the transcript.",
+    fix: "Workloads read Secret Manager at runtime with their own identity. To verify a secret exists: `gcloud secrets describe NAME`.",
+  },
+  {
+    id: "GCP-DESTROY-DATA",
+    level: "ask",
+    re: r(String.raw`(?:${CLI}gcloud${SP}(?:storage\s+rm\b[^;|&]*(?:--recursive|-r\b)|storage\s+buckets\s+delete|sql\s+instances\s+delete|spanner\s+(?:instances|databases)\s+delete|bigtable\s+instances\s+delete|firestore\s+databases\s+delete|container\s+clusters\s+delete|compute\s+(?:instances|disks|snapshots|images)\s+delete|filestore\s+instances\s+delete|redis\s+instances\s+delete|alloydb\s+clusters\s+delete)|${CLI}gsutil${SP}(?:-m\s+)?(?:rm\b[^;|&]*-r|rb)\b|${CLI}bq\s+rm\b)`),
+    reason: "Deletes data stores, clusters, disks or buckets.",
+    fix: "Confirm exact scope; deletion protection and IaC removal are preferred.",
+  },
+
+  // ───────────────────────── IaC tools ─────────────────────────
+  {
+    id: "IAC-UNREVIEWED-APPLY",
+    level: "deny",
+    re: r(String.raw`(?:${CLI}(?:terraform|tofu|terragrunt)${SP}(?:apply|destroy)\b[^;|&]*(?:-auto-approve|--auto-approve)|${CLI}terragrunt${SP}(?:run-all|run\s+--all)\s+(?:apply|destroy)|${CLI}terragrunt\b[^;|&]*--terragrunt-non-interactive[^;|&]*(?:apply|destroy)|${CLI}pulumi${SP}(?:up|destroy|refresh)\b[^;|&]*(?:--yes|-y\b|--skip-preview)|${CLI}cdk${SP}(?:deploy\b[^;|&]*--require-approval[= ]never|destroy\b[^;|&]*(?:--force|-f\b))|${CLI}cdktf${SP}(?:deploy|destroy)\b[^;|&]*--auto-approve|${CLI}sam${SP}deploy\b[^;|&]*--no-confirm-changeset|${CLI}eksctl${SP}delete\s+cluster|${CLI}serverless${SP}remove|${CLI}(?:sls)${SP}remove)`),
+    reason: "Applies or destroys infrastructure without a human reviewing the plan.",
+    fix: "Run `plan`/`preview`/`diff`/`what-if`, show it to the human, and let them (or the CI pipeline) apply.",
+  },
+  {
+    id: "IAC-DESTROY",
+    level: "deny",
+    re: r(String.raw`(?:${CLI}(?:terraform|tofu|terragrunt)${SP}(?:destroy\b|apply\b[^;|&]*-destroy\b|plan\b[^;|&]*-destroy\b[^;|&]*-out)|${CLI}pulumi${SP}(?:destroy|stack\s+rm)\b|${CLI}cdk${SP}destroy\b)`),
+    reason: "Destroys a whole stack / workspace.",
+    fix: "Whole-stack destruction is a human decision executed by a human or a gated pipeline.",
+  },
+  {
+    id: "IAC-STATE-SURGERY",
+    level: "ask",
+    re: r(String.raw`${CLI}(?:terraform|tofu|terragrunt)${SP}(?:state\s+(?:rm|mv|replace-provider)|force-unlock|import|taint|untaint|workspace\s+delete)(?![\w-])`),
+    reason: "Edits Terraform state directly. Mistakes orphan or duplicate real infrastructure.",
+    fix: "Back up state first (`terraform state pull > backup.tfstate` in a gitignored path), prefer `moved`/`import`/`removed` blocks in code.",
+  },
+  {
+    id: "IAC-STATE-OVERWRITE",
+    level: "deny",
+    re: r(String.raw`${CLI}(?:terraform|tofu|terragrunt)${SP}state\s+push\b`),
+    reason: "Overwrites remote state.",
+    fix: "Use `moved`, `import` or `removed` blocks so changes are reviewable.",
+  },
+  {
+    id: "IAC-SECRET-OUTPUT",
+    level: "ask",
+    re: r(String.raw`(?:${CLI}(?:terraform|tofu|terragrunt)${SP}(?:output\b[^;|&]*(?:-json|-raw)|show\b[^;|&]*-json|state\s+pull|console)|${CLI}pulumi${SP}(?:config\s+get|stack\s+output|stack\s+export|config)\b[^;|&]*--show-secrets)`),
+    reason: "Can print sensitive values from state/outputs in clear text.",
+    fix: "Use `terraform output` without -json/-raw (sensitive values stay masked) or filter to the non-sensitive key you need.",
+  },
+
+  // ───────────────────────── Kubernetes ─────────────────────────
+  {
+    id: "K8S-SECRET-READ",
+    level: "deny",
+    re: r(String.raw`(?:${CLI}(?:kubectl|oc|k)${SP}(?:get\s+(?:secrets?|secret/\S+)\b[^;|&]*(?:-o|--output)[= ]?(?:yaml|json|jsonpath|go-template|custom-columns|wide)|describe\s+secrets?\b[^;|&]*--show-|config\s+view\b[^;|&]*--raw|create\s+token\b|view-secret\b)|${CLI}helm${SP}get\s+(?:values|all|manifest)\b[^;|&]*(?:-a|--all))`),
+    reason: "Prints Kubernetes secret data, raw kubeconfig credentials or service-account tokens.",
+    fix: "List secret names only (`kubectl get secrets` without -o). To see which keys a workload uses, describe the Deployment / pod spec instead of the Secret.",
+  },
+  {
+    id: "K8S-ESCALATE",
+    level: "deny",
+    re: r(String.raw`${CLI}(?:kubectl|oc|k)${SP}(?:create\s+(?:clusterrolebinding|rolebinding)\b[^;|&]*(?:cluster-admin|--clusterrole[= ]admin|system:masters)|(?:label|annotate)\s+(?:ns|namespace)\b[^;|&]*pod-security\.kubernetes\.io/enforce=privileged|run\b[^;|&]*--privileged|debug\s+node/|delete\s+(?:validatingwebhookconfiguration|mutatingwebhookconfiguration|clusterpolicy|constrainttemplate|networkpolic(?:y|ies))\b|patch\b[^;|&]*(?:"privileged"\s*:\s*true|hostpid|hostnetwork|hostpath))`),
+    reason: "Grants cluster-admin, enables privileged workloads / host access, or removes an admission or network guardrail.",
+    fix: "Bind narrow Roles to groups via GitOps; privileged workloads need a documented security exception.",
+  },
+  {
+    id: "K8S-MASS-DELETE",
+    level: "deny",
+    re: r(String.raw`${CLI}(?:kubectl|oc|k)${SP}delete\b[^;|&]*(?:\s--all\b|\s-A\b|--all-namespaces|\s(?:ns|namespace|namespaces)\s+(?:kube-system|kube-public|default|istio-system|gatekeeper-system|kyverno|cert-manager|argocd|flux-system|monitoring)\b|\s(?:crd|crds|customresourcedefinitions?|nodes?|pv|persistentvolumes?|storageclass)\b)`),
+    reason: "Mass-deletes resources, system namespaces, CRDs (which cascade-delete every custom resource), nodes or volumes.",
+    fix: "Delete specific named resources after confirming context and namespace; CRD removal goes through GitOps.",
+  },
+  {
+    id: "K8S-NS-DELETE",
+    level: "ask",
+    re: r(String.raw`${CLI}(?:kubectl|oc|k)${SP}(?:delete\s+(?:ns|namespace)\b|drain\b|exec\b|cp\b|port-forward\b|proxy\b|replace\b[^;|&]*--force|delete\b[^;|&]*--force|delete\b[^;|&]*--grace-period[= ]0)`),
+    reason: "Deletes a namespace, drains a node, force-deletes, or opens an interactive / tunnelled session into a workload.",
+    fix: "Confirm cluster context, namespace and blast radius first.",
+  },
+  {
+    id: "HELM-UNINSTALL",
+    level: "ask",
+    re: r(String.raw`${CLI}helm${SP}(?:uninstall|delete|rollback)(?![\w-])`),
+    reason: "Removes or rolls back a Helm release.",
+    fix: "Check `helm history` and confirm the target revision.",
+  },
+
+  // ───────────────────────── Git and GitHub ─────────────────────────
+  {
+    id: "GIT-FORCE-PROTECTED",
+    level: "deny",
+    re: r(String.raw`${CLI}git${SP}push\b(?=[^;|&]*(?:\s-f\b|\s--force\b|--force-with-lease|--force-if-includes|\s\+[\w./-]))(?=[^;|&]*(?:\s|:|\+|/)(?:main|master|trunk|develop|release[\w./-]*|prod|production|hotfix[\w./-]*)(?:\s|$))`),
+    reason: "Force-pushes to a protected branch (main/master/develop/release/prod), rewriting shared history.",
+    fix: "Push a new branch and open a pull request. If history really must be rewritten, a maintainer does it with branch protection temporarily adjusted.",
+  },
+  {
+    id: "GIT-DELETE-PROTECTED",
+    level: "deny",
+    re: r(String.raw`${CLI}git${SP}push\b(?=[^;|&]*(?:--delete|\s-d)\b)[^;|&]*\s(?:main|master|trunk|develop|release[\w./-]*|prod|production)(?:\s|$)|${CLI}git${SP}push\s+\S+\s+:(?:main|master|trunk|develop|release[\w./-]*|prod|production)(?:\s|$)`),
+    reason: "Deletes a protected branch on the remote.",
+    fix: "Branch deletion of long-lived branches is a maintainer decision.",
+  },
+  {
+    id: "GIT-FORCE-PUSH",
+    level: "ask",
+    re: r(String.raw`${CLI}git${SP}push\b[^;|&]*(?:\s-f\b|\s--force(?![-\w])|\s\+[\w./-])`),
+    reason: "Force-pushes and can overwrite other people's commits.",
+    fix: "Use --force-with-lease on your own feature branch only.",
+  },
+  {
+    id: "GIT-HISTORY-DESTROY",
+    level: "deny",
+    re: r(String.raw`${CLI}git${SP}(?:reflog\s+(?:expire|delete)|gc\b[^;|&]*--prune=(?:now|all)|update-ref\s+-d|prune\b[^;|&]*--expire[= ]?now)`),
+    reason: "Destroys the local recovery history (reflog / unreachable objects) that is used to undo mistakes.",
+    fix: "Leave reflog and gc defaults alone; repositories clean themselves up safely.",
+  },
+  {
+    id: "GIT-HISTORY-REWRITE",
+    level: "ask",
+    re: r(String.raw`${CLI}git${SP}(?:filter-branch|filter-repo|replace\b|rebase\b[^;|&]*(?:--root|-i\b|--interactive)|commit\b[^;|&]*--amend\b[^;|&]*--no-edit)|${CLI}bfg\b`),
+    reason: "Rewrites commit history.",
+    fix: "Only on unpushed or personal branches; for secret removal follow the git-secrets-history skill with a maintainer.",
+  },
+  {
+    id: "GIT-DISCARD-WORK",
+    level: "ask",
+    re: r(String.raw`${CLI}git${SP}(?:reset\b[^;|&]*--hard|clean\b[^;|&]*-[a-z]*f|checkout\s+(?:--\s+)?\.(?:\s|$)|checkout\b[^;|&]*\s--\s+\S|restore\s+(?:--worktree\s+)?\.(?:\s|$)|stash\s+(?:drop|clear)|branch\s+-D\b|worktree\s+remove\b[^;|&]*--force)`),
+    reason: "Discards uncommitted work or deletes a branch that may not be merged.",
+    fix: "Run `git status` / `git stash` first and confirm nothing needed is lost.",
+  },
+  {
+    id: "GIT-NO-VERIFY",
+    level: "ask",
+    re: r(String.raw`${CLI}git${SP}(?:commit|push|merge|rebase|am)\b[^;|&]*--no-verify`),
+    reason: "Skips git hooks (secret scanning, linting, tests).",
+    fix: "Fix what the hook reports instead of bypassing it.",
+  },
+  {
+    id: "GIT-ADD-SECRET",
+    level: "deny",
+    re: r(String.raw`${CLI}git${SP}add\b[^;|&]*(?:(?:^|\s|/)\.env(?:\.(?!example|sample|template|dist)[\w-]+)?(?:\s|$)|\.pem\b|\.pfx\b|\.p12\b|\.key(?:\s|$)|\.tfstate\b|\.tfvars(?:\s|$)|(?:^|\s|/)id_(?:rsa|ecdsa|ed25519)(?:\s|$)|credentials(?:\.json)?(?:\s|$)|\.npmrc\b|\.pypirc\b|kubeconfig\b)`),
+    reason: "Stages a file that normally holds secrets (.env, keys, state, tfvars, credentials).",
+    fix: "Add the file to .gitignore, commit an example file without values, keep real values in a secret manager.",
+  },
+  {
+    id: "GIT-ADD-FORCE",
+    level: "ask",
+    re: r(String.raw`${CLI}git${SP}add\b[^;|&]*\s(?:-f|--force)\b`),
+    reason: "Force-adds a file that .gitignore excludes.",
+    fix: "Check why the file is ignored before committing it.",
+  },
+  {
+    id: "GIT-CONFIG-GLOBAL",
+    level: "ask",
+    re: r(String.raw`${CLI}git${SP}config\b[^;|&]*--(?:global|system)\b(?![^;|&]*--(?:get|list|get-all)\b)`),
+    reason: "Changes git configuration for every repository on the machine (identity, hooks path, credential helper).",
+    fix: "Use repository-local config, or ask the human to change their global config.",
+  },
+  {
+    id: "GH-ADMIN",
+    level: "deny",
+    re: r(String.raw`${CLI}gh${SP}(?:repo\s+(?:delete|archive|rename)|repo\s+edit\b[^;|&]*--visibility\s+public|pr\s+merge\b[^;|&]*--admin|api\b[^;|&]*(?:-x|--method)\s+delete|api\b[^;|&]*/protection\b[^;|&]*(?:-x|--method)\s+(?:put|patch|delete)|secret\s+(?:delete|remove)|ruleset\s+delete|release\s+delete)`),
+    reason: "Deletes or exposes a repository, bypasses branch protection, or changes protection/secrets/releases.",
+    fix: "Repository administration is done by maintainers in GitHub settings or via reviewed IaC.",
+  },
+  {
+    id: "GH-SECRET-SET",
+    level: "ask",
+    re: r(String.raw`${CLI}gh${SP}(?:secret|variable)\s+set\b`),
+    reason: "Creates or changes a CI secret or variable.",
+    fix: "Prefer OIDC federation over stored secrets (cicd-oidc); never pass the value on the command line.",
+  },
+
+  // ───────────────────────── Databases ─────────────────────────
+  {
+    id: "DB-PASSWORD-LITERAL",
+    level: "deny",
+    re: r(String.raw`(?:(?:^|\s)(?:pgpassword|mysql_pwd|mssql_password|sqlcmdpassword|rediscli_auth)=[^\s$]|${CLI}(?:mysql|mariadb|mysqldump|mysqladmin)\b[^;|&]*\s-p[^\s-]|--password=[^\s$]|${CLI}sqlcmd\b[^;|&]*\s-p\s+[^\s$]|${CLI}redis-cli\b[^;|&]*\s(?:-a|--pass)\s+[^\s$]|${CLI}sqlplus\s+\w+/[^@\s$]+@|(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?|redis|rediss|sqlserver|mssql|jdbc:\w+):\/\/[^:/\s@]+:[^@\s$]+@)`),
+    reason: "Puts a database password on the command line or in a connection string, exposing it in shell history, process lists and the transcript.",
+    fix: "Use IAM/Entra/IAM-database auth, a .pgpass/option file managed by the human, or a secret manager injected at runtime.",
+  },
+  {
+    id: "DB-DROP-DATABASE",
+    level: "deny",
+    re: r(String.raw`${DBCLI}(?:\bdrop\s+(?:database|schema|keyspace|tablespace|user|role|login)\b|\bdropdatabase\s*\(|${CLI}(?:dropdb|dropuser)\b|${CLI}mysqladmin\b[^;|&]*\bdrop\b)`),
+    reason: "Drops a whole database, schema, keyspace, user or role.",
+    fix: "Database and account removal is a DBA change with a backup and approval, executed outside the agent.",
+  },
+  {
+    id: "DB-UNBOUNDED-WRITE",
+    level: "deny",
+    re: r(String.raw`${DBCLI}(?:\bdelete\s+from\s+[\w.\[\]$"]+\s*(?:;|$|\)|\\n)|\bdelete\s+[\w.\[\]]+\s*(?:;|$)|\bupdate\s+[\w.\[\]$"]+\s+set\s+(?:(?!\bwhere\b)[^;])*(?:;|$)|\.(?:deletemany|remove|updatemany)\s*\(\s*\{\s*\}|\.drop\s*\(\s*\))`),
+    reason: "Deletes or updates every row/document (no WHERE clause / empty filter) or drops a collection.",
+    fix: "Add an explicit WHERE / filter, run the matching SELECT/count first, wrap in a transaction, and get approval with the expected row count.",
+  },
+  {
+    id: "DB-DESTRUCTIVE-DDL",
+    level: "ask",
+    re: r(String.raw`${DBCLI}(?:\b(?:drop\s+(?:table|view|index|collection|materialized\s+view|function|procedure|trigger|sequence|type|extension)|truncate\s+(?:table\s+)?[\w.]|alter\s+table\s+[\w.\[\]"]+\s+drop\b|alter\s+system\b))`),
+    reason: "Drops objects, truncates data, drops columns or changes server-wide settings.",
+    fix: "Ship it as a reviewed migration (db-migrations) with a backup and rollback; never ad hoc in prod.",
+  },
+  {
+    id: "DB-PRIV-ESCALATE",
+    level: "deny",
+    re: r(String.raw`${DBCLI}(?:\bgrant\s+all\b|\bgrant\b[^;]*\bto\s+public\b|\b(?:create|alter)\s+(?:user|role)\b[^;]*\b(?:superuser|createrole|bypassrls|replication)\b|\bwith\s+grant\s+option\b|\bgrant\s+(?:super|file|process|shutdown)\b|\bsp_addsrvrolemember\b|\balter\s+server\s+role\s+sysadmin\b|\bgrant\s+control\s+server\b|\bsp_configure\s+.?xp_cmdshell|role\s*:\s*(?:root|dbowner|userAdminAnyDatabase|dbAdminAnyDatabase|clusterAdmin)\b|\bgrant\s+dba\b)`),
+    reason: "Grants superuser / admin / all privileges, or enables OS command execution from the database.",
+    fix: "Grant the narrow role the application needs (db-access-control) through reviewed migrations or IaC.",
+  },
+  {
+    id: "DB-REDIS-DESTRUCT",
+    level: "deny",
+    re: r(String.raw`${CLI}redis-cli\b[^;|&]*\s(?:flushall|flushdb|shutdown|debug\s+\w+|config\s+set\s+(?:dir|dbfilename|requirepass|protected-mode)|slaveof|replicaof|module\s+load|acl\s+(?:deluser|setuser\b[^;|&]*\+@all))\b`),
+    reason: "Wipes Redis data, shuts it down, re-points replication or changes security-critical config.",
+    fix: "Delete specific keys by pattern with a reviewed script (SCAN + UNLINK) and approval; config changes go through IaC.",
+  },
+  {
+    id: "DB-DATA-EXPORT",
+    level: "ask",
+    re: r(String.raw`${CLI}(?:pg_dump|pg_dumpall|mysqldump|mongodump|mongoexport|bcp|expdp|exp|sqlpackage)\b|\bcopy\b[^;]*\bto\s+(?:stdout|program|'|/)|\binto\s+outfile\b|\bselect\b[^;]*\binto\s+dumpfile\b|${CLI}redis-cli\b[^;|&]*--rdb\b`),
+    reason: "Exports database contents (may include personal or confidential data) to a file or stdout.",
+    fix: "Export only the tables/columns needed, from nonprod or a masked copy, to an approved location.",
+  },
+  {
+    id: "DB-RESTORE-OVERWRITE",
+    level: "ask",
+    re: r(String.raw`${CLI}(?:pg_restore|mongorestore|impdp|imp)\b|${CLI}pg_restore\b[^;|&]*(?:--clean|-c\b)|${CLI}mongorestore\b[^;|&]*--drop`),
+    reason: "Restores data, possibly dropping and replacing existing objects.",
+    fix: "Restore into a new database and validate before switching (cloud-dr-backup).",
+  },
+
+  // ───────────────────────── Packages, publishing and shell ─────────────────────────
+  {
+    id: "PKG-PUBLISH",
+    level: "ask",
+    re: r(String.raw`${CLI}(?:npm|pnpm|yarn|bun)${SP}(?:publish|unpublish|deprecate|dist-tag\s+(?:add|rm))\b|${CLI}yarn\s+npm\s+publish\b|${CLI}(?:mvn|mvnw|\./mvnw)\b[^;|&]*\bdeploy\b|${CLI}(?:gradle|gradlew|\./gradlew)\b[^;|&]*\bpublish\w*\b|${CLI}twine\s+upload\b|${CLI}(?:poetry|uv|hatch|flit)\s+publish\b|${CLI}cargo\s+(?:publish|yank)\b|${CLI}dotnet\s+nuget\s+(?:push|delete)\b|${CLI}gem\s+(?:push|yank)\b|${CLI}(?:docker|podman)\s+(?:push|image\s+push)\b|${CLI}helm\s+push\b|${CLI}go\s+mod\s+retract\b`),
+    reason: "Publishes or retracts a package or image to a registry, which other teams and customers may consume immediately.",
+    fix: "Release through the CI pipeline with versioning, signing and approvals.",
+  },
+  {
+    id: "PKG-UNPUBLISH",
+    level: "deny",
+    re: r(String.raw`${CLI}npm${SP}unpublish\b[^;|&]*--force|${CLI}(?:npm|pnpm)${SP}owner\s+(?:add|rm)\b|${CLI}npm${SP}access\s+(?:public|grant)\b`),
+    reason: "Force-unpublishes a package or changes package ownership/visibility.",
+    fix: "Package ownership and visibility are maintainer decisions.",
+  },
+  {
+    id: "SHELL-RM-ROOT",
+    level: "deny",
+    re: r(String.raw`(?:^|[;&|]\s*|\s)(?:sudo\s+)?rm\s+(?:-[a-z]*\s+)*-[a-z]*r[a-z]*\s+(?:-[a-z]+\s+)*(?:--no-preserve-root\s+)?(?:/|/\*|~|~/|~/\*|\$home|\$home/|\$home/\*|\.|\./|\./\*|\*|\.\.|\.\./|/home|/users|/etc|/var|/usr|c:\\?|c:/)(?:\s|$)|remove-item\b[^;|&]*-recurse\b[^;|&]*\s(?:c:\\?|c:/|~|\$home|\$env:userprofile)(?:\s|$)|${CLI}(?:mkfs(?:\.\w+)?|format\s+[a-z]:|diskpart)\b|\bdd\b[^;|&]*\bof=/dev/(?:sd|nvme|hd|disk)|:\(\)\s*\{\s*:\|:&\s*\};:`),
+    reason: "Recursively deletes the filesystem root, home directory, the whole working tree or a system directory, or wipes a disk.",
+    fix: "Delete specific build paths (e.g. `rm -rf ./dist`) after listing them.",
+  },
+  {
+    id: "SHELL-PERMS",
+    level: "ask",
+    re: r(String.raw`${CLI}chmod\b[^;|&]*\b(?:-r\s+)?(?:777|a\+rwx|o\+w)\b|${CLI}chown\b[^;|&]*\s-r\b[^;|&]*\s/(?:\s|$)|${CLI}icacls\b[^;|&]*everyone:\(?f`),
+    reason: "Makes files world-writable or recursively changes ownership of system paths.",
+    fix: "Grant the narrowest permission to the specific user or group.",
+  },
+  {
+    id: "SHELL-SUDO",
+    level: "ask",
+    re: r(String.raw`(?:^|[;&|]\s*)(?:sudo|doas|runas|gsudo)\s`),
+    reason: "Runs a command with administrator privileges.",
+    fix: "Explain why elevation is needed; the human runs it if appropriate.",
+  },
+
+  // ───────────────────────── Shell-level destruction ─────────────────────────
+  {
+    id: "SHELL-RM-STATE",
+    level: "deny",
+    re: r(String.raw`(?:rm|del|remove-item|rmdir|rd)\b[^;|&]*(?:\.tfstate\b|\.terraform[\\/]?(?:\s|$)|terraform\.tfstate\.d|\.pulumi[\\/]|cdk\.out[\\/]?\s*$|\.aws\b|\.azure\b|\.config[\\/]gcloud|\.kube\b|\.cloud-guard\b)`),
+    reason: "Deletes Terraform/Pulumi state, cloud CLI config or the guard itself.",
+    fix: "State is managed by the remote backend. The guard can only be changed by a human.",
+  },
+  {
+    id: "GUARD-TAMPER",
+    level: "deny",
+    re: r(String.raw`(?:\.cloud-guard[\\/](?:policy\.json|bin[\\/])|\.claude[\\/]settings(?:\.local)?\.json|\.cursor[\\/]hooks\.json|\.gemini[\\/]settings\.json)[^;|&]*(?:>|tee\b|sed\s+-i|set-content|out-file|mv\b|cp\b)|(?:>|tee\s|sed\s+-i|set-content|out-file|\bmv\s|\bcp\s|\brm\s|\bdel\s)[^;|&]*(?:\.cloud-guard[\\/](?:policy\.json|bin[\\/])|\.claude[\\/]settings(?:\.local)?\.json|\.cursor[\\/]hooks\.json|\.gemini[\\/]settings\.json)`),
+    reason: "Modifies the guard policy or the agent's hook configuration from inside the agent.",
+    fix: "Only a human edits the guard policy and hook settings. Ask them to make the change.",
+  },
+];
+
+// Paths an agent must never read or write through file tools (Read/Write/Edit),
+// in addition to shell access covered by SECRET-CRED-FILE-READ.
+const PROTECTED_PATHS = [
+  { id: "PATH-CRED-STORE", re: /(?:^|[\\/])(?:\.aws[\\/](?:credentials|config)|\.azure[\\/]|\.config[\\/]gcloud[\\/]|gcloud[\\/](?:credentials\.db|access_tokens\.db|application_default_credentials\.json|legacy_credentials)|\.kube[\\/]config|\.docker[\\/]config\.json|\.terraform\.d[\\/]credentials|\.terraformrc|\.netrc|\.npmrc|\.pgpass|\.ssh[\\/])/i, reason: "Local credential store." },
+  { id: "PATH-STATE", re: /\.tfstate(?:\.backup)?$|terraform\.tfstate\.d[\\/]|\.pulumi[\\/]stacks[\\/]/i, reason: "IaC state files contain secrets in clear text." },
+  { id: "PATH-DOTENV", re: /(?:^|[\\/])\.env(?:\.(?!example$|sample$|template$|dist$)[\w-]+)?$|(?:^|[\\/])\.(?:pypirc|pgpass|my\.cnf)$|(?:^|[\\/])(?:secrets?|credentials?)\.(?:ya?ml|json|toml|ini)$/i, reason: "Environment / secrets file with real values." },
+  { id: "PATH-KEYS", re: /\.(?:pem|pfx|p12|key|jks|keystore|ppk)$|(?:^|[\\/])id_(?:rsa|ecdsa|ed25519|dsa)(?:\.pub)?$|-[0-9a-f]{12}\.json$|service[-_]?account[^\\/]*\.json$|credentials?\.json$/i, reason: "Private key or service-account key file." },
+];
+
+// Write-only protection: the agent may read these but not change them.
+const GUARD_PATHS = /(?:^|[\\/])\.cloud-guard[\\/](?:policy\.json|bin[\\/])|(?:^|[\\/])\.claude[\\/]settings(?:\.local)?\.json$|(?:^|[\\/])\.cursor[\\/]hooks\.json$|(?:^|[\\/])\.gemini[\\/]settings\.json$/i;
+
+// Secret material that must not be written into files by an agent.
+// Each entry: { id, re, reason }. Matches are case-sensitive where the token format is.
+const SECRET_CONTENT = [
+  { id: "SECRET-AWS-KEY-PAIR", re: /(?:A3T[A-Z0-9]|AKIA|ASIA|ABIA|ACCA)(?!IOSFODNN7EXAMPLE)[A-Z0-9]{16}[\s\S]{0,200}?[A-Za-z0-9/+=]{40}/, reason: "AWS access key id with a secret key." },
+  { id: "SECRET-AWS-SECRET", re: /aws_secret_access_key\s*[=:]\s*["']?(?!wJalrXUtnFEMI\/K7MDENG\/bPxRfiCYEXAMPLEKEY)[A-Za-z0-9/+=]{40}/i, reason: "AWS secret access key." },
+  { id: "SECRET-PRIVATE-KEY", re: /-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED |PGP )?PRIVATE KEY(?: BLOCK)?-----/, reason: "Private key material." },
+  { id: "SECRET-GCP-SA-KEY", re: /"type"\s*:\s*"service_account"[\s\S]{0,2000}"private_key"\s*:\s*"-----BEGIN/, reason: "Google service-account key JSON." },
+  { id: "SECRET-AZ-STORAGE-KEY", re: /AccountKey=[A-Za-z0-9+/]{80,}={0,2}/, reason: "Azure storage account key / connection string." },
+  { id: "SECRET-AZ-SAS", re: /[?&]sig=[A-Za-z0-9%+/]{40,}={0,2}/, reason: "Azure SAS token signature." },
+  { id: "SECRET-AZ-CLIENT-SECRET", re: /\b[a-zA-Z0-9_~.-]{3}\dQ~[a-zA-Z0-9_~.-]{31,34}\b/, reason: "Entra ID (Azure AD) client secret." },
+  { id: "SECRET-AZ-CONN", re: /(?:SharedAccessKey|AccountEndpoint=[^;]+;AccountKey|Password)=[A-Za-z0-9+/]{30,}={0,2}/, reason: "Azure connection string with a key." },
+  { id: "SECRET-GCP-API-KEY", re: /\bAIza[0-9A-Za-z_-]{35}\b/, reason: "Google API key." },
+  { id: "SECRET-GITHUB", re: /\b(?:gh[pousr]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{60,})\b/, reason: "GitHub token." },
+  { id: "SECRET-SLACK", re: /\bxox[abposr]-[A-Za-z0-9-]{10,}/, reason: "Slack token." },
+  { id: "SECRET-OPENAI", re: /\bsk-(?:proj-|ant-)?[A-Za-z0-9_-]{32,}/, reason: "AI provider API key." },
+  { id: "SECRET-JWT", re: /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/, reason: "Bearer token (JWT)." },
+  { id: "SECRET-HARDCODED-PASSWORD", re: /\b(?:password|passwd|admin_password|master_password|client_secret|db_password)\s*[:=]\s*"(?!\$\{|var\.|local\.|data\.|random_|ephemeral\.|<|CHANGE|REPLACE|TODO|example|\*{3})[^"\s]{8,}"/i, reason: "Hard-coded password / client secret in code or config." },
+];
+
+
+// cloud-guard: a pre-execution guard for AI coding agents working on cloud
+// infrastructure (AWS, Azure, Google Cloud, Kubernetes, Terraform/OpenTofu,
+// Pulumi, CDK, Bicep).
+//
+// It runs as a hook before the agent executes a shell command or touches a
+// file, and returns allow / ask / deny. No dependencies, Node 18+.
+//
+// Usage as a hook (reads the hook JSON on stdin):
+//   node cloud-guard.mjs --format claude    # Claude Code PreToolUse
+//   node cloud-guard.mjs --format cursor    # Cursor beforeShellExecution / beforeReadFile
+//   node cloud-guard.mjs --format gemini    # Gemini CLI BeforeTool
+//
+// Usage as a CLI (for humans, CI, or agents without hook support):
+//   node cloud-guard.mjs check -- aws s3 rb s3://x --force
+//   node cloud-guard.mjs scan path/to/file-or-dir     # secret scan
+//   node cloud-guard.mjs explain                      # print the active policy
+//
+// Exit codes in CLI mode: 0 allow, 1 ask, 2 deny.
+
+
+
+
+
+
+
+const VERSION = "1.0.0";
+const RANK = { allow: 0, ask: 1, deny: 2 };
+const worst = (a, b) => (RANK[b.decision] > RANK[a.decision] ? b : a);
+
+// ────────────────────────────────────────────────────────────────────────────
+// Policy
+// ────────────────────────────────────────────────────────────────────────────
+
+const DEFAULT_POLICY = {
+  // standard: reads allowed, non-prod changes ask, prod changes denied.
+  // strict:   like standard, but sandbox changes also ask.
+  // readonly: every change is denied; the agent can only read and plan.
+  mode: "standard",
+  // What an agent may do to production. "deny" (default) means the agent
+  // prepares IaC / a PR / a runbook and a human or pipeline applies it.
+  prodMutations: "deny",
+  // How to treat a command whose target environment cannot be determined.
+  unknownEnvironmentAs: "nonprod",
+  // Explicit identifiers per tier. Match AWS profile names or account ids,
+  // Azure subscription names or ids, GCP project ids, kube contexts,
+  // Terraform workspaces / directories / var files, Pulumi stacks.
+  environments: { prod: [], nonprod: [], sandbox: [] },
+  // Token patterns used when an identifier is not listed explicitly.
+  // Identifiers are split on non-alphanumerics and each token is compared.
+  tierPatterns: {
+    prod: ["prod", "prd", "production", "live", "pr", "p"],
+    sandbox: ["sandbox", "sbx", "playground", "scratch", "lab", "localhost", "local", "127", "devbox", "docker"],
+    nonprod: ["dev", "develop", "development", "test", "tst", "qa", "uat", "stage", "stg", "staging", "nonprod", "np", "perf", "int", "preprod"],
+  },
+  // Regions/locations the agent may target. Empty = any.
+  allowedRegions: [],
+  // Downgrade or upgrade a specific hard rule: { "AWS-S3-RECURSIVE-RM": "deny" }.
+  // Downgrading a "deny" rule requires a justification string:
+  //   { "IAC-STATE-SURGERY": { "level": "allow", "justification": "..." } }
+  overrides: {},
+  // Extra organisation rules, same shape as HARD_RULES but `re` is a string.
+  customRules: [],
+  // Read the active cloud context from local CLI config files (no secrets are
+  // read: only azureProfile.json, gcloud active config and kubeconfig's
+  // current-context line).
+  detectActiveContext: true,
+  // Gemini CLI hooks cannot "ask". Map ask to deny (safe default) or allow
+  // (rely on Gemini's own confirmation prompt, never use with --yolo).
+  geminiAskAs: "deny",
+  // Append every non-allow decision to .cloud-guard/audit.jsonl.
+  audit: true,
+  // Block agents from writing secret material into files.
+  secretWriteGuard: true,
+};
+
+function findProjectRoot(start) {
+  let dir = path.resolve(start || process.cwd());
+  for (let i = 0; i < 40; i++) {
+    if (fs.existsSync(path.join(dir, ".cloud-guard", "policy.json"))) return dir;
+    if (fs.existsSync(path.join(dir, ".git"))) return dir;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return path.resolve(start || process.cwd());
+}
+
+function loadPolicy(root) {
+  const file = path.join(root, ".cloud-guard", "policy.json");
+  let user = {};
+  try {
+    user = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (e) {
+    if (e.code !== "ENOENT") {
+      // A broken policy must not silently weaken the guard.
+      user = { mode: "readonly", __error: `Could not parse ${file}: ${e.message}. Falling back to readonly.` };
+    }
+  }
+  const p = {
+    ...DEFAULT_POLICY,
+    ...user,
+    environments: { ...DEFAULT_POLICY.environments, ...(user.environments || {}) },
+    tierPatterns: { ...DEFAULT_POLICY.tierPatterns, ...(user.tierPatterns || {}) },
+    overrides: { ...(user.overrides || {}) },
+  };
+  if (!["standard", "strict", "readonly"].includes(p.mode)) p.mode = "standard";
+  if (!["deny", "ask"].includes(p.prodMutations)) p.prodMutations = "deny";
+  p.__root = root;
+  p.__file = file;
+  return p;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Command parsing
+// ────────────────────────────────────────────────────────────────────────────
+
+function normalise(cmd) {
+  return String(cmd || "")
+    .replace(/\\\r?\n/g, " ") // line continuations
+    .replace(/`\r?\n/g, " ") // PowerShell continuations
+    .replace(/["']/g, "")
+    .replace(/[ \t]+/g, " ")
+    .toLowerCase()
+    .trim();
+}
+
+// Split a command line into simple segments on shell control operators.
+// Over-splitting is safe (each piece is checked), so this is deliberately
+// simple and also splits inside $( ... ) and backticks.
+function segments(cmd) {
+  return normalise(cmd)
+    .split(/\r?\n|&&|\|\||;|\||\$\(|\)|`|\s&\s/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+const CLIS = ["aws", "az", "gcloud", "gsutil", "bq", "kubectl", "oc", "helm", "terraform", "tofu", "terragrunt", "pulumi", "cdk", "cdktf", "eksctl", "sam", "copilot", "azd", "func", "serverless", "sls", "psql", "mysql", "mariadb", "sqlcmd", "sqlplus", "cqlsh", "mongosh", "mongo", "redis-cli"];
+const DB_CLIS = new Set(["psql", "mysql", "mariadb", "sqlcmd", "sqlplus", "cqlsh", "mongosh", "mongo"]);
+const CLI_RE = new RegExp(String.raw`(?:^|[\s(=])(?:[\w./\\-]*[\\/])?(${CLIS.map((c) => c.replace("-", "\\-")).join("|")})(?:\.exe|\.cmd)?(?=\s|$)`, "g");
+
+// Global flags that take a value, per CLI, so the value is not mistaken for
+// a sub-command.
+const VALUE_FLAGS = {
+  aws: ["--profile", "--region", "--output", "--endpoint-url", "--query", "--ca-bundle", "--cli-read-timeout", "--cli-connect-timeout", "--color", "--cli-binary-format"],
+  gcloud: ["--project", "--account", "--configuration", "--format", "--verbosity", "--impersonate-service-account", "--billing-project", "--flags-file", "--flatten", "--filter", "--limit", "--page-size", "--sort-by", "--trace-token", "--region", "--zone", "--location"],
+  kubectl: ["-n", "--namespace", "--context", "--cluster", "--kubeconfig", "--user", "-s", "--server", "--token", "-l", "--selector", "-o", "--output", "-f", "--filename", "-c", "--container", "--as", "--as-group"],
+  helm: ["-n", "--namespace", "--kube-context", "--kubeconfig", "-f", "--values", "--version", "--set", "--set-string", "-o", "--output", "--repo"],
+  pulumi: ["-s", "--stack", "-C", "--cwd"],
+  terragrunt: ["--terragrunt-working-dir", "--working-dir"],
+};
+VALUE_FLAGS.oc = VALUE_FLAGS.kubectl;
+VALUE_FLAGS["redis-cli"] = ["-h", "-p", "-a", "-n", "-u", "-s", "--user", "--pass", "--tls-cert", "--tls-key", "--cacert", "-r", "-i", "--eval"];
+
+function tokensAfter(segment, start) {
+  return segment.slice(start).trim().split(/\s+/).filter(Boolean);
+}
+
+function positionals(cli, toks) {
+  const vf = new Set(VALUE_FLAGS[cli] || []);
+  const out = [];
+  for (let i = 0; i < toks.length; i++) {
+    const t = toks[i];
+    if (t.startsWith("-")) {
+      // az never takes positional arguments after the first flag.
+      if (cli === "az") break;
+      if (!t.includes("=") && vf.has(t)) i++;
+      continue;
+    }
+    out.push(t);
+  }
+  return out;
+}
+
+function flagValue(toks, names) {
+  for (let i = 0; i < toks.length; i++) {
+    for (const n of names) {
+      if (toks[i] === n && toks[i + 1]) return toks[i + 1];
+      if (toks[i].startsWith(n + "=")) return toks[i].slice(n.length + 1);
+    }
+  }
+  return null;
+}
+
+// Classify one CLI invocation as read | mutate | destructive | unknown.
+const READ_WORDS = /^(?:list|ls|show|describe|get|read|tail|logs?|info|version|help|explain|exists|check-name|check|what-if|validate|wait|search|query|top|history|status|lint|template|diff|plan|preview|synth|cat|du|stat|head|whoami|current-context|get-contexts|get-clusters|view|can-i|api-resources|api-versions|cluster-info|fmt|init|providers|graph|output|login|account|config|auth|completion|estimate|preview|test-[\w-]+|simulate-[\w-]+|filter-log-events|start-query|get-query-results|lookup-events|batch-get-[\w-]+|list-[\w-]+|get-[\w-]+|describe-[\w-]+|show-[\w-]+|search-[\w-]+|print-settings|find|metadata|dry-run|bicep|build|doctor|whoami)$/;
+const DESTRUCTIVE_WORDS = /^(?:delete|delete-[\w-]+|destroy|terminate|terminate-[\w-]+|purge|purge-[\w-]+|remove|remove-[\w-]+|rm|rb|uninstall|drain|deallocate|deregister-[\w-]+|disable|disable-[\w-]+|cancel|cancel-[\w-]+|reset|reset-[\w-]+|revoke|revoke-[\w-]+|detach-[\w-]+|disassociate-[\w-]+|stop|stop-[\w-]+|reimage|failover|force-[\w-]+|rotate|restore|restore-[\w-]+|replace|replace-[\w-]+|undeploy|scale-in|shrink|truncate|wipe|reboot|reboot-[\w-]+|rollback|unlink|leave|leave-[\w-]+|close|close-[\w-]+|cordon)$/;
+const KNOWN_GCLOUD_VERBS = /^(?:list|describe|create|delete|update|patch|deploy|set-[\w-]+|add-[\w-]+|remove-[\w-]+|get-[\w-]+|ssh|scp|start|stop|reset|resize|restart|enable|disable|import|export|run|submit|cancel|restore|clone|failover|promote-replica|rollback|connect|execute|call|read|print-[\w-]+|activate|login|revoke|apply|destroy|attach|detach|move|rename|undelete|sign-[\w-]+|upgrade|ls|cat|cp|mv|rm|rsync|du|tail|logs|search|versions|access|disable-enforce|allow|deny|test-iam-permissions|analyze-iam-policy|update-[\w-]+|create-[\w-]+|delete-[\w-]+|set|unset|get|info|version|help|config|auth|wait|explain|setup|reauth)$/;
+
+function classifyInvocation(cli, toks) {
+  const pos = positionals(cli, toks);
+  const low = pos.map((p) => p.toLowerCase());
+  let verb = null;
+  let kind = "unknown";
+
+  switch (cli) {
+    case "aws": {
+      const svc = low[0];
+      const op = low[1];
+      verb = op || svc || "";
+      if (!svc || svc === "help" || toks.includes("help")) return { kind: "read", verb: "help" };
+      if (svc === "configure") {
+        kind = ["list", "get", "list-profiles", "sso", "sso-session", "export-credentials"].includes(op) ? "read" : "mutate";
+        break;
+      }
+      if (svc === "sso" || svc === "login") return { kind: "read", verb: svc };
+      if (svc === "s3") {
+        if (["ls", "presign"].includes(op)) kind = "read";
+        else if (["cp", "sync"].includes(op)) {
+          const dest = low[low.length - 1] || "";
+          kind = dest.startsWith("s3://") ? "mutate" : "read";
+          if (op === "sync" && toks.includes("--delete")) kind = "destructive";
+        } else if (["rm", "rb"].includes(op)) kind = "destructive";
+        else kind = "mutate";
+        break;
+      }
+      if (!op) return { kind: "unknown", verb: svc };
+      if (/^(?:wait|help)$/.test(op) || /^(?:describe|list|get|head|batch-get|search|lookup|estimate|validate|simulate|test|check|preview|filter|select|scan|query|detect|discover|generate-(?:credential-report|service-last-accessed-details|organizations-access-report)|view|download|tail|start-query|stop-query|export|decode-authorization-message)(?:-|$)/.test(op)) kind = "read";
+      else if (DESTRUCTIVE_WORDS.test(op)) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "az": {
+      // az has no positional resource names, so the verb is the last
+      // positional token before the first flag.
+      verb = low[low.length - 1] || "";
+      const group = low[0] || "";
+      if (!group || verb === "help" || toks.includes("--help") || toks.includes("-h")) return { kind: "read", verb: "help" };
+      if (["login", "logout", "version", "upgrade", "find", "interactive", "init", "config", "configure", "cloud", "extension", "bicep"].includes(group)) return { kind: "read", verb: group };
+      if (group === "account" && ["set", "show", "list", "list-locations", "tenant"].includes(low[1])) return { kind: "read", verb: low[1] };
+      if (toks.includes("what-if") || low.includes("what-if") || toks.includes("--what-if")) return { kind: "read", verb: "what-if" };
+      if (/^(?:show|list|list-[\w-]+|show-[\w-]+|get-[\w-]+|exists|check-name|check-[\w-]+|wait|validate|what-if|query|download|tail|browse|logs?|log|status|history|download-[\w-]+|get|search|summarize|count|test-connection)$/.test(verb)) kind = "read";
+      else if (DESTRUCTIVE_WORDS.test(verb)) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "gcloud": {
+      const idx = low.findIndex((t) => KNOWN_GCLOUD_VERBS.test(t) && !["config", "auth"].includes(t));
+      const group = low[0] || "";
+      if (!group || toks.includes("--help") || group === "help") return { kind: "read", verb: "help" };
+      if (group === "config" || group === "info" || group === "version" || group === "components" || group === "init" || group === "topic" || group === "cheat-sheet") return { kind: "read", verb: group };
+      if (group === "auth") {
+        verb = low[1] || "";
+        return { kind: ["list", "login", "revoke", "application-default", "configure-docker"].includes(verb) ? "read" : "mutate", verb };
+      }
+      verb = idx >= 0 ? low[idx] : low[low.length - 1] || "";
+      if (/^(?:list|describe|get-[\w-]+|read|ls|cat|du|tail|logs|search|print-settings|test-iam-permissions|analyze-iam-policy|info|version|help|explain|wait|versions)$/.test(verb) || (verb === "access" && false)) kind = "read";
+      else if (DESTRUCTIVE_WORDS.test(verb)) kind = "destructive";
+      else if (verb === "rm") kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "gsutil": {
+      verb = low[0] || "";
+      if (/^(?:ls|cat|du|stat|hash|version|help|signurl|ver)$/.test(verb)) kind = "read";
+      else if (verb === "cp" || verb === "rsync") {
+        const dest = low[low.length - 1] || "";
+        kind = dest.startsWith("gs://") ? "mutate" : "read";
+        if (verb === "rsync" && toks.includes("-d")) kind = "destructive";
+      } else if (/^(?:rm|rb)$/.test(verb)) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "bq": {
+      verb = low[0] || "";
+      if (/^(?:ls|show|head|query|version|help|wait|get-iam-policy)$/.test(verb)) kind = "read";
+      else if (verb === "rm") kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "kubectl":
+    case "oc": {
+      verb = low[0] || "";
+      if (verb === "config") {
+        const sub = low[1] || "";
+        kind = ["view", "get-contexts", "current-context", "get-clusters", "get-users", "use-context", "use"].includes(sub) ? "read" : "mutate";
+        break;
+      }
+      if (verb === "rollout") {
+        const sub = low[1] || "";
+        kind = ["status", "history"].includes(sub) ? "read" : sub === "undo" ? "destructive" : "mutate";
+        break;
+      }
+      if (verb === "auth") return { kind: "read", verb: "auth" };
+      if (/^(?:get|describe|logs|top|explain|api-resources|api-versions|version|cluster-info|diff|events|wait|whoami|plugin|completion|kustomize|help)$/.test(verb)) kind = "read";
+      else if (/^(?:delete|drain|cordon|taint|replace)$/.test(verb)) kind = "destructive";
+      else if (verb === "apply" && toks.includes("--dry-run=server")) kind = "read";
+      else if (verb === "apply" && toks.some((t) => t.startsWith("--dry-run"))) kind = "read";
+      else kind = "mutate";
+      break;
+    }
+    case "helm": {
+      verb = low[0] || "";
+      if (verb === "repo" || verb === "plugin" || verb === "registry" || verb === "dependency" || verb === "dep") return { kind: "read", verb };
+      if (/^(?:list|ls|status|history|get|template|lint|show|inspect|search|diff|version|env|help|verify|pull|fetch|package|create|completion)$/.test(verb)) kind = "read";
+      else if (/^(?:install|upgrade)$/.test(verb) && toks.includes("--dry-run")) kind = "read";
+      else if (/^(?:uninstall|delete|del|rollback)$/.test(verb)) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "terraform":
+    case "tofu":
+    case "terragrunt": {
+      let p = low.filter((t) => !/^-chdir=/.test(t));
+      if (cli === "terragrunt" && (p[0] === "run-all" || p[0] === "run")) p = p.slice(1);
+      verb = p[0] || "";
+      if (verb === "state") {
+        const sub = p[1] || "";
+        kind = ["list", "show", "pull"].includes(sub) ? "read" : sub === "rm" ? "destructive" : "mutate";
+        verb = `state ${sub}`;
+        break;
+      }
+      if (verb === "workspace") {
+        const sub = p[1] || "";
+        kind = ["list", "show", "select"].includes(sub) ? "read" : sub === "delete" ? "destructive" : "mutate";
+        break;
+      }
+      if (/^(?:init|validate|fmt|plan|show|output|providers|graph|version|console|get|login|logout|metadata|modules|test|hclfmt|render-json|output-module-groups|validate-inputs|graph-dependencies|info|find|list|hcl)$/.test(verb)) kind = "read";
+      else if (verb === "destroy") kind = "destructive";
+      else kind = "mutate"; // apply, import, taint, untaint, refresh, force-unlock
+      break;
+    }
+    case "pulumi": {
+      verb = low[0] || "";
+      if (verb === "stack" && ["ls", "select", "output", "history", "graph", "export", "tag", undefined].includes(low[1])) return { kind: "read", verb: "stack" };
+      if (verb === "config" && (!low[1] || low[1] === "get")) return { kind: "read", verb: "config" };
+      if (/^(?:preview|whoami|version|about|logs|login|logout|plugin|help|new|convert|schema)$/.test(verb)) kind = "read";
+      else if (verb === "destroy" || (verb === "stack" && low[1] === "rm")) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "cdk":
+    case "cdktf": {
+      verb = low[0] || "";
+      if (/^(?:synth|synthesize|diff|ls|list|doctor|docs|version|context|notices|init|acknowledge|get|metadata|help)$/.test(verb)) kind = "read";
+      else if (verb === "destroy") kind = "destructive";
+      else kind = "mutate"; // deploy, bootstrap, import, watch, migrate
+      break;
+    }
+    case "eksctl": {
+      verb = low[0] || "";
+      if (/^(?:get|info|version|help|utils|completion)$/.test(verb)) kind = "read";
+      else if (/^(?:delete|drain)$/.test(verb)) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "sam": {
+      verb = low[0] || "";
+      if (/^(?:build|validate|local|logs|list|init|package|traces|pipeline|remote)$/.test(verb) && verb !== "remote") kind = "read";
+      else if (verb === "delete") kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "azd": {
+      verb = low[0] || "";
+      if (/^(?:show|env|config|auth|version|template|init|package|monitor|restore|hooks|help|login)$/.test(verb) && !(verb === "env" && ["set", "new"].includes(low[1]))) kind = "read";
+      else if (verb === "down") kind = "destructive";
+      else kind = "mutate"; // up, provision, deploy
+      break;
+    }
+    case "func": {
+      verb = low[0] || "";
+      kind = verb === "azure" ? (low.includes("publish") ? "mutate" : "read") : "read";
+      break;
+    }
+    case "serverless":
+    case "sls": {
+      verb = low[0] || "";
+      if (/^(?:print|info|logs|invoke|package|help|plugin|metrics)$/.test(verb) && !low.includes("local") === false) kind = "read";
+      else if (/^(?:print|info|logs|package|help|metrics)$/.test(verb)) kind = "read";
+      else if (verb === "remove") kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "copilot": {
+      // AWS Copilot CLI (ECS). GitHub's `copilot` CLI is not a cloud CLI; treat
+      // it as read unless an AWS Copilot sub-command is used.
+      verb = low[0] || "";
+      if (!["app", "env", "svc", "job", "pipeline", "deploy", "init", "storage", "run", "task"].includes(verb)) return { kind: "read", verb };
+      const sub = low[1] || "";
+      if (["ls", "show", "status", "logs", "package"].includes(sub)) kind = "read";
+      else if (sub === "delete") kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    case "redis-cli": {
+      verb = low[0] || "";
+      if (!verb) return { kind: "unknown", verb: "session" };
+      if (/^(?:get|mget|exists|ttl|pttl|type|strlen|hget|hgetall|hmget|hkeys|hvals|hlen|hexists|lrange|llen|lindex|smembers|scard|sismember|srandmember|zrange|zrangebyscore|zscore|zcard|zcount|zrank|scan|hscan|sscan|zscan|keys|info|ping|dbsize|memory|slowlog|xlen|xrange|xrevrange|xinfo|pubsub|object|dump|lastsave|time|echo|role|latency|cluster|--bigkeys|--memkeys|--stat|--latency)$/.test(verb)) kind = "read";
+      else if (verb === "config" || verb === "client" || verb === "acl") kind = ["get", "list", "info", "whoami", "users", "cat", "getname"].includes(low[1]) ? "read" : "mutate";
+      else if (/^(?:del|unlink|flushall|flushdb|hdel|srem|zrem|zremrangebyscore|zremrangebyrank|lrem|ltrim|xdel|xtrim|getdel|spop|lpop|rpop|blpop|brpop|rename|renamenx|shutdown|swapdb)$/.test(verb)) kind = "destructive";
+      else kind = "mutate";
+      break;
+    }
+    default:
+      if (DB_CLIS.has(cli)) return classifyDb(cli, toks);
+      kind = "unknown";
+  }
+  return { kind, verb };
+}
+
+const SQL_FLAGS = ["-c", "--command", "-e", "--execute", "-q", "--query", "--eval", "-x"];
+function sqlOf(toks) {
+  for (let i = 0; i < toks.length; i++) {
+    const t = toks[i];
+    for (const f of SQL_FLAGS) {
+      if (t === f) return toks.slice(i + 1).join(" ");
+      if (f.startsWith("--") && t.startsWith(f + "=")) return [t.slice(f.length + 1), ...toks.slice(i + 1)].join(" ");
+    }
+  }
+  return null;
+}
+
+function classifySql(sql) {
+  const q = ` ${sql.toLowerCase()} `;
+  if (/\b(?:drop|truncate|delete|deletemany|deleteone|remove|findoneanddelete|dropindex|dropindexes)\b/.test(q)) return "destructive";
+  if (/\b(?:insert|update|upsert|merge|create|alter|grant|revoke|rename|comment\s+on|copy\b[^;]*\bfrom|call|exec|execute|vacuum|reindex|cluster|refresh|lock|set\s+global|set\s+persist|insertone|insertmany|updateone|updatemany|replaceone|bulkwrite|createindex|createcollection|findoneandupdate|findoneandreplace|kill|shutdown)\b/.test(q)) return "mutate";
+  if (/\bselect\b[^;]*\binto\b(?![^;]*\bfrom\b[^;]*\binto\b)/.test(q) && !/\binto\s+@/.test(q)) return "mutate";
+  if (/\b(?:select|show|explain|describe|desc|with|values|table|pragma|find|findone|countdocuments|estimateddocumentcount|aggregate|distinct|getcollectionnames|getindexes|stats|serverstatus|version|ismaster|hello|ping|listdatabases|listcollections|use)\b|\\[a-z?]/.test(q)) {
+    if (/\$(?:out|merge)\b/.test(q)) return "mutate";
+    return "read";
+  }
+  return "unknown";
+}
+
+function classifyDb(cli, toks) {
+  const sql = sqlOf(toks);
+  if (sql) return { kind: classifySql(sql), verb: (sql.trim().split(/\s+/)[0] || "sql").slice(0, 24) };
+  if (toks.some((t) => /^(?:-f|--file|-i|--input-file|@\S+|<)$/.test(t) || /^--file=/.test(t) || /\.(?:sql|js)$/.test(t))) return { kind: "mutate", verb: "script" };
+  if (toks.some((t) => /^(?:--version|-v|--help|-\?|-l|--list)$/.test(t))) return { kind: "read", verb: "info" };
+  return { kind: "unknown", verb: "session" };
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Environment (tier) detection
+// ────────────────────────────────────────────────────────────────────────────
+
+function readJsonLoose(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8").replace(/^﻿/, ""));
+  } catch {
+    return null;
+  }
+}
+
+function activeAzureSubscription() {
+  const dir = process.env.AZURE_CONFIG_DIR || path.join(os.homedir(), ".azure");
+  const prof = readJsonLoose(path.join(dir, "azureProfile.json"));
+  const sub = prof?.subscriptions?.find((s) => s.isDefault);
+  return sub ? [sub.id, sub.name] : [];
+}
+
+function activeGcloudProject() {
+  const base = process.env.CLOUDSDK_CONFIG || (process.platform === "win32" && process.env.APPDATA ? path.join(process.env.APPDATA, "gcloud") : path.join(os.homedir(), ".config", "gcloud"));
+  try {
+    const active = (process.env.CLOUDSDK_ACTIVE_CONFIG_NAME || fs.readFileSync(path.join(base, "active_config"), "utf8")).trim() || "default";
+    const ini = fs.readFileSync(path.join(base, "configurations", `config_${active}`), "utf8");
+    const m = ini.match(/^\s*project\s*=\s*(\S+)/m);
+    return m ? [m[1], active] : [active];
+  } catch {
+    return [];
+  }
+}
+
+function activeKubeContext() {
+  const file = (process.env.KUBECONFIG || path.join(os.homedir(), ".kube", "config")).split(path.delimiter)[0];
+  try {
+    // Read only the current-context line; never parse or keep credentials.
+    const txt = fs.readFileSync(file, "utf8");
+    const m = txt.match(/^current-context:\s*["']?([^"'\r\n]+)/m);
+    return m ? [m[1].trim()] : [];
+  } catch {
+    return [];
+  }
+}
+
+function terraformContext(cwd, toks) {
+  const ids = [];
+  const chdir = toks.find((t) => t.startsWith("-chdir="));
+  const dir = chdir ? path.resolve(cwd, chdir.slice(7)) : cwd;
+  ids.push(...dir.split(/[\\/]/).slice(-3));
+  if (process.env.TF_WORKSPACE) ids.push(process.env.TF_WORKSPACE);
+  try {
+    ids.push(fs.readFileSync(path.join(dir, ".terraform", "environment"), "utf8").trim());
+  } catch {}
+  for (let i = 0; i < toks.length; i++) {
+    const t = toks[i];
+    if (t.startsWith("-var-file=")) ids.push(path.basename(t.slice(10)));
+    if (t === "-var-file" && toks[i + 1]) ids.push(path.basename(toks[i + 1]));
+    if (t.startsWith("--terragrunt-working-dir") || t.startsWith("--working-dir")) ids.push(...(t.split("=")[1] || toks[i + 1] || "").split(/[\\/]/));
+  }
+  return ids.filter(Boolean);
+}
+
+function inlineEnv(segment, name) {
+  const m = segment.match(new RegExp(String.raw`(?:^|\s)(?:\$env:)?${name}\s*=\s*([^\s;]+)`, "i"));
+  return m ? m[1] : null;
+}
+
+function targetIdentifiers(cli, toks, segment, ctx) {
+  const ids = [];
+  const env = ctx.env || process.env;
+  const detect = ctx.policy.detectActiveContext;
+  const push = (v) => v && ids.push(String(v));
+  switch (cli) {
+    case "aws":
+    case "sam":
+    case "cdk":
+    case "eksctl":
+    case "copilot":
+      push(flagValue(toks, ["--profile"]));
+      push(inlineEnv(segment, "aws_profile"));
+      if (!ids.length) push(env.AWS_PROFILE || env.AWS_DEFAULT_PROFILE);
+      push(env.AWS_ACCOUNT_ID);
+      break;
+    case "az":
+    case "azd":
+    case "func":
+      push(flagValue(toks, ["--subscription"]));
+      push(inlineEnv(segment, "azure_subscription_id"));
+      if (!ids.length) push(env.AZURE_SUBSCRIPTION_ID || env.ARM_SUBSCRIPTION_ID);
+      if (!ids.length && detect) ids.push(...activeAzureSubscription());
+      push(flagValue(toks, ["--resource-group", "-g"]));
+      break;
+    case "gcloud":
+    case "gsutil":
+    case "bq":
+      push(flagValue(toks, ["--project", "--project_id"]));
+      push(inlineEnv(segment, "cloudsdk_core_project"));
+      if (!ids.length) push(env.CLOUDSDK_CORE_PROJECT || env.GOOGLE_CLOUD_PROJECT || env.GCLOUD_PROJECT);
+      if (!ids.length && detect) ids.push(...activeGcloudProject());
+      // bucket names often encode the environment
+      for (const t of toks) if (/^gs:\/\//.test(t)) push(t.slice(5).split("/")[0]);
+      break;
+    case "kubectl":
+    case "oc":
+    case "helm":
+      push(flagValue(toks, ["--context", "--kube-context"]));
+      if (!ids.length && detect) ids.push(...activeKubeContext());
+      push(flagValue(toks, ["-n", "--namespace"]));
+      break;
+    case "terraform":
+    case "tofu":
+    case "terragrunt":
+    case "cdktf":
+      ids.push(...terraformContext(ctx.cwd, toks));
+      break;
+    case "pulumi":
+      push(flagValue(toks, ["-s", "--stack"]));
+      push(env.PULUMI_STACK);
+      break;
+    case "psql":
+    case "mysql":
+    case "mariadb":
+    case "sqlcmd":
+    case "sqlplus":
+    case "cqlsh":
+    case "mongosh":
+    case "mongo":
+    case "redis-cli": {
+      push(flagValue(toks, ["-h", "--host", "-s", "--server", "--hostname"]));
+      push(flagValue(toks, ["-d", "--dbname", "-d", "--database", "-n"]));
+      for (const t of toks) {
+        const uri = t.match(/^[a-z+]+:\/\/(?:[^@/\s]+@)?([^/:?\s,]+)[^/\s]*(?:\/([^?\s]+))?/);
+        if (uri) { push(uri[1]); push(uri[2]); }
+        const kv = t.match(/^(?:host|hostname|server|dbname|database|data\s?source)=(.+)$/);
+        if (kv) push(kv[1]);
+        const tns = cli === "sqlplus" && t.match(/@([\w.-]+)/);
+        if (tns) push(tns[1]);
+      }
+      push(env.PGHOST || env.MYSQL_HOST || env.REDISCLI_HOST);
+      push(env.PGDATABASE);
+      if (!ids.length) push("localhost");
+      break;
+    }
+  }
+  if (cli === "aws") for (const t of toks) if (/^s3:\/\//.test(t)) push(t.slice(5).split("/")[0]);
+  return ids;
+}
+
+function tierOf(ids, policy) {
+  if (!ids.length) return { tier: "unknown", by: null };
+  const lists = policy.environments || {};
+  // Explicit lists win, most sensitive first.
+  for (const tier of ["prod", "nonprod", "sandbox"]) {
+    const list = (lists[tier] || []).map((s) => String(s).toLowerCase());
+    for (const id of ids) if (list.includes(String(id).toLowerCase())) return { tier, by: id };
+  }
+  const tokensOf = (s) => String(s).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+  for (const tier of ["prod", "nonprod", "sandbox"]) {
+    const pats = new Set((policy.tierPatterns[tier] || []).map((s) => s.toLowerCase()));
+    for (const id of ids) {
+      const toks = tokensOf(id);
+      // Single-letter tokens ("p") only count at the start or end of an
+      // identifier, e.g. "app-p" or "p-core", never in the middle.
+      for (let i = 0; i < toks.length; i++) {
+        const t = toks[i];
+        if (!pats.has(t)) continue;
+        if (t.length <= 2 && i !== 0 && i !== toks.length - 1) continue;
+        return { tier, by: id };
+      }
+    }
+  }
+  return { tier: "unknown", by: null };
+}
+
+function regionsIn(toks) {
+  const v = flagValue(toks, ["--region", "--location", "-l", "--zone"]);
+  return v ? [v] : [];
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Evaluation
+// ────────────────────────────────────────────────────────────────────────────
+
+function applyOverride(rule, policy) {
+  const o = policy.overrides?.[rule.id];
+  if (!o) return rule.level;
+  const level = typeof o === "string" ? o : o.level;
+  if (!["allow", "ask", "deny"].includes(level)) return rule.level;
+  // Weakening a rule requires a written justification in the policy file.
+  if (RANK[level] < RANK[rule.level] && !(typeof o === "object" && o.justification && String(o.justification).length >= 20)) return rule.level;
+  return level;
+}
+
+function customRules(policy) {
+  return (policy.customRules || [])
+    .map((c) => {
+      try {
+        return { ...c, re: new RegExp(c.re, "i"), level: c.level === "deny" ? "deny" : c.level === "allow" ? "allow" : "ask" };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
+
+function evaluateCommand(command, ctx = {}) {
+  const cwd = ctx.cwd || process.cwd();
+  const policy = ctx.policy || loadPolicy(findProjectRoot(cwd));
+  const c = { ...ctx, cwd, policy };
+  const norm = normalise(command);
+  let result = { decision: "allow", rule: null, reason: "Read-only or non-cloud command.", fix: null, tier: null };
+
+  if (policy.__error) result = worst(result, { decision: "ask", rule: "POLICY-ERROR", reason: policy.__error, fix: "Ask a human to fix .cloud-guard/policy.json." });
+
+  // 1. Hard rules (and organisation custom rules) on the whole command and on
+  //    each segment, so a rule cannot be dodged by chaining.
+  const pieces = [norm, ...segments(command)];
+  const rules = [...customRules(policy), ...HARD_RULES];
+  const customAllow = new Set();
+  for (const rule of rules) {
+    for (const piece of pieces) {
+      if (!rule.re.test(piece)) continue;
+      const level = rule.level === "allow" ? "allow" : applyOverride(rule, policy);
+      if (rule.level === "allow") {
+        customAllow.add(piece);
+        break;
+      }
+      if (level === "allow") break;
+      result = worst(result, { decision: level, rule: rule.id, reason: rule.reason, fix: rule.fix || null });
+      break;
+    }
+  }
+  if (result.decision === "deny") return finish(result, command, c);
+
+  // 2. Classify each cloud CLI invocation and apply the environment matrix.
+  for (const seg of segments(command)) {
+    if (customAllow.has(seg)) continue;
+    CLI_RE.lastIndex = 0;
+    let m;
+    while ((m = CLI_RE.exec(seg))) {
+      const cli = m[1];
+      const toks = tokensAfter(seg, m.index + m[0].length);
+      const { kind, verb } = classifyInvocation(cli, toks);
+      if (kind === "read") continue;
+      const ids = targetIdentifiers(cli, toks, seg, c);
+      let { tier, by } = tierOf(ids, policy);
+      if (tier === "unknown") tier = policy.unknownEnvironmentAs === "prod" ? "prod" : "unknown";
+      const pos = positionals(cli, toks);
+      const label =
+        cli === "aws" ? `aws ${pos.slice(0, 2).join(" ")}`
+        : cli === "az" ? `az ${pos.join(" ")}`
+        : cli === "gcloud" ? `gcloud ${pos.slice(0, Math.max(1, pos.indexOf(verb) + 1)).join(" ")}`
+        : DB_CLIS.has(cli) ? `${cli} ${verb}`.trim()
+        : `${cli} ${verb || ""}`.trim();
+      const where = by ? ` (target "${by}" is ${tier})` : tier === "unknown" ? " (target environment could not be determined)" : ` (${tier})`;
+
+      let decision;
+      if (policy.mode === "readonly") decision = "deny";
+      else if (tier === "prod") decision = policy.prodMutations === "ask" ? "ask" : "deny";
+      else if (tier === "sandbox" && policy.mode === "standard" && kind === "mutate") decision = "allow";
+      else decision = "ask";
+
+      // Region allow-list
+      const regions = regionsIn(toks);
+      if (policy.allowedRegions?.length && regions.some((rg) => !policy.allowedRegions.map((x) => x.toLowerCase()).includes(rg.toLowerCase()))) {
+        result = worst(result, { decision: "deny", rule: "REGION-NOT-ALLOWED", reason: `Region ${regions.join(", ")} is not in allowedRegions (${policy.allowedRegions.join(", ")}).`, fix: "Use an approved region or ask the platform owner to extend allowedRegions.", tier });
+        continue;
+      }
+
+      const reason =
+        decision === "deny"
+          ? policy.mode === "readonly"
+            ? `Guard is in readonly mode; "${label}" changes infrastructure.`
+            : `"${label}" is a ${kind} operation against production${where}. Agents do not change production directly.`
+          : `"${label}" is a ${kind} operation${where}.`;
+      const fix =
+        decision === "deny"
+          ? "Write the change as IaC and open a pull request, or produce a runbook for a human / the deployment pipeline to execute."
+          : "Show the human the exact command, target account/subscription/project, expected effect and rollback before running it.";
+      result = worst(result, { decision, rule: `ENV-${kind.toUpperCase()}`, reason, fix, tier });
+    }
+  }
+  return finish(result, command, c);
+}
+
+function evaluateFileAccess({ filePath, content, op }, ctx = {}) {
+  const cwd = ctx.cwd || process.cwd();
+  const policy = ctx.policy || loadPolicy(findProjectRoot(cwd));
+  const fp = String(filePath || "");
+  let result = { decision: "allow", rule: null, reason: "File access allowed.", fix: null };
+  const isExample = /(?:\.example|\.sample|\.template|\.dist)$|(?:^|[\\/])(?:examples?|fixtures?|testdata)[\\/]/i.test(fp);
+
+  for (const p of PROTECTED_PATHS) {
+    if (p.re.test(fp) && !(p.id === "PATH-KEYS" && /\.pub$/.test(fp) && op === "read")) {
+      // Public keys and *.example files may be read.
+      if (isExample && op === "read") continue;
+      result = worst(result, { decision: "deny", rule: p.id, reason: `${p.reason} Agents may not ${op} ${path.basename(fp)}.`, fix: "Reference the credential by name / ARN / resource id instead of opening it." });
+    }
+  }
+  if (op !== "read" && GUARD_PATHS.test(fp)) {
+    result = worst(result, { decision: "deny", rule: "GUARD-TAMPER", reason: "The guard policy and agent hook settings can only be changed by a human.", fix: "Describe the change you need and ask the human to make it." });
+  }
+  if (op !== "read" && policy.secretWriteGuard && content && !isExample) {
+    for (const s of SECRET_CONTENT) {
+      if (s.re.test(String(content))) {
+        result = worst(result, { decision: "deny", rule: s.id, reason: `Content contains what looks like a secret (${s.reason}). Secrets never go into files an agent writes.`, fix: "Reference a secret manager (AWS Secrets Manager / SSM, Azure Key Vault, GCP Secret Manager) or an environment variable injected at runtime." });
+        break;
+      }
+    }
+  }
+  return finish(result, `${op} ${fp}`, { ...ctx, cwd, policy });
+}
+
+function redact(s) {
+  let out = String(s);
+  for (const r of SECRET_CONTENT) out = out.replace(new RegExp(r.re.source, r.re.flags.includes("g") ? r.re.flags : r.re.flags + "g"), "[REDACTED]");
+  return out.slice(0, 2000);
+}
+
+function finish(result, subject, ctx) {
+  const policy = ctx.policy;
+  if (policy?.audit && result.decision !== "allow" && !ctx.noAudit) {
+    try {
+      const dir = path.join(policy.__root, ".cloud-guard");
+      if (fs.existsSync(dir)) {
+        fs.appendFileSync(
+          path.join(dir, "audit.jsonl"),
+          JSON.stringify({ ts: new Date().toISOString(), agent: ctx.agent || "cli", decision: result.decision, rule: result.rule, tier: result.tier || null, subject: redact(subject) }) + "\n",
+        );
+      }
+    } catch {}
+  }
+  // Lightweight counters for `report`: one line per check, no command text.
+  if (policy && policy.stats !== false && !ctx.noAudit) {
+    try {
+      const dir = path.join(policy.__root, ".cloud-guard");
+      if (fs.existsSync(dir)) {
+        const f = path.join(dir, "stats.jsonl");
+        try {
+          if (fs.statSync(f).size > 5_000_000) fs.renameSync(f, f + ".1");
+        } catch {}
+        const kind = /^(?:read|write) /.test(String(subject)) ? "file" : (String(subject).match(CLI_RE_ONE) || [])[1] || "shell";
+        fs.appendFileSync(f, JSON.stringify({ ts: new Date().toISOString(), agent: ctx.agent || "cli", d: result.decision, rule: result.rule || null, tier: result.tier || null, kind }) + "\n");
+      }
+    } catch {}
+  }
+  return result;
+}
+const CLI_RE_ONE = new RegExp(String.raw`(?:^|[\s(=;&|])(?:[\w./\\-]*[\\/])?(aws|az|gcloud|gsutil|bq|kubectl|helm|terraform|tofu|terragrunt|pulumi|cdk|git|gh|psql|mysql|sqlcmd|sqlplus|mongosh|redis-cli|npm|pnpm|yarn|mvn|gradle|dotnet|docker|python|pip|uv|go)(?=\s|$)`, "i");
+
+// ────────────────────────────────────────────────────────────────────────────
+// Hook adapters
+// ────────────────────────────────────────────────────────────────────────────
+
+function message(r) {
+  const head = r.decision === "deny" ? "cloud-guard BLOCKED" : "cloud-guard needs human approval";
+  return `${head} [${r.rule}]: ${r.reason}${r.fix ? ` Safer path: ${r.fix}` : ""}`;
+}
+
+const SHELL_TOOLS = new Set(["bash", "shell", "run_shell_command", "powershell", "terminal", "run_terminal_cmd", "execute_command"]);
+const READ_TOOLS = new Set(["read", "read_file", "read_many_files", "view", "notebookread"]);
+const WRITE_TOOLS = new Set(["write", "edit", "multiedit", "notebookedit", "write_file", "replace", "create_file", "str_replace", "apply_patch"]);
+
+function evaluateHookPayload(payload, format, cwdHint) {
+  const cwd = payload.cwd || cwdHint || process.env.CLAUDE_PROJECT_DIR || payload.workspace_roots?.[0] || process.cwd();
+  const root = findProjectRoot(process.env.CLAUDE_PROJECT_DIR || payload.workspace_roots?.[0] || cwd);
+  const policy = loadPolicy(root);
+  const ctx = { cwd, policy, agent: format };
+
+  // Cursor sends the command / file at top level.
+  if (format === "cursor") {
+    if (typeof payload.command === "string") return evaluateCommand(payload.command, ctx);
+    if (payload.file_path) return evaluateFileAccess({ filePath: payload.file_path, content: null, op: "read" }, ctx);
+    return { decision: "allow" };
+  }
+
+  const tool = String(payload.tool_name || "").toLowerCase();
+  const input = payload.tool_input || {};
+  if (SHELL_TOOLS.has(tool) || typeof input.command === "string") return evaluateCommand(input.command || "", ctx);
+  if (READ_TOOLS.has(tool)) {
+    const fp = input.file_path || input.absolute_path || input.path || "";
+    if (Array.isArray(input.paths)) return input.paths.map((p) => evaluateFileAccess({ filePath: p, op: "read" }, ctx)).reduce(worst, { decision: "allow" });
+    return evaluateFileAccess({ filePath: fp, op: "read" }, ctx);
+  }
+  if (WRITE_TOOLS.has(tool)) {
+    const fp = input.file_path || input.absolute_path || input.path || "";
+    const content = [input.content, input.new_string, input.new_str, ...(Array.isArray(input.edits) ? input.edits.map((e) => e.new_string) : []), input.patch, input.input].filter(Boolean).join("\n");
+    return evaluateFileAccess({ filePath: fp, content, op: "write" }, ctx);
+  }
+  return { decision: "allow" };
+}
+
+function renderHookResponse(r, format, policy) {
+  switch (format) {
+    case "claude":
+      // Allow → no output, so Claude Code's normal permission rules still apply.
+      if (r.decision === "allow") return { stdout: "", code: 0 };
+      return {
+        stdout: JSON.stringify({ hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: r.decision, permissionDecisionReason: message(r) } }),
+        code: 0,
+      };
+    case "cursor":
+      if (r.decision === "allow") return { stdout: JSON.stringify({ permission: "allow" }), code: 0 };
+      return { stdout: JSON.stringify({ permission: r.decision, user_message: message(r), agent_message: message(r) }), code: 0 };
+    case "gemini": {
+      let d = r.decision;
+      if (d === "ask") d = (policy?.geminiAskAs || "deny") === "allow" ? "allow" : "deny";
+      if (d === "allow") return { stdout: JSON.stringify({ decision: "allow" }), code: 0 };
+      return { stdout: JSON.stringify({ decision: "deny", reason: message(r) + (r.decision === "ask" ? " (Gemini hooks cannot ask: show the command to the human and let them run it.)" : "") }), code: 0 };
+    }
+    default:
+      return { stdout: JSON.stringify(r, null, 2), code: RANK[r.decision] };
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Secret scanner (CLI `scan`) used by the validator and as a pre-commit hook
+// ────────────────────────────────────────────────────────────────────────────
+
+const SKIP_DIRS = new Set(["node_modules", ".git", ".terraform", "dist", "build", ".venv", "venv", "__pycache__", "cdk.out", ".next"]);
+function scanPath(target) {
+  const findings = [];
+  const walk = (p) => {
+    let st;
+    try {
+      st = fs.statSync(p);
+    } catch {
+      return;
+    }
+    if (st.isDirectory()) {
+      if (SKIP_DIRS.has(path.basename(p))) return;
+      for (const f of fs.readdirSync(p)) walk(path.join(p, f));
+      return;
+    }
+    if (st.size > 2_000_000) return;
+    let txt;
+    try {
+      txt = fs.readFileSync(p, "utf8");
+    } catch {
+      return;
+    }
+    if (txt.includes("\u0000")) return;
+    for (const s of SECRET_CONTENT) {
+      const m = txt.match(s.re);
+      if (m) {
+        const line = txt.slice(0, m.index).split("\n").length;
+        findings.push({ file: p, line, rule: s.id, reason: s.reason });
+      }
+    }
+  };
+  walk(target);
+  return findings;
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+
+window.CloudGuard = { evaluateCommand, evaluateFileAccess, DEFAULT_POLICY, HARD_RULES, VERSION };
+})();</script>
+<script>
+(function () {
+  const cat = JSON.parse(document.getElementById("catalog").textContent || '{"skills":[],"groups":{},"repo":"OWNER/ai-cloud-skills","version":""}');
+  const REPO = cat.repo;
+  const GH = "https://github.com/" + REPO;
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  $("gh-link").href = GH;
+  for (const a of document.querySelectorAll('#use a[href*="your-github-user"], #compare a[href*="your-github-user"]')) a.href = a.href.replace("nkandagatla/ai-cloud-skills", REPO);
+  for (const pre of document.querySelectorAll("#use pre")) pre.innerHTML = pre.innerHTML.split("nkandagatla/ai-cloud-skills").join(esc(REPO));
+  $("fv").textContent = "v" + cat.version;
+
+  const count = (g) => cat.skills.filter((s) => s.group === g).length;
+  const rulesN = window.CloudGuard ? window.CloudGuard.HARD_RULES.length : 0;
+  $("stats").innerHTML = [
+    ["Skills", cat.skills.length],
+    ["Packs", Object.keys(cat.groups).length],
+    ["Hard rules", rulesN],
+  ].map(([k, v]) => `<span><b>${v}</b> ${k}</span>`).join("");
+  if (window.CloudGuard) $("gv").textContent = "v" + window.CloudGuard.VERSION;
+
+  /* ── live guard ── */
+  const examples = [
+    "aws s3api put-bucket-acl --bucket acme-exports --acl public-read",
+    "git push -f origin main",
+    "psql -h orders-db -c \"delete from orders;\"",
+    "psql -h orders-db -c \"select count(*) from orders\"",
+    "git add .env",
+    "npm publish",
+    "aws ec2 describe-instances --region us-east-1",
+    "terraform apply -auto-approve",
+    "terraform plan -out tfplan",
+    "az vm restart -n vm-orders-01 -g rg-orders",
+    "gcloud projects add-iam-policy-binding acme-dev --member=allUsers --role=roles/viewer",
+    "kubectl get secret db-creds -o yaml",
+    "cat ~/.aws/credentials",
+    "aws ecs update-service --cluster c --service orders --task-definition orders:42",
+    "gcloud run deploy orders --image IMAGE --region us-central1",
+    "kubectl delete ns feature-123",
+    "aws sts get-caller-identity && aws cloudtrail stop-logging --name org-trail",
+  ];
+  $("examples").innerHTML = examples.map((e, i) => `<button class="chip" data-i="${i}" type="button">${esc(e.length > 46 ? e.slice(0, 44) + "…" : e)}</button>`).join("");
+  $("examples").addEventListener("click", (ev) => {
+    const b = ev.target.closest(".chip");
+    if (!b) return;
+    $("cmd").value = examples[+b.dataset.i];
+    check();
+  });
+
+  function policy() {
+    const CG = window.CloudGuard;
+    return Object.assign({}, CG.DEFAULT_POLICY, {
+      detectActiveContext: false, audit: false, __root: "/repo",
+      environments: { prod: ["acme-prod"], nonprod: ["acme-dev"], sandbox: ["acme-sbx"] },
+    });
+  }
+  function check() {
+    const CG = window.CloudGuard;
+    if (!CG) return;
+    const t = $("target").value;
+    const id = "acme-" + t;
+    const env = { AWS_PROFILE: id, AZURE_SUBSCRIPTION_ID: id, CLOUDSDK_CORE_PROJECT: id, PULUMI_STACK: id };
+    const cmd = $("cmd").value;
+    let r;
+    const fileRead = cmd.trim().match(/^(?:read|open)\s+(\S+)$/i);
+    if (fileRead) r = CG.evaluateFileAccess({ filePath: fileRead[1], op: "read" }, { policy: policy(), noAudit: true });
+    else r = CG.evaluateCommand(cmd, { policy: policy(), env, cwd: "/repo/envs/" + (t === "sbx" ? "sandbox" : t), noAudit: true });
+    const v = $("verdict");
+    v.dataset.d = r.decision;
+    $("v-tag").textContent = r.decision.toUpperCase() + (r.rule ? "  ·  " + r.rule : "");
+    $("v-why").textContent = r.reason || "";
+    $("v-fix").textContent = r.fix ? "Safer path: " + r.fix : "";
+  }
+  $("cmd").addEventListener("input", check);
+  $("target").addEventListener("change", check);
+  check();
+
+  /* ── install tabs ── */
+  const npx = "npx github:" + REPO;
+  const tabs = [
+    { id: "any", name: "Any agent", tag: "recommended", enf: "hook", title: "One command, every agent",
+      body: `<p>Run inside your repository (development or IaC). It asks which agents and clouds you use, then installs skills, the guard, hooks and instruction files. Re-run to update; it is idempotent.</p>`,
+      code: `${npx} install\n\n<span class="c"># non-interactive: pick agents and skill packs</span>\n${npx} install --agents claude,cursor,copilot --packs aws,git,lang,db,ai\n\n<span class="c"># strictest: the agent can only read and plan</span>\n${npx} install --mode readonly\n\n<span class="c"># extras: CI checks on PRs and a pre-commit secret scan</span>\n${npx} install --with-ci --with-precommit\n\n${npx} doctor      <span class="c"># verify</span>\n${npx} uninstall   <span class="c"># remove everything it added</span>`,
+      after: `<ul><li>Then run <code>/setup-cloud-skills</code> in your agent to write <code>CLOUD.md</code> and list your production accounts, subscriptions and projects in <code>.cloud-guard/policy.json</code>.</li><li>Use <code>--scope user</code> to install once for every repo on your machine.</li></ul>` },
+    { id: "claude", name: "Claude Code", tag: "plugin", enf: "hook", title: "Claude Code",
+      body: `<p>Install as a plugin from this repository's marketplace. Choose all clouds or one. The plugin ships the guard as a <code>PreToolUse</code> hook.</p>`,
+      code: `claude plugin marketplace add ${REPO}\nclaude plugin install ai-cloud-skills@ai-cloud-skills\n\n<span class="c"># or a single cloud</span>\nclaude plugin install ai-cloud-skills-aws@ai-cloud-skills\nclaude plugin install ai-cloud-skills-azure@ai-cloud-skills\nclaude plugin install ai-cloud-skills-gcp@ai-cloud-skills\nclaude plugin install ai-cloud-skills-dev@ai-cloud-skills     <span class="c"># git, languages, databases, AI cost</span>\n\n<span class="c"># per-repo files instead (policy, CLAUDE.md, deny rules)</span>\n${npx} install --agents claude`,
+      after: `<ul><li>Use the plugin or the per-repo install, not both, or every skill appears twice.</li><li>Call skills by name (<code>/ask-skills</code>, <code>/setup-cloud-skills</code>, <code>/write-company-skill</code>) or let Claude pick them from the task.</li><li>The plugin also adds the token-saver output hook.</li></ul>` },
+    { id: "codex", name: "OpenAI Codex", tag: "AGENTS.md", enf: "inst", title: "OpenAI Codex",
+      body: `<p>Skills go to <code>.agents/skills/</code>, which Codex scans from your working directory up to the repo root. Guardrails are added to <code>AGENTS.md</code>. Each skill carries <code>agents/openai.yaml</code> metadata, and user-invoked skills are excluded from implicit invocation.</p>`,
+      code: `${npx} install --agents codex\n\n<span class="c"># call a skill explicitly</span>\n$aws-iam review this policy`,
+      after: `<ul><li>Keep Codex approvals on (<code>approval_policy = "on-request"</code>). There is no pre-execution hook here, so the agent is told to run <code>node .cloud-guard/bin/cloud-guard.mjs check -- &lt;cmd&gt;</code> first.</li></ul>` },
+    { id: "cursor", name: "Cursor", tag: "hooks", enf: "hook", title: "Cursor",
+      body: `<p>Skills go to <code>.agents/skills/</code>. The guard is wired into <code>.cursor/hooks.json</code> on <code>beforeShellExecution</code> and <code>beforeReadFile</code> with fail-closed set, and an always-on rule carries the guardrails.</p>`,
+      code: `${npx} install --agents cursor`,
+      after: `<ul><li>Review <code>.cursor/hooks.json</code> in your PR; hooks run project scripts.</li></ul>` },
+    { id: "copilot", name: "GitHub Copilot", tag: "VS Code · CLI", enf: "inst", title: "GitHub Copilot",
+      body: `<p>VS Code and the Copilot CLI read project skills from <code>.agents/skills/</code>. Guardrails are added to <code>.github/copilot-instructions.md</code>.</p>`,
+      code: `${npx} install --agents copilot`,
+      after: `<ul><li>Keep terminal command approval on in VS Code agent mode; Copilot gets instruction-level guardrails here.</li></ul>` },
+    { id: "gemini", name: "Gemini CLI", tag: "hooks", enf: "hook", title: "Gemini CLI",
+      body: `<p>Skills go to <code>.agents/skills/</code> (a Gemini workspace skills path). The guard runs as a <code>BeforeTool</code> hook in <code>.gemini/settings.json</code>. Gemini hooks cannot pause for approval, so "ask" decisions are blocked by default with a message to show the command to you.</p>`,
+      code: `${npx} install --agents gemini\n\n<span class="c"># skills only, without the guard</span>\ngemini skills install https://github.com/${REPO}.git --path skills/core\ngemini skills install https://github.com/${REPO}.git --path skills/aws`,
+      after: `<ul><li>Never run Gemini with <code>--yolo</code> on cloud repos.</li></ul>` },
+    { id: "windsurf", name: "Windsurf", tag: "rules", enf: "inst", title: "Windsurf",
+      body: `<p>Skills go to <code>.agents/skills/</code>, with an always-on guardrail rule and one model-decision rule per skill in <code>.windsurf/rules/</code> that points Cascade at the right <code>SKILL.md</code>.</p>`,
+      code: `${npx} install --agents windsurf` },
+    { id: "other", name: "Other tools", tag: "skills.sh", enf: "inst", title: "OpenCode, Amp, Devin and others",
+      body: `<p>Any tool that reads the Agent Skills format can use the folders as-is. skills.sh copies skill files only, without the guard.</p>`,
+      code: `${npx} install --agents opencode         <span class="c"># .agents/skills + AGENTS.md + guard</span>\nnpx skills@latest add ${REPO}             <span class="c"># skills only</span>` },
+  ];
+  let active = "any";
+  try { active = localStorage.getItem("acs-tab") || "any"; } catch (e) {}
+  if (location.hash && tabs.some((t) => "#" + t.id === location.hash)) active = location.hash.slice(1);
+  function renderTabs() {
+    $("tabs").innerHTML = tabs.map((t) => `<button class="tab" role="tab" id="tab-${t.id}" aria-selected="${t.id === active}" data-id="${t.id}" type="button">${esc(t.name)} <small>${esc(t.tag)}</small></button>`).join("");
+    const t = tabs.find((x) => x.id === active) || tabs[0];
+    const plain = t.code.replace(/<span class="c">.*?<\/span>/g, "").replace(/[ \t]+$/gm, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    $("pane").innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between">
+        <h3>${esc(t.title)}</h3>
+        <span class="enf ${t.enf}">${t.enf === "hook" ? "Guard enforced by hook" : "Instruction-level guardrails"}</span>
+      </div>
+      ${t.body}
+      <div class="code"><button class="copy" type="button" data-copy="${esc(plain)}">Copy</button><pre>${t.code}</pre></div>
+      ${t.after || ""}`;
+    $("pane").setAttribute("aria-labelledby", "tab-" + t.id);
+  }
+  $("tabs").addEventListener("click", (e) => {
+    const b = e.target.closest(".tab");
+    if (!b) return;
+    active = b.dataset.id;
+    try { localStorage.setItem("acs-tab", active); } catch (err) {}
+    renderTabs();
+  });
+  $("pane").addEventListener("click", async (e) => {
+    const b = e.target.closest(".copy");
+    if (!b) return;
+    const text = b.dataset.copy;
+    try { await navigator.clipboard.writeText(text); b.textContent = "Copied"; }
+    catch (err) {
+      const r = document.createRange(); r.selectNodeContents(b.nextElementSibling);
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected";
+    }
+    setTimeout(() => (b.textContent = "Copy"), 1600);
+  });
+  renderTabs();
+
+  /* ── catalog ── */
+  const groups = [["all", "All"], ["core", "Core"], ["aws", "AWS"], ["azure", "Azure"], ["gcp", "GCP"], ["git", "Git"], ["lang", "Languages"], ["db", "Databases"], ["ai", "AI cost"]];
+  let g = "all";
+  $("groups").innerHTML = groups.map(([k, l]) => `<button type="button" data-g="${k}" aria-pressed="${k === g}">${l}<span>${k === "all" ? cat.skills.length : count(k)}</span></button>`).join("");
+  $("groups").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    g = b.dataset.g;
+    [...$("groups").children].forEach((x) => x.setAttribute("aria-pressed", x.dataset.g === g));
+    renderGrid();
+  });
+  $("q").addEventListener("input", renderGrid);
+  function renderGrid() {
+    const q = $("q").value.trim().toLowerCase();
+    const items = cat.skills.filter((s) => (g === "all" || s.group === g) && (!q || (s.name + " " + s.description).toLowerCase().includes(q)));
+    $("grid").innerHTML = items.map((s) => `
+      <article class="skill">
+        <div class="skill-top">
+          <a class="name" href="${GH}/blob/main/${s.path}">${esc(s.name)}</a>
+          <span class="badge ${s.userInvoked ? "cmd" : ""}">${s.userInvoked ? "/command" : esc(cat.groups[s.group] ? s.group : "")}</span>
+        </div>
+        <p>${esc(s.description.split(" Use ")[0])}</p>
+      </article>`).join("");
+    $("empty").hidden = items.length > 0;
+  }
+  renderGrid();
+})();
+</script>

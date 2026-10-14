@@ -1,0 +1,890 @@
+{
+  "version": "1.3.1",
+  "repo": "nkandagatla/ai-cloud-skills",
+  "generated": "build",
+  "groups": {
+    "core": "Core (guardrails and cross-cloud)",
+    "aws": "Amazon Web Services",
+    "azure": "Microsoft Azure",
+    "gcp": "Google Cloud",
+    "git": "Git and source control",
+    "lang": "Languages",
+    "db": "Databases",
+    "ai": "AI token cost and context"
+  },
+  "skills": [
+    {
+      "name": "ask-skills",
+      "group": "core",
+      "title": "Ask Skills",
+      "description": "Router for the company skills library. Use when you are not sure which skill or flow fits a task - cloud (AWS, Azure, GCP), infrastructure, git, languages (HTML/CSS, JS/TS, Node.js, Python, Java, Go, .NET, shell), databases, security, or AI token cost.",
+      "userInvoked": true,
+      "lines": 54,
+      "path": "skills/core/ask-skills/SKILL.md"
+    },
+    {
+      "name": "cicd-oidc",
+      "group": "core",
+      "title": "CI/CD with OIDC",
+      "description": "Secure CI/CD to AWS, Azure and GCP with OIDC federation (no stored cloud keys) for GitHub Actions, GitLab CI and Azure DevOps - trust policies, plan-on-PR / apply-on-merge pipelines, environment approvals and pipeline hardening. Use when creating or reviewing a deployment pipeline or replacing CI secrets.",
+      "userInvoked": false,
+      "lines": 132,
+      "path": "skills/core/cicd-oidc/SKILL.md"
+    },
+    {
+      "name": "cloud-change-plan",
+      "group": "core",
+      "title": "Cloud Change Plan",
+      "description": "The plan, approve, apply, verify, rollback protocol for any change to cloud infrastructure or Kubernetes. Use whenever you are about to create, modify, scale, deploy, or delete a cloud resource, or apply Terraform/Bicep/CloudFormation/CDK/Pulumi.",
+      "userInvoked": false,
+      "lines": 122,
+      "path": "skills/core/cloud-change-plan/SKILL.md"
+    },
+    {
+      "name": "cloud-compliance-mapping",
+      "group": "core",
+      "title": "Cloud Compliance Mapping",
+      "description": "Map cloud controls on AWS, Azure and GCP to compliance frameworks (CIS Benchmarks, NIST 800-53, SOC 2, ISO 27001, PCI DSS 4.0, HIPAA, GDPR data residency) and gather audit evidence with native tools. Use when preparing for an audit, answering a security questionnaire, or checking which cloud settings satisfy a control.",
+      "userInvoked": false,
+      "lines": 80,
+      "path": "skills/core/cloud-compliance-mapping/SKILL.md"
+    },
+    {
+      "name": "cloud-dr-backup",
+      "group": "core",
+      "title": "Cloud DR and Backup",
+      "description": "Backup, restore and disaster recovery on AWS, Azure and GCP - RPO/RTO tiers, AWS Backup, Azure Backup/Site Recovery, GCP Backup and DR, immutable and cross-region/cross-account copies, ransomware protection and restore drills. Use when designing DR, auditing backups, or restoring data.",
+      "userInvoked": false,
+      "lines": 100,
+      "path": "skills/core/cloud-dr-backup/SKILL.md"
+    },
+    {
+      "name": "cloud-guardrails",
+      "group": "core",
+      "title": "Cloud Guardrails",
+      "description": "Non-negotiable safety rules for any work that touches AWS, Azure, Google Cloud, Kubernetes or infrastructure-as-code. Use before running any cloud CLI, SDK, IaC or kubectl command, before editing Terraform/Bicep/CloudFormation/CDK/Pulumi, and whenever credentials, secrets, IAM, networking or production are involved.",
+      "userInvoked": false,
+      "lines": 107,
+      "path": "skills/core/cloud-guardrails/SKILL.md"
+    },
+    {
+      "name": "cloud-incident-response",
+      "group": "core",
+      "title": "Cloud Incident Response",
+      "description": "Incident triage and response on AWS, Azure and GCP - outages, performance degradation, failed deploys, and security incidents such as leaked credentials, public data exposure, crypto-mining or suspicious IAM activity. Read-only investigation first, containment with approval, evidence preservation and blameless postmortems. Use when something is broken or a security alert fires.",
+      "userInvoked": false,
+      "lines": 108,
+      "path": "skills/core/cloud-incident-response/SKILL.md"
+    },
+    {
+      "name": "cloud-mcp-setup",
+      "group": "core",
+      "title": "Cloud MCP Setup",
+      "description": "Connect AI agents to AWS, Azure and Google Cloud through official MCP servers in read-only mode, with dedicated least-privilege identities, for Claude Code, Cursor, VS Code Copilot, Gemini CLI and Codex. Use when the user wants the agent to query live cloud resources, docs or pricing through MCP.",
+      "userInvoked": true,
+      "lines": 111,
+      "path": "skills/core/cloud-mcp-setup/SKILL.md"
+    },
+    {
+      "name": "cloud-migration-mapping",
+      "group": "core",
+      "title": "Cloud Migration Mapping",
+      "description": "Map services and concepts between AWS, Azure and Google Cloud, and plan migrations (rehost/replatform/refactor) with data transfer, identity, networking and cutover guardrails. Use when translating an architecture between clouds, answering \"what is the Azure/GCP equivalent of X\", or planning a migration or multi-cloud setup.",
+      "userInvoked": false,
+      "lines": 79,
+      "path": "skills/core/cloud-migration-mapping/SKILL.md"
+    },
+    {
+      "name": "cloud-tagging-naming",
+      "group": "core",
+      "title": "Cloud Tagging and Naming",
+      "description": "Naming conventions and tagging/labelling standards for AWS, Azure and GCP, with enforcement (tag policies, Azure Policy, org policy/labels in IaC) and cost allocation. Use when naming new resources, adding tags in IaC, auditing untagged resources, or setting up cost allocation.",
+      "userInvoked": false,
+      "lines": 94,
+      "path": "skills/core/cloud-tagging-naming/SKILL.md"
+    },
+    {
+      "name": "container-supply-chain",
+      "group": "core",
+      "title": "Container Supply Chain",
+      "description": "Secure container and artifact supply chain across ECR, ACR, Artifact Registry - minimal base images, Dockerfile hardening, vulnerability scanning, SBOMs, signing with cosign/Notation, provenance (SLSA), registry access control, and admission policies that only allow signed images. Use when writing Dockerfiles, building images in CI, or securing registries and clusters.",
+      "userInvoked": false,
+      "lines": 112,
+      "path": "skills/core/container-supply-chain/SKILL.md"
+    },
+    {
+      "name": "engineering-guardrails",
+      "group": "core",
+      "title": "Engineering Guardrails",
+      "description": "Non-negotiable safety rules for everyday engineering work by an AI agent - source control, code changes, dependencies, databases, secrets, publishing artifacts, shell commands and AI token spend. Use before running git, package manager, database or shell commands, before editing code in a shared repository, and whenever secrets, production data or releases are involved. Cloud work additionally follows cloud-guardrails.",
+      "userInvoked": false,
+      "lines": 72,
+      "path": "skills/core/engineering-guardrails/SKILL.md"
+    },
+    {
+      "name": "finops-preflight",
+      "group": "core",
+      "title": "FinOps Preflight",
+      "description": "Estimate and control cost before creating or changing cloud resources on AWS, Azure or GCP - Infracost on Terraform plans, pricing calculators/APIs, budget alerts, and expensive-resource red flags (NAT, GPUs, cross-AZ/egress, provisioned throughput, logs). Use before any change that adds billable resources, or when asked \"how much will this cost?\".",
+      "userInvoked": false,
+      "lines": 69,
+      "path": "skills/core/finops-preflight/SKILL.md"
+    },
+    {
+      "name": "genai-platforms",
+      "group": "core",
+      "title": "GenAI Platforms (Bedrock, Azure OpenAI, Vertex AI)",
+      "description": "Build and operate generative AI workloads safely on Amazon Bedrock, Azure OpenAI / Azure AI Foundry and Google Vertex AI (Gemini) - model access, private networking, identity, content safety guardrails, prompt-injection defence, RAG data security, logging, quotas and cost controls. Use when building a chatbot, RAG, agents or any LLM feature on a cloud provider.",
+      "userInvoked": false,
+      "lines": 107,
+      "path": "skills/core/genai-platforms/SKILL.md"
+    },
+    {
+      "name": "iac-security-review",
+      "group": "core",
+      "title": "IaC Security Review",
+      "description": "Security and correctness review of infrastructure-as-code changes (Terraform/OpenTofu, CloudFormation, CDK, SAM, Bicep/ARM, Pulumi, Helm/Kubernetes manifests) for AWS, Azure and GCP. Use when reviewing an IaC diff or PR, before proposing an IaC change, or when asked \"is this Terraform safe?\".",
+      "userInvoked": false,
+      "lines": 115,
+      "path": "skills/core/iac-security-review/SKILL.md"
+    },
+    {
+      "name": "kubernetes-ops",
+      "group": "core",
+      "title": "Kubernetes Ops",
+      "description": "Safe Kubernetes operations on EKS, AKS and GKE - context checks, read-only triage, deployments, rollbacks, scaling, RBAC, Pod Security, NetworkPolicies, secrets handling, node maintenance and upgrades. Use for any kubectl or helm work, debugging pods, or reviewing cluster security.",
+      "userInvoked": false,
+      "lines": 125,
+      "path": "skills/core/kubernetes-ops/SKILL.md"
+    },
+    {
+      "name": "policy-as-code",
+      "group": "core",
+      "title": "Policy as Code",
+      "description": "Set up and run policy-as-code guardrails for infrastructure - Checkov, Trivy/tfsec, TFLint, OPA/Conftest, cfn-guard, PSRule for Azure, Kyverno/Gatekeeper, pre-commit and CI gates - plus cloud-native preventive controls (SCPs, Azure Policy, GCP Org Policy). Use when adding scanners to a repo or pipeline, writing a custom policy, or triaging policy failures.",
+      "userInvoked": false,
+      "lines": 162,
+      "path": "skills/core/policy-as-code/SKILL.md"
+    },
+    {
+      "name": "secrets-and-identity",
+      "group": "core",
+      "title": "Secrets and Identity",
+      "description": "Cross-cloud patterns for workload identity and secrets - IAM roles, IRSA/EKS Pod Identity, Azure managed identity and workload identity, GCP service accounts and Workload Identity Federation, secret managers, rotation, and how to remove long-lived keys. Use when an app or pipeline needs credentials, when you see access keys / client secrets / key JSON, or when designing secret handling.",
+      "userInvoked": false,
+      "lines": 71,
+      "path": "skills/core/secrets-and-identity/SKILL.md"
+    },
+    {
+      "name": "setup-cloud-skills",
+      "group": "core",
+      "title": "Setup Cloud Skills",
+      "description": "One-time setup per repository. Use when installing these skills in a repo or when environments change. Interviews the user and writes CLOUD.md (environments, accounts, regions, IaC, tagging, change process) and .cloud-guard/policy.json so the cloud skills and the cloud-guard hook know what is production.",
+      "userInvoked": true,
+      "lines": 114,
+      "path": "skills/core/setup-cloud-skills/SKILL.md"
+    },
+    {
+      "name": "terraform-workflow",
+      "group": "core",
+      "title": "Terraform Workflow",
+      "description": "Safe day-to-day Terraform/OpenTofu/Terragrunt workflow for AWS, Azure and GCP - repo layout, remote state with locking and encryption, provider/module pinning, plan review, imports, moved/removed blocks, drift detection and state recovery. Use when writing, refactoring, planning or troubleshooting Terraform.",
+      "userInvoked": false,
+      "lines": 139,
+      "path": "skills/core/terraform-workflow/SKILL.md"
+    },
+    {
+      "name": "well-architected-review",
+      "group": "core",
+      "title": "Well-Architected Review",
+      "description": "Architecture review of a workload against the AWS Well-Architected Framework, Azure Well-Architected Framework and Google Cloud Architecture Framework pillars (security, reliability, cost, performance, operational excellence, sustainability), producing a prioritized risk register. Use when reviewing a design, a new service before launch, or an existing workload's health.",
+      "userInvoked": true,
+      "lines": 62,
+      "path": "skills/core/well-architected-review/SKILL.md"
+    },
+    {
+      "name": "write-company-skill",
+      "group": "core",
+      "title": "Write a Company Skill",
+      "description": "Author a new company skill (or improve an existing one) for this library - scoping, the SKILL.md template, guardrail requirements, examples that pass the guard, review checklist, and the build/validate steps. Use when a team wants to document a process, platform or standard as an agent skill.",
+      "userInvoked": true,
+      "lines": 81,
+      "path": "skills/core/write-company-skill/SKILL.md"
+    },
+    {
+      "name": "aws-cloudformation-cdk",
+      "group": "aws",
+      "title": "AWS CloudFormation and CDK",
+      "description": "Author, review and deploy AWS CloudFormation, SAM and CDK safely - change sets, stack policies, termination protection, drift detection, StackSets, cdk diff/synth, cdk-nag, bootstrap security, rollback and recovery from UPDATE_ROLLBACK_FAILED. Use when working with CloudFormation templates, CDK apps or SAM deployments.",
+      "userInvoked": false,
+      "lines": 93,
+      "path": "skills/aws/aws-cloudformation-cdk/SKILL.md"
+    },
+    {
+      "name": "aws-cost-optimization",
+      "group": "aws",
+      "title": "AWS Cost Optimization",
+      "description": "Analyse and reduce AWS spend - Cost Explorer and CUR/Data Exports queries, top cost drivers, rightsizing with Compute Optimizer, Savings Plans/RI coverage analysis, idle and orphaned resources, storage and data-transfer savings, Graviton/Spot, budgets and anomaly detection. Use for cost reviews, unexpected bills, or optimisation plans on AWS.",
+      "userInvoked": false,
+      "lines": 94,
+      "path": "skills/aws/aws-cost-optimization/SKILL.md"
+    },
+    {
+      "name": "aws-databases",
+      "group": "aws",
+      "title": "AWS Databases",
+      "description": "Secure and operate AWS databases - RDS and Aurora (PostgreSQL/MySQL/SQL Server), DynamoDB, ElastiCache/MemoryDB - private networking, encryption, IAM and Secrets Manager auth, backups/PITR, Multi-AZ and global replicas, parameter changes, upgrades, failover, performance troubleshooting. Use for database provisioning, connectivity, performance, upgrades or recovery on AWS.",
+      "userInvoked": false,
+      "lines": 95,
+      "path": "skills/aws/aws-databases/SKILL.md"
+    },
+    {
+      "name": "aws-ec2-autoscaling",
+      "group": "aws",
+      "title": "AWS EC2 and Auto Scaling",
+      "description": "Operate EC2 and Auto Scaling groups safely - launch templates, AMIs and golden images, IMDSv2, EBS encryption, SSM Session Manager/Patch Manager/Run Command, instance refresh, scaling policies, Spot/Graviton, and troubleshooting unhealthy or unreachable instances. Use for EC2/ASG builds, patching, scaling, or instance issues.",
+      "userInvoked": false,
+      "lines": 95,
+      "path": "skills/aws/aws-ec2-autoscaling/SKILL.md"
+    },
+    {
+      "name": "aws-ecs-fargate",
+      "group": "aws",
+      "title": "Amazon ECS on Fargate",
+      "description": "Build, deploy and troubleshoot containers on Amazon ECS (Fargate and EC2) - task definitions with task/execution roles, secrets injection, awsvpc networking, service deployments (rolling, circuit breaker, blue/green), ECS Exec, autoscaling and logging. Use for ECS services, task definitions, deployment failures or stopped tasks.",
+      "userInvoked": false,
+      "lines": 94,
+      "path": "skills/aws/aws-ecs-fargate/SKILL.md"
+    },
+    {
+      "name": "aws-eks",
+      "group": "aws",
+      "title": "Amazon EKS",
+      "description": "Build and operate Amazon EKS securely - cluster endpoint access, access entries, EKS Pod Identity/IRSA, managed node groups/Karpenter/Auto Mode, add-ons, VPC CNI, AWS Load Balancer Controller, secrets encryption, logging, GuardDuty runtime, upgrades and troubleshooting. Use for any EKS cluster provisioning, upgrade, access, or node/pod networking issue.",
+      "userInvoked": false,
+      "lines": 105,
+      "path": "skills/aws/aws-eks/SKILL.md"
+    },
+    {
+      "name": "aws-foundations",
+      "group": "aws",
+      "title": "AWS Foundations",
+      "description": "AWS basics done safely - CLI v2 profiles and IAM Identity Center (SSO) login, account/region targeting, multi-account landing zone layout (Control Tower, OUs), account baseline (root lockdown, CloudTrail, Config, GuardDuty, Security Hub, budgets) and service quotas. Use when starting AWS work, setting up or auditing an account, or when the target account/region is unclear.",
+      "userInvoked": false,
+      "lines": 108,
+      "path": "skills/aws/aws-foundations/SKILL.md"
+    },
+    {
+      "name": "aws-iam",
+      "group": "aws",
+      "title": "AWS IAM",
+      "description": "Design, write, review and troubleshoot AWS IAM - least-privilege policies, roles and trust policies, permission boundaries, ABAC with tags, resource policies, cross-account access, IAM Identity Center permission sets, Access Analyzer, and AccessDenied debugging. Use for any IAM policy, role, trust relationship or permission error.",
+      "userInvoked": false,
+      "lines": 107,
+      "path": "skills/aws/aws-iam/SKILL.md"
+    },
+    {
+      "name": "aws-kms-secrets",
+      "group": "aws",
+      "title": "AWS KMS and Secrets",
+      "description": "AWS encryption keys and secrets - KMS key design, key policies and grants, rotation, multi-region keys, Secrets Manager (rotation, replication, resource policies), SSM Parameter Store SecureString, ACM certificates, and troubleshooting KMS AccessDenied. Use when creating or reviewing keys, key policies, secrets, rotation, or certificate issues.",
+      "userInvoked": false,
+      "lines": 85,
+      "path": "skills/aws/aws-kms-secrets/SKILL.md"
+    },
+    {
+      "name": "aws-networking",
+      "group": "aws",
+      "title": "AWS Networking",
+      "description": "AWS networking design and operations - VPC/subnet/CIDR planning, security groups and NACLs, NAT and egress, VPC endpoints/PrivateLink, Transit Gateway, VPN/Direct Connect, Route 53 (public/private/Resolver), load balancers, CloudFront/WAF, flow logs and Reachability Analyzer troubleshooting. Use for VPC design, connectivity problems, security group changes or DNS issues.",
+      "userInvoked": false,
+      "lines": 90,
+      "path": "skills/aws/aws-networking/SKILL.md"
+    },
+    {
+      "name": "aws-observability",
+      "group": "aws",
+      "title": "AWS Observability",
+      "description": "AWS monitoring and logging - CloudWatch metrics, alarms, dashboards, Logs Insights queries, log retention and cost, X-Ray/Application Signals/OpenTelemetry, Container Insights, CloudTrail investigation and CloudTrail Lake, SLOs and alert design. Use when investigating issues, writing alarms or log queries, or reviewing monitoring coverage on AWS.",
+      "userInvoked": false,
+      "lines": 102,
+      "path": "skills/aws/aws-observability/SKILL.md"
+    },
+    {
+      "name": "aws-organizations-governance",
+      "group": "aws",
+      "title": "AWS Organizations and Governance",
+      "description": "AWS multi-account governance and security posture - Organizations, OUs, Service Control Policies, Resource Control Policies, Control Tower controls, delegated administrators, org-wide CloudTrail/Config/GuardDuty/Security Hub/Inspector/Macie, and declarative policies. Use when writing or reviewing SCPs/RCPs, designing guardrails, or auditing org security posture.",
+      "userInvoked": false,
+      "lines": 150,
+      "path": "skills/aws/aws-organizations-governance/SKILL.md"
+    },
+    {
+      "name": "aws-s3",
+      "group": "aws",
+      "title": "Amazon S3",
+      "description": "Secure and operate Amazon S3 - Block Public Access, bucket policies, Object Ownership, encryption (SSE-S3/SSE-KMS/DSSE), versioning, Object Lock, lifecycle, replication, access points, presigned URLs, CloudFront OAC for public content, access logging, Macie, and troubleshooting 403s. Use for any bucket creation, policy, data access, or S3 permission problem.",
+      "userInvoked": false,
+      "lines": 118,
+      "path": "skills/aws/aws-s3/SKILL.md"
+    },
+    {
+      "name": "aws-security-automation",
+      "group": "aws",
+      "title": "AWS Security Automation (auto-remediation)",
+      "description": "Build guarded security auto-remediation on AWS - EventBridge rules on GuardDuty/Security Hub/Config/CloudTrail events, Lambda and SSM Automation runbooks, AWS Config remediation, Security Hub automation rules, notification pipelines, with dry-run, scoping, kill switches and audit trails. Use when automating detection-to-response, writing remediation Lambdas/runbooks, or reviewing existing auto-remediation.",
+      "userInvoked": false,
+      "lines": 118,
+      "path": "skills/aws/aws-security-automation/SKILL.md"
+    },
+    {
+      "name": "aws-serverless",
+      "group": "aws",
+      "title": "AWS Serverless",
+      "description": "Build and operate AWS serverless applications - Lambda (roles, packaging, versions/aliases, concurrency, VPC, layers, function URLs), API Gateway (REST/HTTP, authorizers, WAF, throttling), Step Functions, EventBridge, SQS/SNS (DLQs, idempotency), with SAM/CDK/Terraform deployment and troubleshooting. Use for serverless architectures, Lambda errors/timeouts/throttles, or API Gateway issues.",
+      "userInvoked": false,
+      "lines": 100,
+      "path": "skills/aws/aws-serverless/SKILL.md"
+    },
+    {
+      "name": "azure-aks",
+      "group": "azure",
+      "title": "Azure Kubernetes Service (AKS)",
+      "description": "Build and operate Azure Kubernetes Service securely - Entra ID integration with Azure RBAC, local accounts disabled, private cluster/authorized IPs, workload identity, node pools and upgrades (auto-upgrade channels, node OS), Azure CNI Overlay/Cilium, network policies, Key Vault CSI, Azure Policy add-on, Defender for Containers, and troubleshooting. Use for AKS provisioning, upgrades, access, or cluster networking issues.",
+      "userInvoked": false,
+      "lines": 121,
+      "path": "skills/azure/azure-aks/SKILL.md"
+    },
+    {
+      "name": "azure-app-service-functions",
+      "group": "azure",
+      "title": "Azure App Service and Functions",
+      "description": "Secure and operate Azure App Service (Web Apps) and Azure Functions - plans (Flex Consumption, Premium, Dedicated), managed identity, Key Vault references, VNet integration and private endpoints, deployment slots and zero-downtime swaps, Easy Auth, TLS/FTPS settings, App Insights, scaling and troubleshooting. Use for web app or function deployments, configuration, or runtime errors on Azure.",
+      "userInvoked": false,
+      "lines": 76,
+      "path": "skills/azure/azure-app-service-functions/SKILL.md"
+    },
+    {
+      "name": "azure-bicep",
+      "group": "azure",
+      "title": "Azure Bicep",
+      "description": "Author, review and deploy Azure Bicep/ARM safely - module structure, Azure Verified Modules, parameters files (.bicepparam), @secure() params and Key Vault references, linter configuration, what-if, incremental vs complete mode, Deployment Stacks with deny settings, deployment scopes, and troubleshooting failed deployments. Use when writing Bicep, reviewing ARM templates, or deploying Azure infrastructure as code.",
+      "userInvoked": false,
+      "lines": 121,
+      "path": "skills/azure/azure-bicep/SKILL.md"
+    },
+    {
+      "name": "azure-container-apps",
+      "group": "azure",
+      "title": "Azure Container Apps and ACR",
+      "description": "Deploy and operate Azure Container Apps and Azure Container Registry securely - environments with VNet integration and internal ingress, managed identity image pulls, Key Vault secret references, revisions and traffic splitting, KEDA scaling, Dapr, jobs, and troubleshooting. Use for container deployments on Container Apps, ACR configuration, or revision/scaling issues.",
+      "userInvoked": false,
+      "lines": 91,
+      "path": "skills/azure/azure-container-apps/SKILL.md"
+    },
+    {
+      "name": "azure-cost-management",
+      "group": "azure",
+      "title": "Azure Cost Management",
+      "description": "Analyse and reduce Azure spend - Cost Management queries and exports, top cost drivers by service/resource group/tag, Azure Advisor cost recommendations, reservations and savings plan analysis, idle and orphaned resources, VM/AKS/database rightsizing, storage tiering, Log Analytics costs, budgets and anomaly alerts. Use for Azure cost reviews, bill spikes, or optimisation plans.",
+      "userInvoked": false,
+      "lines": 92,
+      "path": "skills/azure/azure-cost-management/SKILL.md"
+    },
+    {
+      "name": "azure-databases",
+      "group": "azure",
+      "title": "Azure Databases",
+      "description": "Secure and operate Azure databases - Azure SQL Database/Managed Instance, Azure Database for PostgreSQL/MySQL Flexible Server, Cosmos DB, Azure Cache for Redis - Entra-only authentication, private endpoints, TDE with CMK, auditing, Defender for SQL, backups/PITR/LTR, geo-replication and failover groups, scaling and performance troubleshooting. Use for database provisioning, connectivity, performance, failover or restores on Azure.",
+      "userInvoked": false,
+      "lines": 81,
+      "path": "skills/azure/azure-databases/SKILL.md"
+    },
+    {
+      "name": "azure-entra-rbac",
+      "group": "azure",
+      "title": "Azure Entra ID and RBAC",
+      "description": "Azure identity and access - Entra ID users/groups/apps/service principals, managed identities, workload identity federation, Azure RBAC role assignments and custom roles, PIM, Conditional Access, data-plane roles, and troubleshooting AuthorizationFailed. Use for role assignments, app registrations, managed identity setup, access reviews, or permission errors on Azure.",
+      "userInvoked": false,
+      "lines": 89,
+      "path": "skills/azure/azure-entra-rbac/SKILL.md"
+    },
+    {
+      "name": "azure-foundations",
+      "group": "azure",
+      "title": "Azure Foundations",
+      "description": "Azure basics done safely - az CLI login and subscription targeting, tenants/management groups/subscriptions/resource groups hierarchy, Azure Landing Zones (CAF), subscription baseline (Defender, Activity Log export, policies, budgets, locks), resource providers and quotas. Use when starting Azure work, auditing a subscription, or when the target tenant/subscription is unclear.",
+      "userInvoked": false,
+      "lines": 89,
+      "path": "skills/azure/azure-foundations/SKILL.md"
+    },
+    {
+      "name": "azure-key-vault",
+      "group": "azure",
+      "title": "Azure Key Vault",
+      "description": "Azure Key Vault and Managed HSM - RBAC authorization mode, network isolation, soft delete and purge protection, secrets/keys/certificates lifecycle, rotation policies and near-expiry events, Key Vault references, CMK for other services, and troubleshooting access. Use when creating or reviewing vaults, granting access to secrets, rotation, certificates, or Key Vault errors.",
+      "userInvoked": false,
+      "lines": 82,
+      "path": "skills/azure/azure-key-vault/SKILL.md"
+    },
+    {
+      "name": "azure-monitor",
+      "group": "azure",
+      "title": "Azure Monitor",
+      "description": "Azure observability - Log Analytics KQL queries, Application Insights, Azure Monitor metrics and alerts (metric, log search, activity log, Service Health), action groups, diagnostic settings, Data Collection Rules, Managed Prometheus/Grafana, Activity Log investigations, retention and cost. Use when investigating issues, writing KQL or alerts, or reviewing monitoring coverage on Azure.",
+      "userInvoked": false,
+      "lines": 95,
+      "path": "skills/azure/azure-monitor/SKILL.md"
+    },
+    {
+      "name": "azure-networking",
+      "group": "azure",
+      "title": "Azure Networking",
+      "description": "Azure networking design and operations - VNets/subnets/IP planning, NSGs and ASGs, hub-spoke and Virtual WAN, Azure Firewall, UDRs, Private Endpoints and Private DNS zones, service endpoints, NAT Gateway, Application Gateway/WAF, Front Door, Load Balancer, Bastion, VPN/ExpressRoute, flow logs and Network Watcher troubleshooting. Use for VNet design, connectivity or DNS problems, NSG changes, or private endpoint setup.",
+      "userInvoked": false,
+      "lines": 87,
+      "path": "skills/azure/azure-networking/SKILL.md"
+    },
+    {
+      "name": "azure-policy-governance",
+      "group": "azure",
+      "title": "Azure Policy and Governance",
+      "description": "Azure governance and security posture - Azure Policy definitions/initiatives/assignments/exemptions, effects (audit, deny, modify, deployIfNotExists), remediation tasks, Microsoft Cloud Security Benchmark, Defender for Cloud plans and secure score, resource locks, Deployment Stacks deny settings, and landing-zone guardrails. Use when writing or reviewing policies, analysing non-compliance, or auditing Defender for Cloud posture.",
+      "userInvoked": false,
+      "lines": 92,
+      "path": "skills/azure/azure-policy-governance/SKILL.md"
+    },
+    {
+      "name": "azure-security-automation",
+      "group": "azure",
+      "title": "Azure Security Automation (auto-remediation)",
+      "description": "Build guarded security auto-remediation on Azure - Defender for Cloud workflow automation and continuous export, Azure Policy remediation (modify/deployIfNotExists), Event Grid on Activity Log/Key Vault events, Logic Apps/Functions/Automation runbooks with managed identities, Sentinel automation rules and playbooks, with dry-run, scoping, kill switches and audit. Use when automating detection-to-response or reviewing remediation automation on Azure.",
+      "userInvoked": false,
+      "lines": 104,
+      "path": "skills/azure/azure-security-automation/SKILL.md"
+    },
+    {
+      "name": "azure-storage",
+      "group": "azure",
+      "title": "Azure Storage",
+      "description": "Secure and operate Azure Storage accounts - Blob/ADLS Gen2, Files, Queues, Tables - Entra ID auth and disabling shared keys, user-delegation SAS, private endpoints and network rules, encryption with CMK, soft delete/versioning/immutability, lifecycle management, replication (LRS/ZRS/GZRS), Defender for Storage, and troubleshooting 403s. Use for storage account creation, access, data protection or permission problems.",
+      "userInvoked": false,
+      "lines": 98,
+      "path": "skills/azure/azure-storage/SKILL.md"
+    },
+    {
+      "name": "azure-vms-vmss",
+      "group": "azure",
+      "title": "Azure VMs and VM Scale Sets",
+      "description": "Operate Azure Virtual Machines and Virtual Machine Scale Sets securely - images (Compute Gallery, Image Builder), Trusted Launch, encryption at host/disk encryption sets, managed identity, Bastion/JIT access, Update Manager patching, Run Command, VMSS rolling upgrades and autoscale, Azure Monitor Agent, and troubleshooting boot/connectivity. Use for VM/VMSS builds, patching, scaling or VM issues on Azure.",
+      "userInvoked": false,
+      "lines": 91,
+      "path": "skills/azure/azure-vms-vmss/SKILL.md"
+    },
+    {
+      "name": "gcp-bigquery",
+      "group": "gcp",
+      "title": "BigQuery",
+      "description": "Use and govern BigQuery safely - dataset/table IAM, authorized views and row/column-level security, policy tags and data masking, CMEK, dry runs and cost controls (maximum bytes billed, partitioning/clustering, reservations), query optimisation, data exfiltration controls (VPC-SC), audit logs and billing export analysis. Use when writing or reviewing BigQuery SQL, designing datasets/permissions, or controlling BigQuery cost.",
+      "userInvoked": false,
+      "lines": 91,
+      "path": "skills/gcp/gcp-bigquery/SKILL.md"
+    },
+    {
+      "name": "gcp-cloud-run-functions",
+      "group": "gcp",
+      "title": "Cloud Run and Cloud Run functions",
+      "description": "Deploy and operate Cloud Run services/jobs and Cloud Run functions securely - dedicated service accounts, ingress settings and IAM invoker, IAP/load balancer fronting, Secret Manager integration, Direct VPC egress, revisions and traffic splitting, concurrency/min instances, Eventarc/Pub/Sub triggers, Binary Authorization, and troubleshooting. Use for serverless container or function deployments, 403/5xx issues, or cold starts on GCP.",
+      "userInvoked": false,
+      "lines": 100,
+      "path": "skills/gcp/gcp-cloud-run-functions/SKILL.md"
+    },
+    {
+      "name": "gcp-cloud-storage",
+      "group": "gcp",
+      "title": "Google Cloud Storage",
+      "description": "Secure and operate Google Cloud Storage - public access prevention, uniform bucket-level access, IAM and IAM Conditions, CMEK, soft delete, object versioning, retention policies and Bucket Lock, lifecycle rules, Autoclass, dual/multi-region, signed URLs, data access logging, and troubleshooting 403s. Use for bucket creation, access policies, data protection or GCS permission problems.",
+      "userInvoked": false,
+      "lines": 88,
+      "path": "skills/gcp/gcp-cloud-storage/SKILL.md"
+    },
+    {
+      "name": "gcp-compute-engine",
+      "group": "gcp",
+      "title": "Google Compute Engine and MIGs",
+      "description": "Operate Google Compute Engine and managed instance groups securely - instance templates, custom images and image families, Shielded VM, OS Login and IAP access, dedicated service accounts with minimal scopes, CMEK disks, VM Manager (OS patch, inventory), MIG autoscaling/autohealing/rolling updates, snapshots schedules, and troubleshooting. Use for GCE/MIG builds, patching, scaling or VM issues on GCP.",
+      "userInvoked": false,
+      "lines": 98,
+      "path": "skills/gcp/gcp-compute-engine/SKILL.md"
+    },
+    {
+      "name": "gcp-cost-optimization",
+      "group": "gcp",
+      "title": "GCP Cost Optimization",
+      "description": "Analyse and reduce Google Cloud spend - billing export queries in BigQuery, top cost drivers by service/project/label/SKU, Recommender (idle VMs, rightsizing, idle disks/IPs, CUD recommendations), committed use discounts analysis, GKE/Cloud Run/Cloud SQL optimisation, storage classes, network egress, logging costs, budgets and alerts. Use for GCP cost reviews, bill spikes, or optimisation plans.",
+      "userInvoked": false,
+      "lines": 98,
+      "path": "skills/gcp/gcp-cost-optimization/SKILL.md"
+    },
+    {
+      "name": "gcp-databases",
+      "group": "gcp",
+      "title": "Google Cloud Databases",
+      "description": "Secure and operate Google Cloud databases - Cloud SQL (PostgreSQL/MySQL/SQL Server), AlloyDB, Spanner, Firestore, Bigtable and Memorystore - private IP/PSC, IAM database authentication, Cloud SQL Auth Proxy/connectors, SSL enforcement, CMEK, backups/PITR, HA and cross-region replicas, deletion protection, maintenance, and performance troubleshooting. Use for database provisioning, connectivity, performance, failover or restores on GCP.",
+      "userInvoked": false,
+      "lines": 101,
+      "path": "skills/gcp/gcp-databases/SKILL.md"
+    },
+    {
+      "name": "gcp-foundations",
+      "group": "gcp",
+      "title": "Google Cloud Foundations",
+      "description": "Google Cloud basics done safely - gcloud auth and configurations, project/folder/organization targeting, service account impersonation, resource hierarchy and landing zone (Cloud Foundation), project baseline (audit logs, org policies, SCC, budgets, APIs), quotas and Cloud Asset Inventory. Use when starting GCP work, auditing a project, or when the target project/account is unclear.",
+      "userInvoked": false,
+      "lines": 79,
+      "path": "skills/gcp/gcp-foundations/SKILL.md"
+    },
+    {
+      "name": "gcp-gke",
+      "group": "gcp",
+      "title": "Google Kubernetes Engine (GKE)",
+      "description": "Build and operate Google Kubernetes Engine securely - Autopilot vs Standard, private clusters and control-plane access, Workload Identity Federation for GKE, Google Groups for RBAC, release channels and maintenance windows, node pools (Shielded, COS, auto-upgrade), Dataplane V2 network policy, Binary Authorization, Security Posture, Backup for GKE, and troubleshooting. Use for GKE provisioning, upgrades, access, or cluster networking issues.",
+      "userInvoked": false,
+      "lines": 98,
+      "path": "skills/gcp/gcp-gke/SKILL.md"
+    },
+    {
+      "name": "gcp-iac",
+      "group": "gcp",
+      "title": "Google Cloud IaC",
+      "description": "Infrastructure as code on Google Cloud - Terraform google/google-beta providers with impersonation and GCS state, Cloud Foundation Fabric and terraform-google-modules, Infrastructure Manager, Config Connector (KRM), Cloud Build/Cloud Deploy pipelines, API enablement, IAM resource types pitfalls, and importing existing resources. Use when writing or reviewing Terraform/KRM for GCP or setting up GCP IaC pipelines.",
+      "userInvoked": false,
+      "lines": 97,
+      "path": "skills/gcp/gcp-iac/SKILL.md"
+    },
+    {
+      "name": "gcp-iam",
+      "group": "gcp",
+      "title": "Google Cloud IAM",
+      "description": "Google Cloud IAM design, review and troubleshooting - predefined vs custom roles, additive bindings vs authoritative policies, IAM Conditions, service accounts and impersonation, Workload Identity Federation, IAM deny policies, Principal Access Boundary, Recommender/Policy Analyzer/Policy Troubleshooter, and privilege-escalation risks. Use for any IAM binding, service account, role or 403 PERMISSION_DENIED on GCP.",
+      "userInvoked": false,
+      "lines": 93,
+      "path": "skills/gcp/gcp-iam/SKILL.md"
+    },
+    {
+      "name": "gcp-networking",
+      "group": "gcp",
+      "title": "Google Cloud Networking",
+      "description": "Google Cloud networking design and operations - custom-mode VPCs, Shared VPC, subnets and secondary ranges, hierarchical and network firewall policies, Cloud NAT, Private Google Access and Private Service Connect, Cloud DNS (private zones, forwarding), Cloud Load Balancing and Cloud Armor, IAP TCP forwarding, VPN/Interconnect, NCC, flow logs and Connectivity Tests. Use for VPC design, firewall changes, connectivity or DNS problems on GCP.",
+      "userInvoked": false,
+      "lines": 86,
+      "path": "skills/gcp/gcp-networking/SKILL.md"
+    },
+    {
+      "name": "gcp-observability",
+      "group": "gcp",
+      "title": "GCP Observability",
+      "description": "Google Cloud observability - Cloud Logging queries and Log Analytics (SQL), log buckets/sinks/exclusions and retention, Cloud Monitoring metrics, MQL/PromQL, alerting policies and notification channels, uptime checks, SLOs, Cloud Trace/Profiler, Managed Service for Prometheus, and audit log investigations. Use when investigating issues, writing log queries or alerts, or reviewing monitoring coverage on GCP.",
+      "userInvoked": false,
+      "lines": 93,
+      "path": "skills/gcp/gcp-observability/SKILL.md"
+    },
+    {
+      "name": "gcp-org-policy-security",
+      "group": "gcp",
+      "title": "GCP Org Policy and Security",
+      "description": "Google Cloud organization governance and security posture - Organization Policy constraints (managed and custom), dry-run policies, VPC Service Controls perimeters, Security Command Center (findings, posture, mute rules), org-level audit log sinks and log buckets, Access Transparency, Assured Workloads. Use when writing or reviewing org policies or perimeters, triaging SCC findings, or auditing org security posture.",
+      "userInvoked": false,
+      "lines": 93,
+      "path": "skills/gcp/gcp-org-policy-security/SKILL.md"
+    },
+    {
+      "name": "gcp-secret-manager-kms",
+      "group": "gcp",
+      "title": "GCP Secret Manager and Cloud KMS",
+      "description": "Google Cloud Secret Manager and Cloud KMS - secret creation and per-secret IAM, replication and CMEK, versions, rotation schedules with Pub/Sub, regional secrets, KMS key rings/keys/rotation, protection levels (software/HSM/external), CMEK for services, key IAM separation of duties, Autokey, and troubleshooting. Use when creating or reviewing secrets, keys, CMEK, rotation, or KMS/secret access errors on GCP.",
+      "userInvoked": false,
+      "lines": 102,
+      "path": "skills/gcp/gcp-secret-manager-kms/SKILL.md"
+    },
+    {
+      "name": "gcp-security-automation",
+      "group": "gcp",
+      "title": "GCP Security Automation (auto-remediation)",
+      "description": "Build guarded security auto-remediation on Google Cloud - Security Command Center notifications to Pub/Sub, Eventarc on Cloud Audit Logs, Cloud Run/Cloud Functions remediators with dedicated service accounts, log-based alerts, Workflows approvals, org policy and posture as preventive controls, with dry-run, scoping, kill switches and audit. Use when automating detection-to-response or reviewing remediation automation on GCP.",
+      "userInvoked": false,
+      "lines": 94,
+      "path": "skills/gcp/gcp-security-automation/SKILL.md"
+    },
+    {
+      "name": "git-commits-prs",
+      "group": "git",
+      "title": "Git Commits and Pull Requests",
+      "description": "Write good commits and pull requests - Conventional Commits, atomic commits, commit message body, co-author/attribution, PR size and description template, linking tickets, draft PRs, review etiquette, addressing review comments, squash vs merge, and gh CLI usage. Use when committing, opening or updating a PR, writing a PR description, or responding to review feedback.",
+      "userInvoked": false,
+      "lines": 110,
+      "path": "skills/git/git-commits-prs/SKILL.md"
+    },
+    {
+      "name": "git-recovery",
+      "group": "git",
+      "title": "Git Recovery",
+      "description": "Recover from git mistakes safely - lost commits via reflog, undoing commits (reset vs revert), unstaging, restoring deleted files or branches, aborting bad rebases/merges, fixing commits on the wrong branch, detached HEAD, and recovering after a bad force push. Use when something went wrong in git or before running any command that could discard work.",
+      "userInvoked": false,
+      "lines": 64,
+      "path": "skills/git/git-recovery/SKILL.md"
+    },
+    {
+      "name": "git-repo-standards",
+      "group": "git",
+      "title": "Repository Standards",
+      "description": "Company repository standards - required files (README, CODEOWNERS, CONTRIBUTING, SECURITY, LICENSE, .editorconfig, .gitattributes), branch protection and rulesets, required checks, Dependabot/Renovate, PR and issue templates, signed commits, git hooks, and an audit of an existing repo against the standard. Use when creating a new repository, auditing repo hygiene, or setting up branch protection and templates.",
+      "userInvoked": false,
+      "lines": 112,
+      "path": "skills/git/git-repo-standards/SKILL.md"
+    },
+    {
+      "name": "git-secrets-history",
+      "group": "git",
+      "title": "Git: Secrets and History",
+      "description": "Prevent and respond to secrets in git - .gitignore and example env files, pre-commit secret scanning (gitleaks, cloud-guard scan), GitHub push protection, what to do when a secret is committed or pushed (rotate first), purging history with git filter-repo, and coordinating the force-push. Use when setting up secret scanning, when a secret or credential is found in a repo, or before making a repository public.",
+      "userInvoked": false,
+      "lines": 94,
+      "path": "skills/git/git-secrets-history/SKILL.md"
+    },
+    {
+      "name": "git-workflow",
+      "group": "git",
+      "title": "Git Workflow",
+      "description": "Team git workflow for agents and developers - trunk-based vs GitFlow, branch naming, syncing with main (rebase vs merge), resolving conflicts, keeping branches short-lived, release branches and tags, monorepo and submodule basics, and compact git commands that save tokens. Use when starting work on a change, updating a branch, resolving conflicts, cutting a release, or when unsure which git flow the repo uses.",
+      "userInvoked": false,
+      "lines": 96,
+      "path": "skills/git/git-workflow/SKILL.md"
+    },
+    {
+      "name": "code-fundamentals",
+      "group": "lang",
+      "title": "Code Fundamentals",
+      "description": "Company coding fundamentals for every language - the definition of done (format, lint, type-check, unit tests, coverage), unit tests for every function or branch with logic, error handling (try/catch at boundaries, never swallow, wrap with context, always clean up), input validation, naming, small functions, logging, and quality-gate commands for JavaScript/TypeScript, Python, Java, Kotlin, Go, C#, Rust, PHP, Ruby, C/C++, shell and HTML/CSS. Use when writing, changing or reviewing any code, in any language, before saying a change is done.",
+      "userInvoked": false,
+      "lines": 139,
+      "path": "skills/lang/code-fundamentals/SKILL.md"
+    },
+    {
+      "name": "dotnet-csharp",
+      "group": "lang",
+      "title": ".NET and C#",
+      "description": "Company standard for .NET and C# - LTS SDK pinning with global.json, nullable reference types and analyzers, ASP.NET Core security (authentication, authorization policies, data protection, headers), configuration and Key Vault/secret manager integration, EF Core pitfalls and migrations, async best practices, logging with ILogger/Serilog, testing with xUnit/Testcontainers, and container images. Use when writing, reviewing or debugging C# / ASP.NET Core / .NET worker code.",
+      "userInvoked": false,
+      "lines": 105,
+      "path": "skills/lang/dotnet-csharp/SKILL.md"
+    },
+    {
+      "name": "go",
+      "group": "lang",
+      "title": "Go",
+      "description": "Company standard for Go - modules and toolchain pinning, project layout, error handling and wrapping, context propagation and timeouts, concurrency patterns and race detection, net/http server hardening, database/sql usage, structured logging with slog, testing (table tests, fuzzing), linting with golangci-lint, govulncheck and static binaries in distroless images. Use when writing, reviewing or debugging Go services, CLIs or operators.",
+      "userInvoked": false,
+      "lines": 86,
+      "path": "skills/lang/go/SKILL.md"
+    },
+    {
+      "name": "html-css",
+      "group": "lang",
+      "title": "HTML and CSS",
+      "description": "Company standard for HTML and CSS - semantic markup, accessibility (WCAG 2.2 AA), responsive layout with flex/grid, design tokens and CSS custom properties, dark mode, forms, images and performance (Core Web Vitals), security headers and CSP, safe DOM manipulation, and linting with HTMLHint/Stylelint. Use when writing or reviewing HTML templates, CSS, static pages or front-end markup.",
+      "userInvoked": false,
+      "lines": 89,
+      "path": "skills/lang/html-css/SKILL.md"
+    },
+    {
+      "name": "java-spring",
+      "group": "lang",
+      "title": "Java and Spring Boot",
+      "description": "Company standard for Java and Spring Boot - LTS JDK, Maven/Gradle builds with wrappers and dependency management, project structure, Spring Boot configuration and profiles, Spring Security, validation, exception handling, JPA/Hibernate pitfalls (N+1, transactions), logging, Actuator hardening, testing with JUnit 5/Testcontainers, performance tuning and container images. Use when writing, reviewing or debugging Java or Spring Boot services and libraries.",
+      "userInvoked": false,
+      "lines": 131,
+      "path": "skills/lang/java-spring/SKILL.md"
+    },
+    {
+      "name": "javascript-typescript",
+      "group": "lang",
+      "title": "JavaScript and TypeScript",
+      "description": "Company standard for JavaScript and TypeScript - strict tsconfig, ESLint/Prettier, module system (ESM), types over any, runtime validation with zod, async/await and error handling, immutability, testing with Vitest/Jest/Playwright, React/front-end safety, bundle size, and package management with npm/pnpm lockfiles. Use when writing, reviewing or refactoring JS/TS code in browsers or tooling.",
+      "userInvoked": false,
+      "lines": 115,
+      "path": "skills/lang/javascript-typescript/SKILL.md"
+    },
+    {
+      "name": "nodejs-backend",
+      "group": "lang",
+      "title": "Node.js Backend",
+      "description": "Company standard for Node.js services - LTS versions, project layout, Express/Fastify/NestJS security middleware, config and secrets, input validation, structured logging with pino, error handling and graceful shutdown, database access and connection pooling, performance (event loop, streams, worker threads), testing, Docker images and npm supply-chain hygiene. Use when building, reviewing or debugging Node.js APIs, workers or CLIs.",
+      "userInvoked": false,
+      "lines": 100,
+      "path": "skills/lang/nodejs-backend/SKILL.md"
+    },
+    {
+      "name": "python",
+      "group": "lang",
+      "title": "Python",
+      "description": "Company standard for Python - supported versions, uv/poetry/pip with lockfiles and virtual environments, pyproject.toml, Ruff lint and format, type hints with mypy/pyright, pydantic validation, logging, exceptions, async, FastAPI/Django/Flask security, packaging, pytest testing, data and scripting hygiene, and dependency auditing. Use when writing, reviewing or debugging Python services, scripts, data jobs or Lambda/Cloud Functions code.",
+      "userInvoked": false,
+      "lines": 114,
+      "path": "skills/lang/python/SKILL.md"
+    },
+    {
+      "name": "secure-coding",
+      "group": "lang",
+      "title": "Secure Coding",
+      "description": "Language-agnostic secure coding standard for agents - OWASP Top 10 and API Top 10 defences, input validation, output encoding, injection (SQL/NoSQL/command/LDAP), authn/authz checks, secrets handling, crypto do's and don'ts, SSRF, deserialization, file uploads, logging without PII, dependency risk, and a review checklist. Use when writing or reviewing any code that handles input, auth, data, files, URLs or secrets, in any language.",
+      "userInvoked": false,
+      "lines": 77,
+      "path": "skills/lang/secure-coding/SKILL.md"
+    },
+    {
+      "name": "shell-scripting",
+      "group": "lang",
+      "title": "Shell Scripting (Bash and PowerShell)",
+      "description": "Company standard for Bash and PowerShell scripts - strict mode, quoting, argument parsing, dry-run flags, idempotency, error handling and traps, logging, portability (Linux/macOS/Windows), ShellCheck and PSScriptAnalyzer, safe file operations, secrets handling, and when to switch to Python. Use when writing, reviewing or debugging shell scripts, CI steps, Makefiles or PowerShell automation.",
+      "userInvoked": false,
+      "lines": 111,
+      "path": "skills/lang/shell-scripting/SKILL.md"
+    },
+    {
+      "name": "db-access-control",
+      "group": "db",
+      "title": "Database Access Control",
+      "description": "Design and review database access control - separate owner/migration/application/read-only/analyst roles, least-privilege grants per engine (PostgreSQL, MySQL, SQL Server, Oracle, MongoDB), cloud IAM database authentication, secret rotation, row-level security and column masking for personal data, audit logging, break-glass access and access reviews. Use when creating database users or roles, granting permissions, reviewing who can access data, or protecting personal data in databases.",
+      "userInvoked": false,
+      "lines": 97,
+      "path": "skills/db/db-access-control/SKILL.md"
+    },
+    {
+      "name": "db-guardrails",
+      "group": "db",
+      "title": "Database Guardrails",
+      "description": "Non-negotiable rules for any AI agent work against databases (PostgreSQL, MySQL/MariaDB, SQL Server, Oracle, MongoDB, Redis, Cassandra, SQLite, warehouses) - environment tiers, read-only by default, query safety (WHERE, LIMIT, transactions, dry runs), personal data handling, credentials, migrations-only schema changes, and what is forbidden. Use before connecting to a database, running any query or database CLI command, writing data fixes, or touching schemas.",
+      "userInvoked": false,
+      "lines": 78,
+      "path": "skills/db/db-guardrails/SKILL.md"
+    },
+    {
+      "name": "db-migrations",
+      "group": "db",
+      "title": "Database Migrations",
+      "description": "Safe, zero-downtime database schema migrations with Flyway, Liquibase, Alembic, Django, Prisma, Knex, EF Core, golang-migrate and Rails - expand/contract pattern, backward compatibility with running code, online index and column changes per engine, large backfills, testing on production-like data, rollback strategy and pipeline application. Use when adding or reviewing a migration, changing a column/table/index, backfilling data, or a migration failed.",
+      "userInvoked": false,
+      "lines": 87,
+      "path": "skills/db/db-migrations/SKILL.md"
+    },
+    {
+      "name": "mongodb",
+      "group": "db",
+      "title": "MongoDB",
+      "description": "Operate and troubleshoot MongoDB (self-managed, Atlas, Amazon DocumentDB, Azure Cosmos DB for MongoDB) safely - mongosh usage without credential leaks, query and aggregation safety, indexes and explain plans, schema design and validation, profiler and currentOp diagnostics, write concerns, transactions, replica set and sharding health, users/roles and network security. Use for any MongoDB query, index, performance or administration question.",
+      "userInvoked": false,
+      "lines": 66,
+      "path": "skills/db/mongodb/SKILL.md"
+    },
+    {
+      "name": "mysql",
+      "group": "db",
+      "title": "MySQL and MariaDB",
+      "description": "Operate and troubleshoot MySQL and MariaDB (self-managed, RDS/Aurora MySQL, Azure Flexible Server, Cloud SQL) safely - client usage without password leaks, performance_schema and sys schema diagnostics, slow query log, InnoDB locks and deadlocks, indexes, online DDL (INSTANT/INPLACE, gh-ost, pt-osc), replication lag, character sets, users and grants, backups and upgrades. Use for any MySQL/MariaDB query, performance, locking or maintenance question.",
+      "userInvoked": false,
+      "lines": 80,
+      "path": "skills/db/mysql/SKILL.md"
+    },
+    {
+      "name": "postgresql",
+      "group": "db",
+      "title": "PostgreSQL",
+      "description": "Operate and troubleshoot PostgreSQL (self-managed, RDS/Aurora, Azure Flexible Server, Cloud SQL/AlloyDB) safely - psql usage, roles and privileges, connection pooling, pg_stat_statements and pg_stat_activity diagnostics, locks and blocking, vacuum/bloat, indexes, configuration, replication lag, extensions, backups and upgrades. Use for any PostgreSQL query, performance, locking, connection or maintenance question.",
+      "userInvoked": false,
+      "lines": 97,
+      "path": "skills/db/postgresql/SKILL.md"
+    },
+    {
+      "name": "redis",
+      "group": "db",
+      "title": "Redis and Valkey",
+      "description": "Operate and troubleshoot Redis and Valkey (self-managed, ElastiCache/MemoryDB, Azure Cache/Managed Redis, Memorystore) safely - redis-cli without password leaks, key design and TTLs, SCAN instead of KEYS, memory and eviction diagnostics, big/hot keys, latency and slowlog, persistence, replication and cluster health, ACLs and TLS, and safe bulk deletes. Use for any Redis/Valkey caching, session, queue, performance or administration question.",
+      "userInvoked": false,
+      "lines": 75,
+      "path": "skills/db/redis/SKILL.md"
+    },
+    {
+      "name": "sql-safety-performance",
+      "group": "db",
+      "title": "SQL Safety and Performance",
+      "description": "Write, review and optimise SQL safely across PostgreSQL, MySQL, SQL Server and Oracle - parameterisation, correct joins and NULL handling, pagination, transactions and isolation, locking and deadlocks, indexing strategy, reading EXPLAIN plans, N+1 queries from ORMs, query anti-patterns, and safe data-fix scripts. Use when writing or reviewing SQL, a query is slow, an ORM generates bad SQL, or a data fix is needed.",
+      "userInvoked": false,
+      "lines": 97,
+      "path": "skills/db/sql-safety-performance/SKILL.md"
+    },
+    {
+      "name": "sql-server",
+      "group": "db",
+      "title": "SQL Server and Azure SQL",
+      "description": "Operate and troubleshoot Microsoft SQL Server and Azure SQL safely - sqlcmd/Invoke-Sqlcmd without password leaks, Entra authentication, DMVs and Query Store diagnostics, blocking and deadlocks, wait statistics, indexes and statistics maintenance, tempdb, Always On/geo-replication lag, permissions and security baseline. Use for any SQL Server or Azure SQL query, performance, blocking or maintenance question.",
+      "userInvoked": false,
+      "lines": 90,
+      "path": "skills/db/sql-server/SKILL.md"
+    },
+    {
+      "name": "ai-context-management",
+      "group": "ai",
+      "title": "AI Context Management",
+      "description": "How an AI agent keeps its own context window small and useful without losing important history - loading files and logs just in time, reading surgically, delegating noisy work to subagents, keeping a handoff note, suggesting clear or compact to the user at the right moment, resuming work across sessions, and writing lean CLAUDE.md/AGENTS.md files with progressive disclosure. Use when a session gets long, before switching tasks, when context is nearly full, when resuming earlier work, or when asked to create or trim project instruction files.",
+      "userInvoked": false,
+      "lines": 72,
+      "path": "skills/ai/ai-context-management/SKILL.md"
+    },
+    {
+      "name": "ai-token-cost-control",
+      "group": "ai",
+      "title": "AI Token Cost Control",
+      "description": "How an AI coding agent keeps its own token usage and cost low (Claude Code, Codex, Copilot, Cursor, Gemini CLI) - where tokens go, compact commands and targeted reads, model and effort choice, delegating noisy work to subagents, MCP and tool overhead, output trimming with token-saver, when to suggest clearing or compacting to the user, and how to configure team cost controls or prepare an AI spend review when asked. Use when a session is getting long or expensive, before running commands with large output, when choosing a model for a subagent, or when the user asks to reduce AI spend or set up AI budgets.",
+      "userInvoked": false,
+      "lines": 79,
+      "path": "skills/ai/ai-token-cost-control/SKILL.md"
+    },
+    {
+      "name": "llm-app-cost-control",
+      "group": "ai",
+      "title": "LLM Application Cost Control",
+      "description": "Control cost and token usage in applications that call LLM APIs (Anthropic Claude API, Amazon Bedrock, Azure OpenAI, Vertex AI, OpenAI) - token accounting per request, model routing, prompt caching, batch APIs, max_tokens and output limits, context trimming for chat history and RAG, response caching, rate limits, per-tenant budgets and quotas, cost observability and alerts. Use when building or reviewing a chatbot, RAG system, agent or any LLM feature, or when an LLM bill spikes.",
+      "userInvoked": false,
+      "lines": 84,
+      "path": "skills/ai/llm-app-cost-control/SKILL.md"
+    },
+    {
+      "name": "llm-batch-processing",
+      "group": "ai",
+      "title": "LLM Batch Processing",
+      "description": "Use batch APIs to cut LLM cost for work that does not need an immediate answer - Claude Message Batches, Amazon Bedrock batch inference, Azure OpenAI Global/Data Zone Batch, Vertex AI batch prediction and OpenAI Batch - when to batch, building JSONL/requests with custom ids, submitting and polling, handling partial failures and retries, combining with prompt caching, idempotent pipelines, security of input/output files, and cost estimation. Use when processing many LLM requests offline (evaluations, classification, enrichment, summarisation, embeddings, document processing, nightly jobs).",
+      "userInvoked": false,
+      "lines": 140,
+      "path": "skills/ai/llm-batch-processing/SKILL.md"
+    },
+    {
+      "name": "llm-prompt-caching",
+      "group": "ai",
+      "title": "LLM Prompt Caching",
+      "description": "Implement and verify prompt caching to cut LLM input cost and latency - how prefix caching works, what to cache, prompt layout for cache hits, cache breakpoints and TTLs on the Claude API, cachePoint on Amazon Bedrock, automatic caching on Azure OpenAI/OpenAI, Gemini context caching on Vertex AI, break-even maths, measuring hit rates from usage fields, common cache-busting mistakes, and keeping agent sessions cache-friendly. Use when building or reviewing any feature that sends repeated long prompts (system prompts, tools, documents, RAG context, chat history), or when LLM input costs are high.",
+      "userInvoked": false,
+      "lines": 166,
+      "path": "skills/ai/llm-prompt-caching/SKILL.md"
+    },
+    {
+      "name": "token-saver",
+      "group": "ai",
+      "title": "Token Saver",
+      "description": "How to work with the token-saver that ships with this library - a Claude Code PostToolUse hook and a run wrapper that trims large command output (test runs, builds, installs, logs) before the model sees it, keeps errors and summaries, saves the full redacted output to a local log for follow-up reads, and reports savings. Use when you are about to run a command with large output, when an output was trimmed and you need the omitted part, when the user asks to tune output trimming, or when comparing with third-party tools such as RTK.",
+      "userInvoked": false,
+      "lines": 95,
+      "path": "skills/ai/token-saver/SKILL.md"
+    }
+  ]
+}
